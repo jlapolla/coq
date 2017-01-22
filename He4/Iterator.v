@@ -136,55 +136,6 @@ Definition range_forth :=
 
 (** Implied constraints *)
 
-Corollary 
-
-
-
-
-
-
-Definition forth_dom_ex :=
-  forall x,
-    forth_dom x ->
-    exists x', forth x x'.
-
-Definition after_dom :=
-  forall x,
-    wf x ->
-    exists b, after x b.
-
-Definition forth_wf :=
-  forall x,
-    wf x ->
-    after x false ->
-    wf (forth x).
-
-Definition forth_domain :=
-  forall x,
-    wf x ->
-    after x = false ->
-    exists x', x' = forth x.
-
-Lemma forth_wf__forth_domain :
-  forth_wf ->
-  forth_domain.
-Proof.
-  unfold forth_wf, forth_domain.
-  intros. exists (forth x). reflexivity.
-  Qed.
-
-Definition forth_sem := forall (x : concrete_class A),
-  wf x ->
-  after x = false ->
-  forall (x' : concrete_class A),
-    x' = forth x ->
-    off x' = false \/ (off x' = true /\ after x' = true).
-
-Definition off_sem := forall (x : concrete_class A),
-  wf x ->
-  off x = false ->
-  after x = false.
-
 End Iterators.
 
 End Iterator.
