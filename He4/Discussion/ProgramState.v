@@ -2,7 +2,7 @@ Require Export Coq.Lists.List.
 
 Set Implicit Arguments.
 
-Section ListOperations.
+Section Lists.
 
 Hint Resolve Lt.lt_S_n.
 
@@ -61,8 +61,6 @@ Proof with auto.
   simpl. intros...
   Qed.
 
-(** TODO: Fill in Lemmas *)
-
 Fixpoint repeat (x : A) (n : nat) : list A :=
   match n with
   | O => nil
@@ -86,8 +84,6 @@ Proof with auto.
   destruct m...
   intros. simpl...
   Qed.
-
-(** TODO: Fill in Lemmas *)
 
 Fixpoint resize (n : nat) (l : list A) (default : A) : list A :=
   match n with
@@ -144,9 +140,7 @@ Proof with auto.
   simpl. intros. apply Le.le_S_n in H0...
   Qed.
 
-(** TODO: Fill in Lemmas *)
-
-End ListOperations.
+End Lists.
 
 Section Stacks.
 
@@ -160,19 +154,13 @@ Definition push := cons.
 
 Definition pop := tl.
 
-Function sk_write (n : nat) (a : A) (sk : stack) : stack :=
-  match sk with
-  | nil => nil
-  | cons sf' sk' => cons (replace n a sf') sk'
-  end.
+Definition sk_write_hd (n : nat) (a : A) (sk : stack) : stack :=
+  push (replace n a (hd nil sk)) (pop sk).
 
-Function sk_read (n : nat) (sk : stack) (default : A) : A :=
-  match sk with
-  | nil => default
-  | cons sf' sk' => nth n sf' default
-  end.
+Definition sk_read_hd (n : nat) (sk : stack) (default : A) : A :=
+  nth n (hd nil sk) default.
 
-Definition sk_resize (n : nat) (sk : stack) (default : A) : stack :=
+Definition sk_resize_hd (n : nat) (sk : stack) (default : A) : stack :=
   push (resize n (hd nil sk) default) (pop sk).
 
 (** TODO: Fill in Lemmas *)
@@ -185,7 +173,7 @@ Variable A : Type.
 
 Definition store := list A.
 
-Definition alloc (a : A) (sr : store) :=
+Definition sr_alloc (a : A) (sr : store) :=
   app sr (cons a nil).
 
 Definition sr_write := replace.
