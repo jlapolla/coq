@@ -8,12 +8,9 @@ Inductive f1 : Type :=
 Inductive f2 : Type :=
   | F2set_first : f2.
 
-(* Reference classes *)
+(* Classes *)
 Inductive cl : Type :=
   | CLNatRangeIterator : cl.
-
-(* Expanded classes *)
-Inductive clex : Type := .
 
 Inductive ty : Type :=
 
@@ -24,8 +21,7 @@ Inductive ty : Type :=
   | Tref : ty -> ty
 
   (* Classes *)
-  | Tcl : cl -> ty
-  | Tclex : clex -> ty.
+  | Tcl : cl -> ty.
 
 Inductive tm : Type :=
 
@@ -51,8 +47,7 @@ Inductive tm : Type :=
 
   (* Classes *)
   | tnew : cl -> tm
-  | tnewex : clex -> tm
-  | tclex : clex -> tm -> tm.
+  | tcl : cl -> tm -> tm.
 
 Definition tempty := tvoid.
 
@@ -64,7 +59,7 @@ Inductive value : tm -> Prop :=
   | vbool : forall b, value (tbool b)
   | vref : forall n, value (tref n)
   | vpair : forall t1 t2, value t1 -> value t2 -> value (tpair t1 t2)
-  | vclex : forall clex t1, value t1 -> value (tclex clex t1).
+  | vcl : forall cl1 t1, value t1 -> value (tcl cl1 t1).
 
 Section Stacks.
 Definition stack := ProgramState.stack tm.
