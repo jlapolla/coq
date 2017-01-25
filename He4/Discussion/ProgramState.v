@@ -44,6 +44,67 @@ Proof with auto.
 
 (** TODO: Fill in Lemmas *)
 
+Fixpoint resize (n : nat) (l : list A) (default : A) : list A :=
+  match n with
+  | O => nil
+  | S n' =>
+    match l with
+    | nil => cons default (resize n' l default)
+    | cons a' l' => cons a' (resize n' l' default)
+    end
+  end.
+
+Lemma resize_length:
+  forall n l default,
+  length (resize n l default) = n.
+Proof with auto.
+  induction n...
+  destruct l; simpl...
+  Qed.
+
+Lemma resize_nil:
+  forall n default,
+  resize n nil default = repeat default n.
+Proof with auto.
+  induction n...
+  intros. simpl. rewrite IHn...
+  Qed.
+
+Lemma resize_correct_1:
+  forall l n m d1 d2,
+  lt m n ->
+  lt m (length l) ->
+  nth m (resize n l d1) d2 = nth m l d2.
+Proof with auto.
+  induction l.
+  destruct n; try (intros; inversion H0).
+  destruct n. intros. inversion H.
+  destruct m...
+  intros. simpl. simpl in H0.
+  apply Lt.lt_S_n in H. apply Lt.lt_S_n in H0.
+  apply IHl...
+  Qed.
+
+Lemma resize_correct_2:
+  forall l n m d1 d2,
+  lt m n ->
+  le (length l) m ->
+  nth m (resize n l d1) d2 = d1.
+Proof with auto.
+  induction l.
+  destruct n. intros. inversion H.
+  destruct m... intros. simpl.
+  intros. rewrite resize_nil.
+  rewrite repeat_correct...
+  apply Lt.lt_S_n in H...
+  destruct n. intros. inversion H.
+  destruct m. intros. inversion H0.
+  simpl. intros.
+  apply Lt.lt_S_n in H. apply Le.le_S_n in H0...
+  Qed.
+
+(** TODO: Fill in Lemmas *)
+
 End ListOperations.
 
 Section Stacks.
@@ -70,67 +131,8 @@ Function sk_read (n : nat) (sk : stack) (default : A) : A :=
   | cons sf' sk' => nth n sf' default
   end.
 
-Fixpoint sf_resize (n : nat) (sf : stack_frame) (default : A) : stack_frame :=
-  match n with
-  | O => nil
-  | S n' =>
-    match sf with
-    | nil => cons default (sf_resize n' sf default)
-    | cons a' sf' => cons a' (sf_resize n' sf' default)
-    end
-  end.
-
-Lemma sf_resize_length:
-  forall n sf default,
-  length (sf_resize n sf default) = n.
-Proof with auto.
-  induction n...
-  destruct sf; simpl...
-  Qed.
-
-Lemma sf_resize_nil:
-  forall n default,
-  sf_resize n nil default = repeat default n.
-Proof with auto.
-  induction n...
-  intros. simpl. rewrite IHn...
-  Qed.
-
-Lemma sf_resize_correct_1:
-  forall sf n m d1 d2,
-  lt m n ->
-  lt m (length sf) ->
-  nth m (sf_resize n sf d1) d2 = nth m sf d2.
-Proof with auto.
-  induction sf.
-  destruct n; try (intros; inversion H0).
-  destruct n. intros. inversion H.
-  destruct m...
-  intros. simpl. simpl in H0.
-  apply Lt.lt_S_n in H. apply Lt.lt_S_n in H0.
-  apply IHsf...
-  Qed.
-
-Lemma sf_resize_correct_2:
-  forall sf n m d1 d2,
-  lt m n ->
-  le (length sf) m ->
-  nth m (sf_resize n sf d1) d2 = d1.
-Proof with auto.
-  induction sf.
-  destruct n. intros. inversion H.
-  destruct m... intros. simpl.
-  intros. rewrite sf_resize_nil.
-  rewrite repeat_correct...
-  apply Lt.lt_S_n in H...
-  destruct n. intros. inversion H.
-  destruct m. intros. inversion H0.
-  simpl. intros.
-  apply Lt.lt_S_n in H. apply Le.le_S_n in H0...
-  Qed.
-
 Definition sk_resize (n : nat) (sk : stack) (default : A) : stack :=
-  push (sf_resize n (hd nil sk) default) (pop sk).
+  push (resize n (hd nil sk) default) (pop sk).
 
 (** TODO: Fill in Lemmas *)
 
