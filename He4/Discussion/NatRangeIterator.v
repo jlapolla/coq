@@ -8,8 +8,12 @@ Inductive f1 : Type :=
 Inductive f2 : Type :=
   | F2set_first : f2.
 
+(* Reference classes *)
 Inductive cl : Type :=
   | CLNatRangeIterator : cl.
+
+(* Expanded classes *)
+Inductive clex : Type := .
 
 Inductive ty : Type :=
 
@@ -20,7 +24,8 @@ Inductive ty : Type :=
   | Tref : ty -> ty
 
   (* Classes *)
-  | Tclass : cl -> ty.
+  | Tcl : cl -> ty
+  | Tclex : clex -> ty.
 
 Inductive tm : Type :=
 
@@ -31,8 +36,8 @@ Inductive tm : Type :=
 
   (* Variables and references *)
   | tvar : nat -> tm
-  | tassign : tm -> tm -> tm
   | tref : nat -> tm
+  | tassign : tm -> tm -> tm
 
   (* Structures *)
   | tpair : tm -> tm -> tm
@@ -45,7 +50,9 @@ Inductive tm : Type :=
   | tf2 : f2 -> tm -> tm -> tm
 
   (* Classes *)
-  | tnew : cl -> tm.
+  | tnew : cl -> tm
+  | tnewex : clex -> tm.
+  | tclex : clex -> tm -> tm.
 
 Inductive value : tm -> Prop :=
 
@@ -54,18 +61,14 @@ Inductive value : tm -> Prop :=
   | vnat : forall n, value (tnat n)
   | vbool : forall b, value (tbool b)
   | vref : forall n, value (tref n)
-  | vpair :
-    forall t1 t2,
-    value t1 ->
-    value t2 ->
-    value (tpair t1 t2)
-
-  (* Expanded classes (no reference type classes) *).
+  | vpair : forall t1 t2, value t1 -> value t2 -> value (tpair t1 t2)
+  | vclex : forall clex t1, value t1 -> value (tclex clex t1).
 
 Definition stack := @ProgramState.stack (prod ty tm).
 Definition store := @ProgramState.store (prod ty tm).
 Definition sk_read (n : nat) (sk : stack) := ProgramState.sk_read n sk (pair Tvoid tvoid).
 Definition sr_read (n : nat) (sr : store) := ProgramState.sr_read n sr (pair Tvoid tvoid).
+Definition sf_new (n : nat) := ProgramState.repeat (pair Tvoid tvoid) n.
 
 (** We encode objects as nested [tpair] terms. This allows us to
     implement a garbage collector that walks the stack looking for
