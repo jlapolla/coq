@@ -2,11 +2,11 @@ Module NatRangeIterator.
 
 Require Import He4.Discussion.ProgramState.
 
-Inductive fn1 : Type :=
-  | FN1get_first : fn1.
+Inductive f1 : Type :=
+  | F1get_first : f1.
 
-Inductive fn2 : Type :=
-  | FN2set_first : fn2.
+Inductive f2 : Type :=
+  | F2set_first : f2.
 
 Inductive class : Type :=
   | CLNatRangeIterator : class.
@@ -41,8 +41,8 @@ Inductive tm : Type :=
   | tseq : tm -> tm -> tm
 
   (* Named functions *)
-  | tfn1 : fn1 -> tm -> tm
-  | tfn2 : fn2 -> tm -> tm -> tm
+  | tf1 : f1 -> tm -> tm
+  | tf2 : f2 -> tm -> tm -> tm
 
   (* Classes *)
   | tnew : class -> tm.
@@ -170,19 +170,19 @@ Inductive step : (prod tm (prod stack store)) -> (prod tm (prod stack store)) ->
     forall t2 st,
     tseq tvoid t2 / st ==> t2 / st
 
-  | STfn1_1 :
-    forall fn1 t1 t1' st st',
+  | STf1_1 :
+    forall f1 t1 t1' st st',
     t1 / st ==> t1' / st' ->
-    tfn1 fn1 t1 / st ==> tfn1 fn1 t1' / st'
-  | STfn2_1 :
-    forall fn2 t1 t1' t2 st st',
+    tf1 f1 t1 / st ==> tf1 f1 t1' / st'
+  | STf2_1 :
+    forall f2 t1 t1' t2 st st',
     t1 / st ==> t1' / st' ->
-    tfn2 fn2 t1 t2 / st ==> tfn2 fn2 t1' t2 / st'
-  | STfn2_2 :
-    forall fn2 v1 t2 t2' st st',
+    tf2 f2 t1 t2 / st ==> tf2 f2 t1' t2 / st'
+  | STf2_2 :
+    forall f2 v1 t2 t2' st st',
     value v1 ->
     t2 / st ==> t2' / st' ->
-    tfn2 fn2 v1 t2 / st ==> tfn2 fn2 v1 t2' / st'
+    tf2 f2 v1 t2 / st ==> tf2 f2 v1 t2' / st'
 
   (* Classes *)
   | STnew_NatRangeIterator :
