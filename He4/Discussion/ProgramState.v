@@ -4,6 +4,8 @@ Set Implicit Arguments.
 
 Section ListOperations.
 
+Hint Resolve Lt.lt_S_n.
+
 Variable A : Type.
 
 Fixpoint replace (n : nat) (a : A) (l : list A) : list A :=
@@ -46,8 +48,7 @@ Proof with auto.
   destruct n.
   destruct m... intros. exfalso...
   destruct m...
-  simpl. intros. apply not_eq_n in H0. apply Lt.lt_S_n in H.
-  apply IHl...
+  simpl. intros. apply not_eq_n in H0...
   Qed.
 
 Lemma replace_correct_2:
@@ -57,8 +58,7 @@ Lemma replace_correct_2:
 Proof with auto.
   induction l. intros. inversion H.
   destruct n...
-  simpl. intros. apply Lt.lt_S_n in H.
-  apply IHl...
+  simpl. intros...
   Qed.
 
 (** TODO: Fill in Lemmas *)
@@ -84,7 +84,7 @@ Lemma repeat_correct:
 Proof with auto.
   induction n. intros. inversion H.
   destruct m...
-  intros. simpl. apply Lt.lt_S_n in H...
+  intros. simpl...
   Qed.
 
 (** TODO: Fill in Lemmas *)
@@ -125,9 +125,7 @@ Proof with auto.
   destruct n; try (intros; inversion H0).
   destruct n. intros. inversion H.
   destruct m...
-  intros. simpl. simpl in H0.
-  apply Lt.lt_S_n in H. apply Lt.lt_S_n in H0.
-  apply IHl...
+  simpl...
   Qed.
 
 Lemma resize_correct_2:
@@ -141,11 +139,9 @@ Proof with auto.
   destruct m... intros. simpl.
   intros. rewrite resize_nil.
   rewrite repeat_correct...
-  apply Lt.lt_S_n in H...
   destruct n. intros. inversion H.
   destruct m. intros. inversion H0.
-  simpl. intros.
-  apply Lt.lt_S_n in H. apply Le.le_S_n in H0...
+  simpl. intros. apply Le.le_S_n in H0...
   Qed.
 
 (** TODO: Fill in Lemmas *)
