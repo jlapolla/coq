@@ -8,8 +8,8 @@ Inductive f1 : Type :=
 Inductive f2 : Type :=
   | F2set_first : f2.
 
-Inductive class : Type :=
-  | CLNatRangeIterator : class.
+Inductive cl : Type :=
+  | CLNatRangeIterator : cl.
 
 Inductive ty : Type :=
 
@@ -20,7 +20,7 @@ Inductive ty : Type :=
   | Tref : ty -> ty
 
   (* Classes *)
-  | Tclass : class -> ty.
+  | Tclass : cl -> ty.
 
 Inductive tm : Type :=
 
@@ -45,7 +45,7 @@ Inductive tm : Type :=
   | tf2 : f2 -> tm -> tm -> tm
 
   (* Classes *)
-  | tnew : class -> tm.
+  | tnew : cl -> tm.
 
 Inductive value : tm -> Prop :=
 
