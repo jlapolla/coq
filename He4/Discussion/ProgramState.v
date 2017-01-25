@@ -16,6 +16,51 @@ Fixpoint replace (n : nat) (a : A) (l : list A) : list A :=
     end
   end.
 
+Lemma replace_length:
+  forall n l a,
+  length (replace n a l) = length l.
+Proof with auto.
+  induction n.
+  destruct l...
+  destruct l...
+  simpl. intros. apply f_equal. apply IHn...
+  Qed.
+
+(* TODO: Move not_eq_n to another library. *)
+
+Lemma not_eq_n:
+  forall n m : nat,
+  S n <> S m ->
+  n <> m.
+Proof.
+  auto.
+  Qed.
+
+Lemma replace_correct_1:
+  forall l n m d a,
+  m < length l ->
+  m <> n ->
+  nth m (replace n a l) d = nth m l d.
+Proof with auto.
+  induction l. intros. inversion H.
+  destruct n.
+  destruct m... intros. exfalso...
+  destruct m...
+  simpl. intros. apply not_eq_n in H0. apply Lt.lt_S_n in H.
+  apply IHl...
+  Qed.
+
+Lemma replace_correct_2:
+  forall l n d a,
+  n < length l ->
+  nth n (replace n a l) d = a.
+Proof with auto.
+  induction l. intros. inversion H.
+  destruct n...
+  simpl. intros. apply Lt.lt_S_n in H.
+  apply IHl...
+  Qed.
+
 (** TODO: Fill in Lemmas *)
 
 Fixpoint repeat (x : A) (n : nat) : list A :=
