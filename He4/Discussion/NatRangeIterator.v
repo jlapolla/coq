@@ -314,4 +314,44 @@ Inductive step : (prod tm (prod stack store)) -> (prod tm (prod stack store)) ->
 
   where "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2)).
 
+Lemma value_does_not_step:
+  forall t,
+  value t ->
+  forall st t' st',
+    ~(t / st ==> t' / st').
+Proof with eauto.
+  intros t Hval.
+  induction Hval;
+  try solve [intros st t' st' Hcontra; inversion Hcontra].
+  intros st t' st' Hcontra.
+  inversion Hcontra; subst.
+  apply IHHval1 in H0. inversion H0.
+  apply IHHval2 in H5. inversion H5.
+  Qed.
+
+Lemma step_deterministic:
+  forall x y,
+  step x y ->
+  forall z,
+    step x z ->
+    z = y.
+Proof with auto.
+  intros x y Hxy.
+  induction Hxy; intros z Hxz; inversion Hxz; subst;
+  try solve [apply IHHxy in H3; inversion H3; subst; auto];
+  try solve [auto].
+  destruct (value_does_not_step t0 H3 (pair sk sr) t0' st')...
+  destruct (value_does_not_step v0 H (pair sk sr) t0' st')...
+  inversion Hxy.
+  inversion H3.
+  destruct (value_does_not_step t H3 st t' st')...
+  destruct (value_does_not_step v H st t' st'0)...
+  apply IHHxy in H5; inversion H5; subst...
+  destruct (value_does_not_step t0 H3 (pair sk sr) t0' st')...
+  destruct (value_does_not_step v0 H (pair sk sr) t0' st')...
+  apply IHHxy in H2; inversion H2; subst...
+  destruct (value_does_not_step t H2 (pair sk sr) t' st')...
+  destruct (value_does_not_step v H (pair sk sr) t' st')...
+  Qed.
+
 End NatRangeIterator.
