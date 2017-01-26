@@ -4,7 +4,7 @@ Set Implicit Arguments.
 
 Section Lists.
 
-Hint Resolve Lt.lt_S_n.
+Hint Resolve Lt.lt_S_n List.nth_indep.
 
 Variable A : Type.
 
@@ -39,16 +39,15 @@ Proof.
   Qed.
 
 Lemma replace_correct_1:
-  forall l n m d a,
+  forall l n m d1 d2 a,
   m < length l ->
   m <> n ->
-  nth m (replace n a l) d = nth m l d.
+  nth m (replace n a l) d1 = nth m l d2.
 Proof with auto.
-  induction l. intros. inversion H.
-  destruct n.
-  destruct m... intros. exfalso...
-  destruct m...
-  simpl. intros. apply not_eq_n in H0...
+  induction l; try solve [intros; inversion H].
+  destruct n; try solve [destruct m; simpl; auto].
+  destruct m; try solve [intros; exfalso; auto].
+  simpl...
   Qed.
 
 Lemma replace_correct_2:
@@ -112,10 +111,10 @@ Proof with auto.
   Qed.
 
 Lemma resize_correct_1:
-  forall l n m d1 d2,
+  forall l n m d1 d2 d3,
   lt m n ->
   lt m (length l) ->
-  nth m (resize n l d1) d2 = nth m l d2.
+  nth m (resize n l d1) d2 = nth m l d3.
 Proof with auto.
   induction l.
   destruct n; try (intros; inversion H0).
