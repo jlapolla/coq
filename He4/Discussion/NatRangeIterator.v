@@ -199,6 +199,16 @@ Proof with auto.
   simpl...
   Qed.
 
+Lemma rc_to_list_correct:
+  forall rc m d1,
+  lt m (rc_length rc) ->
+  nth m (rc_to_list rc) d1 = rc_read m rc.
+Proof with auto.
+  induction rc;
+  try solve [intros; inversion H].
+  destruct m; simpl...
+  Qed.
+
 End Records.
 
 Reserved Notation "t1 '/' st1 '==>' t2 '/' st2"
