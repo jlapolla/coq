@@ -42,12 +42,10 @@ Inductive tm : Type :=
   | trc : tm -> tm -> tm
 
   (* Functions *)
-  | tapp : tm -> tm -> tm
   | tf : f1 -> tm
-
-  (* Named functions *)
-  | tf1 : f1 -> tm -> tm
-  | tf2 : f2 -> tm -> tm -> tm
+  | tcall : tm -> tm -> tm
+  | texec : tm -> tm
+  | treturn : tm -> tm
 
   (* Classes *)
   | tnew : cl -> tm
@@ -61,6 +59,7 @@ Inductive value : tm -> Prop :=
   | vbool : forall b, value (tbool b)
   | vref : forall n, value (tref n)
   | vrc : forall t rc, value t -> value rc -> value (trc t rc)
+  | vf : forall f, value (tf f)
 
   (* Classes *)
   | vcl : forall c t, value t -> value (tcl c t).
@@ -220,34 +219,49 @@ Inductive step : (prod tm (prod stack store)) -> (prod tm (prod stack store)) ->
     (tvar n) / (pair sk sr) ==> sk_read_hd n sk / (pair sk sr)
 
   | STassign_r :
-    forall n t2 t2' st st',
-    t2 / st ==> t2' / st' ->
-    tassign (tvar n) t2 / st ==> tassign (tvar n) t2' / st'
+    forall n t0 t0' st st',
+    t0 / st ==> t0' / st' ->
+    tassign (tvar n) t0 / st ==> tassign (tvar n) t0' / st'
   | STassign :
-    forall n v sk sr,
-    value v ->
-    tassign (tvar n) v / (pair sk sr) ==> tvoid / (pair (sk_write_hd n v sk) sr)
+    forall n v0 sk sr,
+    value v0 ->
+    tassign (tvar n) v0 / (pair sk sr) ==> tvoid / (pair (sk_write_hd n v0 sk) sr)
 
   | STseq_l :
-    forall t1 t1' t2 st st',
-    t1 / st ==> t1' / st' ->
-    tseq t1 t2 / st ==> tseq t1' t2 / st'
+    forall t t' t0 st st',
+    t / st ==> t' / st' ->
+    tseq t t0 / st ==> tseq t' t0 / st'
   | STseq :
-    forall t2 st,
-    tseq tvoid t2 / st ==> t2 / st
+    forall t0 st,
+    tseq tvoid t0 / st ==> t0 / st
 
   | STrc_l :
-    forall t1 t1' rc st st',
-    t1 / st ==> t1' / st' ->
-    trc t1 rc / st ==> trc t1' rc / st'
+    forall t t' t0 st st',
+    t / st ==> t' / st' ->
+    trc t t0 / st ==> trc t' t0 / st'
   | STrc_r :
-    forall v1 rc rc' st st',
-    value v1 ->
-    rc / st ==> rc' / st' ->
-    trc v1 rc / st ==> trc v1 rc' / st'
+    forall v t0 t0' st st',
+    value v ->
+    t0 / st ==> t0' / st' ->
+    trc v t0 / st ==> trc v t0' / st'
 
-  | STapp :
-    tapp (tf fn)
+  | STcall_r :
+    forall f t0 t0' st st',
+    t0 / st ==> t0' / st' ->
+    tcall (tf f) t0 / st ==> tcall (tf f) t0' / st'
+  | STcall :
+    forall f v0 sk sr,
+    value v0 ->
+    tcall (tf f) v0 / (pair sk sr) ==> treturn (texec (tf f)) / (pair (push (rc_to_list v0) sk) sr)
+
+  | STreturn_r :
+    forall t t' st st',
+    t / st ==> t' / st' ->
+    treturn t / st ==> treturn t' / st'
+  | STreturn :
+    forall v sk sr,
+    value v ->
+    treturn v / (pair sk sr) ==> v / (pair (pop sk) sr)
 
   where "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2)).
 
