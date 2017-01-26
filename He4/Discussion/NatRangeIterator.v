@@ -41,6 +41,10 @@ Inductive tm : Type :=
   (* Records *)
   | trc : tm -> tm -> tm
 
+  (* Functions *)
+  | tapp : tm -> tm -> tm
+  | tf : f1 -> tm
+
   (* Named functions *)
   | tf1 : f1 -> tm -> tm
   | tf2 : f2 -> tm -> tm -> tm
@@ -82,10 +86,6 @@ Section Records.
 
 Hint Resolve Lt.lt_S_n.
 
-Inductive is_rc : tm -> Prop :=
-  | RC_tempty : is_rc tempty
-  | RC_trc : forall t rc, is_rc rc -> is_rc (trc t rc).
-
 Fixpoint rc_create (n : nat) : tm :=
   match n with
   | O => tempty
@@ -126,12 +126,11 @@ Fixpoint rc_write (n : nat) (t rc : tm) : tm :=
     end
   end.
 
-Lemma rc_create_is_rc:
-  forall n,
-  is_rc (rc_create n).
-Proof with auto.
-  induction n; simpl; constructor...
-  Qed.
+Fixpoint rc_to_list (rc : tm) : list tm :=
+  match rc with
+  | trc t1 rc' => cons t1 (rc_to_list rc')
+  | _ => nil
+  end.
 
 Lemma rc_create_length:
   forall n,
@@ -150,65 +149,54 @@ Proof with auto.
   Qed.
 
 Lemma rc_read_overflow:
-  forall rc,
-  is_rc rc ->
-  forall m,
-    le (rc_length rc) m ->
-    rc_read m rc = tempty.
+  forall rc m,
+  le (rc_length rc) m ->
+  rc_read m rc = tempty.
 Proof with auto.
-  intros rc H. induction H; destruct m...
-  simpl. intros. inversion H0.
-  simpl. intros. apply Le.le_S_n in H0...
-  Qed.
-
-Lemma rc_write_is_rc:
-  forall rc,
-  is_rc rc ->
-  forall n t,
-    is_rc (rc_write n t rc).
-Proof with auto.
-  intros rc H.
-  induction H; destruct n; simpl; constructor...
+  induction rc; try (destruct m; auto).
+  simpl. intros. inversion H.
+  simpl. intros. apply Le.le_S_n in H...
   Qed.
 
 Lemma rc_write_length:
-  forall rc,
-  is_rc rc ->
-  forall n t,
-    rc_length (rc_write n t rc) = rc_length rc.
+  forall rc n t,
+  rc_length (rc_write n t rc) = rc_length rc.
 Proof with auto.
-  intros rc H. induction H.
-  destruct n; simpl; constructor...
-  destruct n; simpl...
+  induction rc;
+  try solve [destruct n; simpl; auto];
+  try solve [destruct n0; auto].
   Qed.
 
 Lemma rc_write_correct_1:
-  forall rc,
-  is_rc rc ->
-  forall n m t,
-    lt m (rc_length rc) ->
-    m <> n ->
-    rc_read m (rc_write n t rc) = rc_read m rc.
+  forall rc n m t,
+  lt m (rc_length rc) ->
+  m <> n ->
+  rc_read m (rc_write n t rc) = rc_read m rc.
 Proof with auto.
-  intros rc H. induction H.
-  simpl. intros. inversion H.
+  induction rc;
+  try solve [destruct n; auto];
+  try solve [destruct n0; auto].
   destruct n.
-  destruct m... intros. exfalso...
-  destruct m...
-  simpl. intros. apply not_eq_n in H1...
+  destruct m; try solve [intros; exfalso; auto]...
+  destruct m; simpl...
   Qed.
 
 Lemma rc_write_correct_2:
-  forall rc,
-  is_rc rc ->
-  forall n t,
-    lt n (rc_length rc) ->
-    rc_read n (rc_write n t rc) = t.
+  forall rc n t,
+  lt n (rc_length rc) ->
+  rc_read n (rc_write n t rc) = t.
 Proof with auto.
-  intros rc H. induction H.
-  intros. inversion H.
-  destruct n...
-  simpl. intros...
+  induction rc;
+  try solve [simpl; intros; inversion H].
+  destruct n; simpl; intros...
+  Qed.
+
+Lemma rc_to_list_length:
+  forall rc,
+  length (rc_to_list rc) = rc_length rc.
+Proof with auto.
+  induction rc...
+  simpl...
   Qed.
 
 End Records.
@@ -248,10 +236,8 @@ Inductive step : (prod tm (prod stack store)) -> (prod tm (prod stack store)) ->
     rc / st ==> rc' / st' ->
     trc v1 rc / st ==> trc v1 rc' / st'
 
-  | STf1_1 :
-    forall f1 t1 t1' st st',
-    t1 / st ==> t1' / st' ->
-    tf1 f1 t1 / st ==> tf1 f1 t1' / st'
+  | STapp :
+    tapp (tf fn)
 
   where "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2)).
 
@@ -260,6 +246,10 @@ Inductive step : (prod tm (prod stack store)) -> (prod tm (prod stack store)) ->
 
 
 
+  | STf1_1 :
+    forall f1 t1 t1' st st',
+    t1 / st ==> t1' / st' ->
+    tf1 f1 t1 / st ==> tf1 f1 t1' / st'
   | STf2_1 :
     forall f2 t1 t1' t2 st st',
     t1 / st ==> t1' / st' ->
