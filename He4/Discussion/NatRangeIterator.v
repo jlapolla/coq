@@ -63,6 +63,58 @@ Inductive value : tm -> Prop :=
 
 Definition tempty := tvoid.
 
+Module ObjectOrientedNotations.
+
+Notation "'|(' ')|'" := tempty (at level 10, format "'|(' ')|'") : oo_scope.
+
+Notation "'|(' t ')|'" := (trc t tempty) (at level 10, format "'|(' t ')|'") : oo_scope.
+
+Notation "'|(' t ',' .. ',' t0 ')|'" :=
+  (trc t .. (trc t0 tempty) ..) (at level 10, format "'|(' t ','  .. ','  t0 ')|'") : oo_scope.
+
+Notation "t '#' f t0" :=
+  (tcall f (trc t t0)) (at level 20, left associativity, format "t  '#'  f t0") : oo_scope.
+
+Notation "t ; t0" :=
+  (tseq t t0) (at level 80, right associativity, format "'[v' t ';' '/' t0 ']'").
+
+Notation "t '::=' t0" :=
+  (tassign t t0) (at level 30, right associativity) : oo_scope.
+
+Delimit Scope oo_scope with oo.
+
+Example ex_oo_notation_1:
+  |()|%oo = tempty.
+Proof. reflexivity. Qed.
+
+Example ex_oo_notation_2:
+  |(tnat 2)|%oo = trc (tnat 2) tempty.
+Proof. reflexivity. Qed.
+
+Example ex_oo_notation_3:
+  |(tnat 1, tnat 2, tnat 4)|%oo = (trc (tnat 1) (trc (tnat 2) (trc (tnat 4) tempty))).
+Proof. reflexivity. Qed.
+
+Example ex_oo_notation_4:
+  (tnat 1#FNget_first|(tnat 2#FNget_first|()|, tnat 4)|)%oo = tcall FNget_first (trc (tnat 1) (trc (tcall FNget_first (trc (tnat 2) tempty)) (trc (tnat 4) tempty))).
+Proof. reflexivity. Qed.
+
+Example ex_oo_notation_5:
+  (tnat 1#FNget_first|(tnat 2)|#FNget_first|(tnat 4)|)%oo = tcall FNget_first (trc (tcall FNget_first (trc (tnat 1) (trc (tnat 2) tempty))) (trc (tnat 4) tempty)).
+Proof. reflexivity. Qed.
+
+Example ex_oo_notation_6:
+  (tnat 4; tnat 5; tnat 6)%oo = tseq (tnat 4) (tseq (tnat 5) (tnat 6)).
+Proof. reflexivity. Qed.
+
+Example ex_oo_notation_7:
+  (tvar 1 ::= tvar 2 ::= tnat 3)%oo = tassign (tvar 1) (tassign (tvar 2) (tnat 3)).
+Proof. reflexivity. Qed.
+
+End ObjectOrientedNotations.
+
+Import ObjectOrientedNotations.
+
 Section Stacks.
 Definition stack := ProgramState.stack tm.
 Definition sk_read_hd (n : nat) (sk : stack) : tm := ProgramState.sk_read_hd n sk tempty.
@@ -261,55 +313,5 @@ Inductive step : (prod tm (prod stack store)) -> (prod tm (prod stack store)) ->
     treturn v / (pair sk sr) ==> v / (pair (pop sk) sr)
 
   where "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2)).
-
-
-
-
-
-
-  | STf1_1 :
-    forall f1 t1 t1' st st',
-    t1 / st ==> t1' / st' ->
-    tf1 f1 t1 / st ==> tf1 f1 t1' / st'
-  | STf2_1 :
-    forall f2 t1 t1' t2 st st',
-    t1 / st ==> t1' / st' ->
-    tf2 f2 t1 t2 / st ==> tf2 f2 t1' t2 / st'
-  | STf2_2 :
-    forall f2 v1 t2 t2' st st',
-    value v1 ->
-    t2 / st ==> t2' / st' ->
-    tf2 f2 v1 t2 / st ==> tf2 f2 v1 t2' / st'
-
-  (* Classes *)
-  | STnew_NatRangeIterator :
-    sr' = alloc (pair (Tclass CLNatRangeIterator)  ) sr ->
-    tnew CLNatRangeIterator / (pair sk sr) ==>
-
-Notation "t ',get_first()'" :=
-  (tf1_get_first t) (at level 0, format "t ',get_first()'") : oo_scope.
-
-Notation "t1 ',set_first(' t2 ')'" :=
-  (tf2_set_first t1 t2) (at level 0, format "t1 ',set_first(' t2 ')'") : oo_scope.
-
-Notation "t1 ',test(' t2 , t3 ')'" :=
-  (tf3_test t1 t2 t3) (at level 0, format "t1 ',test(' t2 ,  t3 ')'") : oo_scope.
-
-Delimit Scope oo_scope with oo.
-
-Example ex_comma_notation1 :
-  ((tbool false),get_first(),get_first())%oo = tf1_get_first (tf1_get_first (tbool false)).
-Proof. reflexivity. Qed.
-
-Example ex_comma_notation2 :
-  ((tbool false),set_first(tnat 3),get_first())%oo = tf1_get_first (tf2_set_first (tbool false) (tnat 3)).
-Proof. reflexivity. Qed.
-
-Example ex_comma_notation3 :
-  ((tbool false),test(tnat 3, tnat 4))%oo = tf3_test (tbool false) (tnat 3) (tnat 4).
-Proof. reflexivity. Qed.
-
-Notation "t1 ;; t2" :=
-  (tseq t1 t2) (at level 80, right associativity).
 
 End NatRangeIterator.
