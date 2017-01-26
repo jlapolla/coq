@@ -2,13 +2,12 @@ Module NatRangeIterator.
 
 Require Import He4.Discussion.ProgramState.
 
-Inductive f1 : Type :=
-  | F1get_first : f1.
+(** Functions. *)
+Inductive fn : Type :=
+  | FNget_first : fn
+  | FNset_first : fn.
 
-Inductive f2 : Type :=
-  | F2set_first : f2.
-
-(* Classes *)
+(** Classes. *)
 Inductive cl : Type :=
   | CLNatRangeIterator : cl.
 
@@ -42,9 +41,8 @@ Inductive tm : Type :=
   | trc : tm -> tm -> tm
 
   (* Functions *)
-  | tf : f1 -> tm
-  | tcall : tm -> tm -> tm
-  | texec : tm -> tm
+  | tcall : fn -> tm -> tm
+  | texec : fn -> tm
   | treturn : tm -> tm
 
   (* Classes *)
@@ -59,7 +57,6 @@ Inductive value : tm -> Prop :=
   | vbool : forall b, value (tbool b)
   | vref : forall n, value (tref n)
   | vrc : forall t rc, value t -> value rc -> value (trc t rc)
-  | vf : forall f, value (tf f)
 
   (* Classes *)
   | vcl : forall c t, value t -> value (tcl c t).
@@ -248,11 +245,11 @@ Inductive step : (prod tm (prod stack store)) -> (prod tm (prod stack store)) ->
   | STcall_r :
     forall f t0 t0' st st',
     t0 / st ==> t0' / st' ->
-    tcall (tf f) t0 / st ==> tcall (tf f) t0' / st'
+    tcall f t0 / st ==> tcall f t0' / st'
   | STcall :
     forall f v0 sk sr,
     value v0 ->
-    tcall (tf f) v0 / (pair sk sr) ==> treturn (texec (tf f)) / (pair (push (rc_to_list v0) sk) sr)
+    tcall f v0 / (pair sk sr) ==> treturn (texec f) / (pair (push (rc_to_list v0) sk) sr)
 
   | STreturn_r :
     forall t t' st st',
