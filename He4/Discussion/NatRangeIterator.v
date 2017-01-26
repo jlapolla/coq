@@ -67,11 +67,13 @@ Section Stacks.
 Definition stack := ProgramState.stack tm.
 Definition sk_read_hd (n : nat) (sk : stack) : tm := ProgramState.sk_read_hd n sk tempty.
 Definition sk_resize_hd (n : nat) (sk : stack) : stack := ProgramState.sk_resize_hd n sk tempty.
+Definition empty_stack : stack := push nil nil.
 End Stacks.
 
 Section Stores.
 Definition store := ProgramState.store tm.
 Definition sr_read (n : nat) (sr : store) : tm := ProgramState.sr_read n sr tempty.
+Definition empty_store : store := sr_alloc tempty nil. (* Position 0 represents the "null" reference *)
 End Stores.
 
 Section Records.
@@ -217,31 +219,16 @@ Reserved Notation "t1 '/' st1 '==>' t2 '/' st2"
 Inductive step : (prod tm (prod stack store)) -> (prod tm (prod stack store)) -> Prop :=
   | STvar :
     forall n sk sr,
-    (tvar n) / (pair sk sr) ==> snd (sk_read n sk) / (pair sk sr)
+    (tvar n) / (pair sk sr) ==> sk_read_hd n sk / (pair sk sr)
 
   | STassign_r :
     forall n t2 t2' st st',
     t2 / st ==> t2' / st' ->
     tassign (tvar n) t2 / st ==> tassign (tvar n) t2' / st'
-  | STassign_nat :
-    forall n m sk sr,
-    tassign (tvar n) (tnat m) / (pair sk sr) ==> tvoid / (pair (sk_write n (pair Tnat (tnat m)) sk) sr)
-  | STassign_bool :
-    forall n b sk sr,
-    tassign (tvar n) (tbool b) / (pair sk sr) ==> tvoid / (pair (sk_write n (pair Tbool (tbool b)) sk) sr)
-  | STassign_ref :
-    forall n r sk sr,
-    tassign (tvar n) (tref r) / (pair sk sr) ==> tvoid / (pair (sk_write n (pair (Tref (fst (sr_read r sr))) (tref r)) sk) sr)
-
-  | STpair_l :
-    forall t1 t1' t2 st st',
-    t1 / st ==> t1' / st' ->
-    tpair t1 t2 / st ==> tpair t1' t2 / st'
-  | STpair_r :
-    forall v1 t2 t2' st st',
-    value v1 ->
-    t2 / st ==> t2' / st' ->
-    tpair v1 t2 / st ==> tpair v1 t2' / st'
+  | STassign :
+    forall n v sk sr,
+    value v ->
+    tassign (tvar n) v / (pair sk sr) ==> tvoid / (pair (sk_write_hd n v sk) sr)
 
   | STseq_l :
     forall t1 t1' t2 st st',
@@ -251,10 +238,28 @@ Inductive step : (prod tm (prod stack store)) -> (prod tm (prod stack store)) ->
     forall t2 st,
     tseq tvoid t2 / st ==> t2 / st
 
+  | STrc_l :
+    forall t1 t1' rc st st',
+    t1 / st ==> t1' / st' ->
+    trc t1 rc / st ==> trc t1' rc / st'
+  | STrc_r :
+    forall v1 rc rc' st st',
+    value v1 ->
+    rc / st ==> rc' / st' ->
+    trc v1 rc / st ==> trc v1 rc' / st'
+
   | STf1_1 :
     forall f1 t1 t1' st st',
     t1 / st ==> t1' / st' ->
     tf1 f1 t1 / st ==> tf1 f1 t1' / st'
+
+  where "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2)).
+
+
+
+
+
+
   | STf2_1 :
     forall f2 t1 t1' t2 st st',
     t1 / st ==> t1' / st' ->
@@ -269,8 +274,6 @@ Inductive step : (prod tm (prod stack store)) -> (prod tm (prod stack store)) ->
   | STnew_NatRangeIterator :
     sr' = alloc (pair (Tclass CLNatRangeIterator)  ) sr ->
     tnew CLNatRangeIterator / (pair sk sr) ==>
-
-  where "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2)).
 
 Notation "t ',get_first()'" :=
   (tf1_get_first t) (at level 0, format "t ',get_first()'") : oo_scope.
