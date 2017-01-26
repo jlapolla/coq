@@ -11,17 +11,6 @@ Inductive fn : Type :=
 Inductive cl : Type :=
   | CLNatRangeIterator : cl.
 
-Inductive ty : Type :=
-
-  (* Base types *)
-  | Tvoid : ty
-  | Tnat : ty
-  | Tbool : ty
-  | Tref : ty -> ty
-
-  (* Classes *)
-  | Tcl : cl -> ty.
-
 Inductive tm : Type :=
 
   (* Base types *)
