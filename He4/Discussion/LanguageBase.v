@@ -283,22 +283,31 @@ End LanguageDefinitions.
 
 Module ObjectOrientedNotations.
 
-Notation "'|(' ')|'" := tvoid (at level 10, format "'|(' ')|'") : oo_scope.
+Section Notations.
 
-Notation "'|(' t ')|'" := (trc t tvoid) (at level 10, format "'|(' t ')|'") : oo_scope.
+Set Implicit Arguments.
+
+Variable cl : Type.
+Variable fn : Type.
+
+Notation "'|(' ')|'" := (@tvoid cl fn) (at level 10, format "'|(' ')|'") : oo_scope.
+
+Notation "'|(' t ')|'" := ((@trc cl fn) t (@tvoid cl fn)) (at level 10, format "'|(' t ')|'") : oo_scope.
 
 Notation "'|(' t ',' .. ',' t0 ')|'" :=
-  (trc t .. (trc t0 tvoid) ..) (at level 10, format "'|(' t ','  .. ','  t0 ')|'") : oo_scope.
+  ((@trc cl fn) t .. ((@trc cl fn) t0 (@tvoid cl fn)) ..) (at level 10, format "'|(' t ','  .. ','  t0 ')|'") : oo_scope.
 
 Notation "t '#' f t0" :=
-  (tcall f (trc t t0)) (at level 20, left associativity, format "t  '#'  f t0") : oo_scope.
+  ((@tcall cl fn) f ((@trc cl fn) t t0)) (at level 20, left associativity, format "t  '#'  f t0") : oo_scope.
 
 Notation "t ; t0" :=
-  (tseq t t0) (at level 80, right associativity, format "'[v' t ';' '/' t0 ']'").
+  ((@tseq cl fn) t t0) (at level 80, right associativity, format "'[v' t ';' '/' t0 ']'").
 
 Notation "t '::=' t0" :=
-  (tassign t t0) (at level 30, right associativity) : oo_scope.
+  ((@tassign cl fn) t t0) (at level 30, right associativity) : oo_scope.
 
 Delimit Scope oo_scope with oo.
+
+End Notations.
 
 End ObjectOrientedNotations.
