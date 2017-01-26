@@ -1,15 +1,11 @@
-Module NatRangeIterator.
+Require Export He4.Discussion.ProgramState.
 
-Require Import He4.Discussion.ProgramState.
+Section LanguageDefinitions.
 
-(** Functions. *)
-Inductive fn : Type :=
-  | FNget_first : fn
-  | FNset_first : fn.
+Set Implicit Arguments.
 
-(** Classes. *)
-Inductive cl : Type :=
-  | CLNatRangeIterator : cl.
+Variable cl : Type.
+Variable fn : Type.
 
 Inductive tm : Type :=
 
@@ -50,74 +46,14 @@ Inductive value : tm -> Prop :=
   (* Classes *)
   | vcl : forall c t, value t -> value (tcl c t).
 
-Definition tempty := tvoid.
-
-Module ObjectOrientedNotations.
-
-Notation "'|(' ')|'" := tempty (at level 10, format "'|(' ')|'") : oo_scope.
-
-Notation "'|(' t ')|'" := (trc t tempty) (at level 10, format "'|(' t ')|'") : oo_scope.
-
-Notation "'|(' t ',' .. ',' t0 ')|'" :=
-  (trc t .. (trc t0 tempty) ..) (at level 10, format "'|(' t ','  .. ','  t0 ')|'") : oo_scope.
-
-Notation "t '#' f t0" :=
-  (tcall f (trc t t0)) (at level 20, left associativity, format "t  '#'  f t0") : oo_scope.
-
-Notation "t ; t0" :=
-  (tseq t t0) (at level 80, right associativity, format "'[v' t ';' '/' t0 ']'").
-
-Notation "t '::=' t0" :=
-  (tassign t t0) (at level 30, right associativity) : oo_scope.
-
-Delimit Scope oo_scope with oo.
-
-Example ex_oo_notation_1:
-  |()|%oo = tempty.
-Proof. reflexivity. Qed.
-
-Example ex_oo_notation_2:
-  |(tnat 2)|%oo = trc (tnat 2) tempty.
-Proof. reflexivity. Qed.
-
-Example ex_oo_notation_3:
-  |(tnat 1, tnat 2, tnat 4)|%oo = (trc (tnat 1) (trc (tnat 2) (trc (tnat 4) tempty))).
-Proof. reflexivity. Qed.
-
-Example ex_oo_notation_4:
-  (tnat 1#FNget_first|(tnat 2#FNget_first|()|, tnat 4)|)%oo = tcall FNget_first (trc (tnat 1) (trc (tcall FNget_first (trc (tnat 2) tempty)) (trc (tnat 4) tempty))).
-Proof. reflexivity. Qed.
-
-Example ex_oo_notation_5:
-  (tnat 1#FNget_first|(tnat 2)|#FNget_first|(tnat 4)|)%oo = tcall FNget_first (trc (tcall FNget_first (trc (tnat 1) (trc (tnat 2) tempty))) (trc (tnat 4) tempty)).
-Proof. reflexivity. Qed.
-
-Example ex_oo_notation_6:
-  (tnat 4; tnat 5; tnat 6)%oo = tseq (tnat 4) (tseq (tnat 5) (tnat 6)).
-Proof. reflexivity. Qed.
-
-Example ex_oo_notation_7:
-  (tvar 1 ::= tvar 2 ::= tnat 3)%oo = tassign (tvar 1) (tassign (tvar 2) (tnat 3)).
-Proof. reflexivity. Qed.
-
-End ObjectOrientedNotations.
-
-Import ObjectOrientedNotations.
-
-Section Stacks.
 Definition stack := ProgramState.stack tm.
-Definition sk_read_hd (n : nat) (sk : stack) : tm := ProgramState.sk_read_hd n sk tempty.
-Definition sk_resize_hd (n : nat) (sk : stack) : stack := ProgramState.sk_resize_hd n sk tempty.
+Definition sk_read_hd (n : nat) (sk : stack) : tm := ProgramState.sk_read_hd n sk tvoid.
+Definition sk_resize_hd (n : nat) (sk : stack) : stack := ProgramState.sk_resize_hd n sk tvoid.
 Definition empty_stack : stack := push nil nil.
-End Stacks.
 
-Section Stores.
 Definition store := ProgramState.store tm.
-Definition sr_read (n : nat) (sr : store) : tm := ProgramState.sr_read n sr tempty.
-Definition empty_store : store := sr_alloc tempty nil. (* Position 0 represents the "null" reference *)
-End Stores.
-
-Section Records.
+Definition sr_read (n : nat) (sr : store) : tm := ProgramState.sr_read n sr tvoid.
+Definition empty_store : store := sr_alloc tvoid nil. (* Position 0 represents the "null" reference *)
 
 (** Records encoded as nested pair terms. *)
 
@@ -125,8 +61,8 @@ Hint Resolve Lt.lt_S_n.
 
 Fixpoint rc_create (n : nat) : tm :=
   match n with
-  | O => tempty
-  | S n' => trc tempty (rc_create n')
+  | O => tvoid
+  | S n' => trc tvoid (rc_create n')
   end.
 
 Fixpoint rc_length (rc : tm) : nat :=
@@ -140,12 +76,12 @@ Fixpoint rc_read (n : nat) (rc : tm) : tm :=
   | O =>
     match rc with
     | trc t1 _ => t1
-    | _ => tempty
+    | _ => tvoid
     end
   | S n' =>
     match rc with
     | trc _ rc' => rc_read n' rc'
-    | _ => tempty
+    | _ => tvoid
     end
   end.
 
@@ -179,7 +115,7 @@ Proof with auto.
 Lemma rc_create_correct:
   forall n m,
   lt m n ->
-  rc_read m (rc_create n) = tempty.
+  rc_read m (rc_create n) = tvoid.
 Proof with auto.
   induction n. intros. inversion H.
   destruct m; simpl...
@@ -188,7 +124,7 @@ Proof with auto.
 Lemma rc_read_overflow:
   forall rc m,
   le (rc_length rc) m ->
-  rc_read m rc = tempty.
+  rc_read m rc = tvoid.
 Proof with auto.
   induction rc; try (destruct m; auto).
   simpl. intros. inversion H.
@@ -246,8 +182,6 @@ Proof with auto.
   destruct m; simpl...
   Qed.
 
-End Records.
-
 Reserved Notation "t1 '/' st1 '==>' t2 '/' st2"
   (at level 40, st1 at level 39, t2 at level 39).
 
@@ -303,6 +237,8 @@ Inductive step : (prod tm (prod stack store)) -> (prod tm (prod stack store)) ->
 
   where "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2)).
 
+Unset Implicit Arguments.
+
 Lemma value_does_not_step:
   forall t,
   value t ->
@@ -343,4 +279,26 @@ Proof with auto.
   destruct (value_does_not_step v H (pair sk sr) t' st')...
   Qed.
 
-End NatRangeIterator.
+End LanguageDefinitions.
+
+Module ObjectOrientedNotations.
+
+Notation "'|(' ')|'" := tvoid (at level 10, format "'|(' ')|'") : oo_scope.
+
+Notation "'|(' t ')|'" := (trc t tvoid) (at level 10, format "'|(' t ')|'") : oo_scope.
+
+Notation "'|(' t ',' .. ',' t0 ')|'" :=
+  (trc t .. (trc t0 tvoid) ..) (at level 10, format "'|(' t ','  .. ','  t0 ')|'") : oo_scope.
+
+Notation "t '#' f t0" :=
+  (tcall f (trc t t0)) (at level 20, left associativity, format "t  '#'  f t0") : oo_scope.
+
+Notation "t ; t0" :=
+  (tseq t t0) (at level 80, right associativity, format "'[v' t ';' '/' t0 ']'").
+
+Notation "t '::=' t0" :=
+  (tassign t t0) (at level 30, right associativity) : oo_scope.
+
+Delimit Scope oo_scope with oo.
+
+End ObjectOrientedNotations.
