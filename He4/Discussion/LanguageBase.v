@@ -2,8 +2,6 @@ Require Export He4.Discussion.ProgramState.
 
 Section LanguageDefinitions.
 
-Set Implicit Arguments.
-
 Variable cl : Type.
 Variable fn : Type.
 
@@ -33,6 +31,8 @@ Inductive tm : Type :=
   (* Classes *)
   | tnew : cl -> tm
   | tcl : cl -> tm -> tm.
+
+Set Implicit Arguments.
 
 Inductive value : tm -> Prop :=
 
@@ -281,33 +281,96 @@ Proof with auto.
 
 End LanguageDefinitions.
 
+Arguments tvoid {cl} {fn}.
+Arguments tnat {cl} {fn} n.
+Arguments tbool {cl} {fn} b.
+Arguments tvar {cl} {fn} n.
+Arguments tref {cl} {fn} n.
+Arguments tassign {cl} {fn} t t0.
+Arguments tseq {cl} {fn} t t0.
+Arguments trc {cl} {fn} t t0.
+Arguments tcall {cl} {fn} f t0.
+Arguments texec {cl} {fn} f.
+Arguments treturn {cl} {fn} t.
+Arguments tnew {cl} {fn} c.
+Arguments tcl {cl} {fn} c t0.
+
 Module ObjectOrientedNotations.
 
-Section Notations.
+Notation "'|(' ')|'" := tvoid (at level 10, format "'|(' ')|'") : oo_scope.
 
-Set Implicit Arguments.
+Notation "'|(' t ')|'" := (trc t tvoid) (at level 10, format "'|(' t ')|'") : oo_scope.
+
+Notation "'|(' t ',' .. ',' t0 ')|'" :=
+  (trc t .. (trc t0 tvoid) ..) (at level 10, format "'|(' t ','  .. ','  t0 ')|'") : oo_scope.
+
+Notation "t '#' f t0" :=
+  (tcall f (trc t t0)) (at level 20, left associativity, format "t  '#'  f t0") : oo_scope.
+
+Notation "t ; t0" :=
+  (tseq t t0) (at level 80, right associativity, format "'[v' t ';' '/' t0 ']'").
+
+Notation "t '::=' t0" :=
+  (tassign t t0) (at level 30, right associativity) : oo_scope.
+
+Section Examples.
+
+(** *** Notation Examples
+
+    We define a new set of terms, which are [tm]'s bound to a specific
+    [cl] and [fn] type. *)
 
 Variable cl : Type.
 Variable fn : Type.
 
-Notation "'|(' ')|'" := (@tvoid cl fn) (at level 10, format "'|(' ')|'") : oo_scope.
+Let ivoid := @tvoid cl fn.
+Let inat := @tnat cl fn.
+Let ibool := @tbool cl fn.
+Let ivar := @tvar cl fn.
+Let iref := @tref cl fn.
+Let iassign := @tassign cl fn.
+Let iseq := @tseq cl fn.
+Let irc := @trc cl fn.
+Let icall := @tcall cl fn.
+Let iexec := @texec cl fn.
+Let ireturn := @treturn cl fn.
+Let inew := @tnew cl fn.
+Let icl := @tcl cl fn.
 
-Notation "'|(' t ')|'" := ((@trc cl fn) t (@tvoid cl fn)) (at level 10, format "'|(' t ')|'") : oo_scope.
+(** [FNget_first] is an example function name. *)
 
-Notation "'|(' t ',' .. ',' t0 ')|'" :=
-  ((@trc cl fn) t .. ((@trc cl fn) t0 (@tvoid cl fn)) ..) (at level 10, format "'|(' t ','  .. ','  t0 ')|'") : oo_scope.
-
-Notation "t '#' f t0" :=
-  ((@tcall cl fn) f ((@trc cl fn) t t0)) (at level 20, left associativity, format "t  '#'  f t0") : oo_scope.
-
-Notation "t ; t0" :=
-  ((@tseq cl fn) t t0) (at level 80, right associativity, format "'[v' t ';' '/' t0 ']'").
-
-Notation "t '::=' t0" :=
-  ((@tassign cl fn) t t0) (at level 30, right associativity) : oo_scope.
+Variable FNget_first : fn.
 
 Delimit Scope oo_scope with oo.
 
-End Notations.
+Example ex_oo_notation_1:
+  |()|%oo = ivoid.
+Proof. reflexivity. Abort.
+
+Example ex_oo_notation_2:
+  |(inat 2)|%oo = irc (inat 2) ivoid.
+Proof. reflexivity. Abort.
+
+Example ex_oo_notation_3:
+  |(inat 1, inat 2, inat 4)|%oo = (irc (inat 1) (irc (inat 2) (irc (inat 4) ivoid))).
+Proof. reflexivity. Abort.
+
+Example ex_oo_notation_4:
+  (inat 1#FNget_first|(inat 2#FNget_first|()|, inat 4)|)%oo = icall FNget_first (irc (inat 1) (irc (icall FNget_first (irc (inat 2) ivoid)) (irc (inat 4) ivoid))).
+Proof. reflexivity. Abort.
+
+Example ex_oo_notation_5:
+  (inat 1#FNget_first|(inat 2)|#FNget_first|(inat 4)|)%oo = icall FNget_first (irc (icall FNget_first (irc (inat 1) (irc (inat 2) ivoid))) (irc (inat 4) ivoid)).
+Proof. reflexivity. Abort.
+
+Example ex_oo_notation_6:
+  (inat 4; inat 5; inat 6)%oo = iseq (inat 4) (iseq (inat 5) (inat 6)).
+Proof. reflexivity. Abort.
+
+Example ex_oo_notation_7:
+  (ivar 1 ::= ivar 2 ::= inat 3)%oo = iassign (ivar 1) (iassign (ivar 2) (inat 3)).
+Proof. reflexivity. Abort.
+
+End Examples.
 
 End ObjectOrientedNotations.
