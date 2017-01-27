@@ -32,8 +32,6 @@ Inductive tm : Type :=
   | tnew : cl -> tm
   | tcl : cl -> tm -> tm.
 
-Set Implicit Arguments.
-
 Inductive value : tm -> Prop :=
 
   (* Base types *)
@@ -57,6 +55,7 @@ Definition empty_store : store := sr_alloc tvoid nil. (* Position 0 represents t
 
 (** Records encoded as nested pair terms. *)
 
+Set Implicit Arguments.
 Hint Resolve Lt.lt_S_n.
 
 Fixpoint rc_create (n : nat) : tm :=
@@ -110,6 +109,8 @@ Fixpoint list_to_rc (l : list tm) : tm :=
   | nil => tvoid
   | cons t' l' => trc t' (list_to_rc l')
   end.
+
+Unset Implicit Arguments.
 
 Lemma rc_create_length:
   forall n,
@@ -261,8 +262,6 @@ Inductive step_base : (prod tm (prod stack store)) -> (prod tm (prod stack store
     treturn v / (pair sk sr) ==> v / (pair (pop sk) sr)
 
   where "t1 '/' st1 '==>' t2 '/' st2" := (step_base (pair t1 st1) (pair t2 st2)).
-
-Unset Implicit Arguments.
 
 Lemma value_does_not_step:
   forall t,
