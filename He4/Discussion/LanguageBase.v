@@ -185,7 +185,7 @@ Proof with auto.
 Reserved Notation "t1 '/' st1 '==>' t2 '/' st2"
   (at level 40, st1 at level 39, t2 at level 39).
 
-Inductive step : (prod tm (prod stack store)) -> (prod tm (prod stack store)) -> Prop :=
+Inductive step_base : (prod tm (prod stack store)) -> (prod tm (prod stack store)) -> Prop :=
   | STvar :
     forall n sk sr,
     (tvar n) / (pair sk sr) ==> sk_read_hd n sk / (pair sk sr)
@@ -235,7 +235,7 @@ Inductive step : (prod tm (prod stack store)) -> (prod tm (prod stack store)) ->
     value v ->
     treturn v / (pair sk sr) ==> v / (pair (pop sk) sr)
 
-  where "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2)).
+  where "t1 '/' st1 '==>' t2 '/' st2" := (step_base (pair t1 st1) (pair t2 st2)).
 
 Unset Implicit Arguments.
 
@@ -244,7 +244,7 @@ Lemma value_does_not_step:
   value t ->
   forall st t' st',
     ~(t / st ==> t' / st').
-Proof with eauto.
+Proof with auto.
   intros t Hval.
   induction Hval;
   try solve [intros st t' st' Hcontra; inversion Hcontra].
@@ -254,11 +254,11 @@ Proof with eauto.
   apply IHHval2 in H5. inversion H5.
   Qed.
 
-Lemma step_deterministic:
+Lemma step_base_deterministic:
   forall x y,
-  step x y ->
+  step_base x y ->
   forall z,
-    step x z ->
+    step_base x z ->
     z = y.
 Proof with auto.
   intros x y Hxy.
