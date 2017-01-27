@@ -105,6 +105,12 @@ Fixpoint rc_to_list (rc : tm) : list tm :=
   | _ => nil
   end.
 
+Fixpoint list_to_rc (l : list tm) : tm :=
+  match l with
+  | nil => tvoid
+  | cons t' l' => trc t' (list_to_rc l')
+  end.
+
 Lemma rc_create_length:
   forall n,
   rc_length (rc_create n) = n.
@@ -180,6 +186,25 @@ Proof with auto.
   induction rc;
   try solve [intros; inversion H].
   destruct m; simpl...
+  Qed.
+
+Lemma list_to_rc_length:
+  forall l,
+  rc_length (list_to_rc l) = length l.
+Proof with auto.
+  induction l...
+  simpl...
+  Qed.
+
+Lemma list_to_rc_correct:
+  forall l m d,
+  lt m (length l) ->
+  rc_read m (list_to_rc l) = nth m l d.
+Proof.
+  induction l;
+  try solve [intros; inversion H].
+  destruct m;
+  try solve [simpl; intros; auto].
   Qed.
 
 Reserved Notation "t1 '/' st1 '==>' t2 '/' st2"
