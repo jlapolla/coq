@@ -57,6 +57,8 @@ Inductive value : tm -> Prop :=
   (* Classes *)
   | vcl : forall c t, value t -> value (tcl c t).
 
+Set Implicit Arguments.
+
 Definition stack := ProgramState.stack tm.
 Definition sk_read_hd (n : nat) (sk : stack) : tm := ProgramState.sk_read_hd n sk tvoid.
 Definition sk_resize_hd (n : nat) (sk : stack) : stack := ProgramState.sk_resize_hd n sk tvoid.
@@ -67,8 +69,6 @@ Definition sr_read (n : nat) (sr : store) : tm := ProgramState.sr_read n sr tvoi
 Definition empty_store : store := sr_alloc tvoid nil. (* Position 0 represents the "null" reference *)
 
 (** Records encoded as nested pair terms. *)
-
-Set Implicit Arguments.
 Hint Resolve Lt.lt_S_n.
 
 Fixpoint rc_create (n : nat) : tm :=
