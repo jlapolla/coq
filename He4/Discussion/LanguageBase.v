@@ -17,6 +17,11 @@ Inductive tm : Type :=
   | tand : tm -> tm -> tm
   | tor : tm -> tm -> tm
 
+  (* Numeric operators *)
+  | tplus : tm -> tm -> tm
+  | tminus : tm -> tm -> tm
+  | tmult : tm -> tm -> tm
+
   (* Variables and references *)
   | tvar : nat -> tm
   | tref : nat -> tm
@@ -264,6 +269,45 @@ Inductive step_base : (prod tm (prod stack store)) -> (prod tm (prod stack store
     forall st,
     tor (tbool false) (tbool false) / st ==> tbool false / st
 
+  | STplus_l :
+    forall t t' t0 st st',
+    t / st ==> t' / st' ->
+    tplus t t0 / st ==> tplus t' t0 / st'
+  | STplus_r :
+    forall t t0 t0' st st',
+    value t ->
+    t0 / st ==> t0' / st' ->
+    tplus t t0 / st ==> tplus t t0' / st'
+  | STplus_nat :
+    forall n n0 st,
+    tplus (tnat n) (tnat n0) / st ==> tnat (plus n n0) / st
+
+  | STminus_l :
+    forall t t' t0 st st',
+    t / st ==> t' / st' ->
+    tminus t t0 / st ==> tminus t' t0 / st'
+  | STminus_r :
+    forall t t0 t0' st st',
+    value t ->
+    t0 / st ==> t0' / st' ->
+    tminus t t0 / st ==> tminus t t0' / st'
+  | STminus_nat :
+    forall n n0 st,
+    tminus (tnat n) (tnat n0) / st ==> tnat (minus n n0) / st
+
+  | STmult_l :
+    forall t t' t0 st st',
+    t / st ==> t' / st' ->
+    tmult t t0 / st ==> tmult t' t0 / st'
+  | STmult_r :
+    forall t t0 t0' st st',
+    value t ->
+    t0 / st ==> t0' / st' ->
+    tmult t t0 / st ==> tmult t t0' / st'
+  | STmult_nat :
+    forall n n0 st,
+    tmult (tnat n) (tnat n0) / st ==> tnat (mult n n0) / st
+
   | STvar :
     forall n sk sr,
     (tvar n) / (pair sk sr) ==> sk_read_hd n sk / (pair sk sr)
@@ -449,6 +493,9 @@ Arguments tbool {cl} {fn} b.
 Arguments tnot {cl} {fn} b.
 Arguments tand {cl} {fn} b b0.
 Arguments tor {cl} {fn} b b0.
+Arguments tplus {cl} {fn} n n0.
+Arguments tminus {cl} {fn} n n0.
+Arguments tmult {cl} {fn} n n0.
 Arguments tvar {cl} {fn} n.
 Arguments tref {cl} {fn} n.
 Arguments tassign {cl} {fn} t t0.
