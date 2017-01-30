@@ -512,18 +512,36 @@ Arguments tfield_w {cl} {fn} n t0 t1.
 
 Module ObjectOrientedNotations.
 
-Notation "'|(' ')|'" := tvoid (at level 10, format "'|(' ')|'") : oo_scope.
+Notation "'!' t" :=
+  (tnot t) (at level 30, right associativity, format "'!' t") : oo_scope.
 
-Notation "'|(' t ')|'" := (trc t tvoid) (at level 10, format "'|(' t ')|'") : oo_scope.
+Notation "t && t0" :=
+  (tand t t0) (at level 40, left associativity, format "t  '&&'  t0") : oo_scope.
+
+Notation "t '*' t0" :=
+  (tmult t t0) (at level 40, left associativity, format "t  '*'  t0") : oo_scope.
+
+Notation "t '||' t0" :=
+  (tor t t0) (at level 50, left associativity, format "t  '||'  t0") : oo_scope.
+
+Notation "t '+' t0" :=
+  (tplus t t0) (at level 50, left associativity, format "t  '+'  t0") : oo_scope.
+
+Notation "t '-' t0" :=
+  (tminus t t0) (at level 50, left associativity, format "t  '-'  t0") : oo_scope.
+
+Notation "'|(' ')|'" := tvoid (at level 60, format "'|(' ')|'") : oo_scope.
+
+Notation "'|(' t ')|'" := (trc t tvoid) (at level 60, format "'|(' t ')|'") : oo_scope.
 
 Notation "'|(' t ',' .. ',' t0 ')|'" :=
-  (trc t .. (trc t0 tvoid) ..) (at level 10, format "'|(' t ','  .. ','  t0 ')|'") : oo_scope.
+  (trc t .. (trc t0 tvoid) ..) (at level 60, format "'|(' t ','  .. ','  t0 ')|'") : oo_scope.
 
 Notation "t '#' f t0" :=
-  (tcall f (trc t t0)) (at level 20, left associativity, format "t  '#'  f t0") : oo_scope.
+  (tcall f (trc t t0)) (at level 65, left associativity, format "t  '#'  f t0") : oo_scope.
 
 Notation "t '::=' t0" :=
-  (tassign t t0) (at level 30, right associativity) : oo_scope.
+  (tassign t t0) (at level 70, right associativity) : oo_scope.
 
 Notation "t ; t0" :=
   (tseq t t0) (at level 80, right associativity, format "'[v' t ';' '/' t0 ']'").
@@ -541,6 +559,12 @@ Variable fn : Type.
 Let ivoid := @tvoid cl fn.
 Let inat := @tnat cl fn.
 Let ibool := @tbool cl fn.
+Let inot := @tnot cl fn.
+Let iand := @tand cl fn.
+Let ior := @tor cl fn.
+Let iplus := @tplus cl fn.
+Let iminus := @tminus cl fn.
+Let imult := @tmult cl fn.
 Let ivar := @tvar cl fn.
 Let iref := @tref cl fn.
 Let iassign := @tassign cl fn.
@@ -559,30 +583,38 @@ Variable FNget_first : fn.
 Delimit Scope oo_scope with oo.
 
 Example ex_oo_notation_1:
-  |()|%oo = ivoid.
+  (!(ibool true) || (ibool false) && (ibool false))%oo = ior (inot (ibool true)) (iand (ibool false) (ibool false)).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_2:
-  |(inat 2)|%oo = irc (inat 2) ivoid.
+  ((tnat 1) * (tnat 2) - (tnat 3) + (tnat 4) * (tnat 5))%oo = iplus (iminus (imult (tnat 1) (tnat 2)) (tnat 3)) (imult (tnat 4) (tnat 5)).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_3:
-  |(inat 1, inat 2, inat 4)|%oo = (irc (inat 1) (irc (inat 2) (irc (inat 4) ivoid))).
+  |()|%oo = ivoid.
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_4:
-  (inat 1#FNget_first|(inat 2#FNget_first|()|, inat 4)|)%oo = icall FNget_first (irc (inat 1) (irc (icall FNget_first (irc (inat 2) ivoid)) (irc (inat 4) ivoid))).
+  |(inat 2)|%oo = irc (inat 2) ivoid.
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_5:
-  (inat 1#FNget_first|(inat 2)|#FNget_first|(inat 4)|)%oo = icall FNget_first (irc (icall FNget_first (irc (inat 1) (irc (inat 2) ivoid))) (irc (inat 4) ivoid)).
+  |(inat 1, inat 2, inat 4)|%oo = (irc (inat 1) (irc (inat 2) (irc (inat 4) ivoid))).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_6:
-  (ivar 1 ::= ivar 2 ::= inat 3)%oo = iassign (ivar 1) (iassign (ivar 2) (inat 3)).
+  (inat 1#FNget_first|(inat 2#FNget_first|()|, inat 4)|)%oo = icall FNget_first (irc (inat 1) (irc (icall FNget_first (irc (inat 2) ivoid)) (irc (inat 4) ivoid))).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_7:
+  (inat 1#FNget_first|(inat 2)|#FNget_first|(inat 4)|)%oo = icall FNget_first (irc (icall FNget_first (irc (inat 1) (irc (inat 2) ivoid))) (irc (inat 4) ivoid)).
+Proof. reflexivity. Abort.
+
+Example ex_oo_notation_8:
+  (ivar 1 ::= ivar 2 ::= inat 3)%oo = iassign (ivar 1) (iassign (ivar 2) (inat 3)).
+Proof. reflexivity. Abort.
+
+Example ex_oo_notation_9:
   (inat 4; inat 5; inat 6)%oo = iseq (inat 4) (iseq (inat 5) (inat 6)).
 Proof. reflexivity. Abort.
 
