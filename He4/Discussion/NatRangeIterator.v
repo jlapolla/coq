@@ -14,6 +14,10 @@ Inductive fn : Type :=
   | FNset_at_start : fn
   | FNset_count : fn
   | FNset_first : fn
+  | FNoff : fn
+  | FNafter : fn
+  | FNforth : fn
+  | FNitem : fn
 .
 
 Definition tm := tm cl fn.
@@ -27,10 +31,13 @@ Definition tor := @tor cl fn.
 Definition tplus := @tplus cl fn.
 Definition tminus := @tminus cl fn.
 Definition tmult := @tmult cl fn.
+Definition teq := @teq cl fn.
 Definition tvar := @tvar cl fn.
 Definition tref := @tref cl fn.
 Definition tassign := @tassign cl fn.
 Definition tseq := @tseq cl fn.
+Definition tif := @tif cl fn.
+Definition twhile := @twhile cl fn.
 Definition trc := @trc cl fn.
 Definition tcall := @tcall cl fn.
 Definition texec := @texec cl fn.
@@ -122,6 +129,44 @@ Inductive step : (prod tm (prod stack store)) -> (prod tm (prod stack store)) ->
     (
       this<@2 <- value
     )%oo) / pair (sk_resize_hd 2 sk) sr
+  | STexec_off :
+    forall sk sr,
+    called_on_class CLNatRangeIterator sk sr ->
+    texec FNoff / pair sk sr ==> (
+    let this := tvar 0 in
+    (
+      this#FNget_count|()| == (tnat 0) \|| this#FNget_at_start|()|
+    )%oo) / pair (sk_resize_hd 1 sk) sr
+  | STexec_after :
+    forall sk sr,
+    called_on_class CLNatRangeIterator sk sr ->
+    texec FNafter / pair sk sr ==> (
+    let this := tvar 0 in
+    (
+      this#FNget_count|()| == (tnat 0) \&& !this#FNget_at_start|()|
+    )%oo) / pair (sk_resize_hd 1 sk) sr
+  | STexec_forth :
+    forall sk sr,
+    called_on_class CLNatRangeIterator sk sr ->
+    texec FNforth / pair sk sr ==> (
+    let this := tvar 0 in
+    (
+      \if this#FNget_at_start|()|
+      \then
+        this#FNset_at_start|(tbool false)|
+      \else
+        this#FNset_first|(this#FNget_first|()| \+ tnat 1)|;
+        this#FNset_count|(this#FNget_count|()| \- tnat 1)|
+      \fi
+    )%oo) / pair (sk_resize_hd 1 sk) sr
+  | STexec_item :
+    forall sk sr,
+    called_on_class CLNatRangeIterator sk sr ->
+    texec FNitem / pair sk sr ==> (
+    let this := tvar 0 in
+    (
+      this#FNget_first|()|
+    )%oo) / pair (sk_resize_hd 1 sk) sr
 
   where "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2)).
 
