@@ -22,6 +22,9 @@ Inductive tm : Type :=
   | tminus : tm -> tm -> tm
   | tmult : tm -> tm -> tm
 
+  (* Equality operators *)
+  | teq : tm -> tm -> tm
+
   (* Variables and references *)
   | tvar : nat -> tm
   | tref : nat -> tm
@@ -308,6 +311,56 @@ Inductive step_base : (prod tm (prod stack store)) -> (prod tm (prod stack store
     forall n n0 st,
     tmult (tnat n) (tnat n0) / st ==> tnat (mult n n0) / st
 
+  | STeq_l :
+    forall t t' t0 st st',
+    t / st ==> t' / st' ->
+    teq t t0 / st ==> teq t' t0 / st'
+  | STeq_r :
+    forall t t0 t0' st st',
+    value t ->
+    t0 / st ==> t0' / st' ->
+    teq t t0 / st ==> teq t t0' / st'
+  | STeq_void :
+    forall st,
+    teq tvoid tvoid / st ==> tbool true / st
+  | STeq_nat_false :
+    forall n n0 st,
+    (n = n0 -> False) ->
+    teq (tnat n) (tnat n0) / st ==> tbool false / st
+  | STeq_nat_true :
+    forall n st,
+    teq (tnat n) (tnat n) / st ==> tbool true / st
+  | STeq_bool_false :
+    forall b b0 st,
+    (b = b0 -> False) ->
+    teq (tbool b) (tbool b0) / st ==> tbool false / st
+  | STeq_bool_true :
+    forall b st,
+    teq (tbool b) (tbool b) / st ==> tbool true / st
+  | STeq_ref_false :
+    forall n n0 st,
+    (n = n0 -> False) ->
+    teq (tref n) (tref n0) / st ==> tbool false / st
+  | STeq_ref_true :
+    forall n st,
+    teq (tref n) (tref n) / st ==> tbool true / st
+  | STeq_rc :
+    forall t t0 t1 t2 st,
+    value (trc t t0) ->
+    value (trc t1 t2) ->
+    teq (trc t t0) (trc t1 t2) / st ==> tand (teq t t1) (teq t0 t2) / st
+  | STeq_cl_false :
+    forall c t0 c1 t2 st,
+    value (tcl c t0) ->
+    value (tcl c1 t2) ->
+    (c = c1 -> False) ->
+    teq (tcl c t0) (tcl c1 t2) / st ==> tbool false / st
+  | STeq_cl :
+    forall c t0 t2 st,
+    value (tcl c t0) ->
+    value (tcl c t2) ->
+    teq (tcl c t0) (tcl c t2) / st ==> teq t0 t2 / st
+
   | STvar :
     forall n sk sr,
     (tvar n) / (pair sk sr) ==> sk_read_hd n sk / (pair sk sr)
@@ -453,6 +506,12 @@ Ltac rewrite_invert :=
     solve [rewrite H in H0; inversion H0; reflexivity]
   end.
 
+Ltac equality_contradiction :=
+  match goal with
+  | H: ?x = ?x -> False |- _ =>
+    solve [exfalso; apply H; reflexivity]
+  end.
+
 Lemma step_base_deterministic:
   forall x y,
   step_base x y ->
@@ -462,11 +521,12 @@ Lemma step_base_deterministic:
 Proof with auto.
   intros x y Hxy.
   induction Hxy; intros z Hxz; inversion Hxz; subst;
-  try solve [value_step_impossible]; (* 16, 16, 4.7 sec *)
-  try solve [auto]; (* 15, 15, 4.7 *)
-  try solve [step_base_inductive]; (* 15, 15, 4.8 sec *)
-  try solve [rewrite_invert]; (* 6, 6, 4.7 sec *)
-  try solve [step_base_impossible]. (* 32, 32, 31.5 sec *)
+  try solve [value_step_impossible];
+  try solve [auto];
+  try solve [step_base_inductive];
+  try solve [rewrite_invert];
+  try solve [equality_contradiction];
+  try solve [step_base_impossible].
   (* STfield_w_r and STfield_w_l *)
   destruct H5 as [H5 | H5].
   { value_step_impossible. }
@@ -496,6 +556,7 @@ Arguments tor {cl} {fn} b b0.
 Arguments tplus {cl} {fn} n n0.
 Arguments tminus {cl} {fn} n n0.
 Arguments tmult {cl} {fn} n n0.
+Arguments teq {cl} {fn} t t0.
 Arguments tvar {cl} {fn} n.
 Arguments tref {cl} {fn} n.
 Arguments tassign {cl} {fn} t t0.
@@ -512,36 +573,39 @@ Arguments tfield_w {cl} {fn} n t0 t1.
 
 Module ObjectOrientedNotations.
 
-Notation "'!' t" :=
-  (tnot t) (at level 30, right associativity, format "'!' t") : oo_scope.
+Notation "'|(' ')|'" := tvoid (at level 20, format "'|(' ')|'") : oo_scope.
 
-Notation "t && t0" :=
-  (tand t t0) (at level 40, left associativity, format "t  '&&'  t0") : oo_scope.
-
-Notation "t '*' t0" :=
-  (tmult t t0) (at level 40, left associativity, format "t  '*'  t0") : oo_scope.
-
-Notation "t '||' t0" :=
-  (tor t t0) (at level 50, left associativity, format "t  '||'  t0") : oo_scope.
-
-Notation "t '+' t0" :=
-  (tplus t t0) (at level 50, left associativity, format "t  '+'  t0") : oo_scope.
-
-Notation "t '-' t0" :=
-  (tminus t t0) (at level 50, left associativity, format "t  '-'  t0") : oo_scope.
-
-Notation "'|(' ')|'" := tvoid (at level 60, format "'|(' ')|'") : oo_scope.
-
-Notation "'|(' t ')|'" := (trc t tvoid) (at level 60, format "'|(' t ')|'") : oo_scope.
+Notation "'|(' t ')|'" := (trc t tvoid) (at level 20, format "'|(' t ')|'") : oo_scope.
 
 Notation "'|(' t ',' .. ',' t0 ')|'" :=
-  (trc t .. (trc t0 tvoid) ..) (at level 60, format "'|(' t ','  .. ','  t0 ')|'") : oo_scope.
+  (trc t .. (trc t0 tvoid) ..) (at level 20, format "'|(' t ','  .. ','  t0 ')|'") : oo_scope.
 
 Notation "t '@' n0" :=
-  (tfield_r n0 t) (at level 65, left associativity, format "t '@' n0") : oo_scope.
+  (tfield_r n0 t) (at level 26, left associativity, format "t '@' n0") : oo_scope.
 
 Notation "t '#' f t0" :=
-  (tcall f (trc t t0)) (at level 65, left associativity, format "t  '#'  f t0") : oo_scope.
+  (tcall f (trc t t0)) (at level 26, left associativity, format "t  '#'  f t0") : oo_scope.
+
+Notation "'!' t" :=
+  (tnot t) (at level 35, right associativity, format "'!' t") : oo_scope.
+
+Notation "t '\*' t0" :=
+  (tmult t t0) (at level 40, left associativity, format "t  '\*'  t0") : oo_scope.
+
+Notation "t '\+' t0" :=
+  (tplus t t0) (at level 45, left associativity, format "t  '\+'  t0") : oo_scope.
+
+Notation "t '\-' t0" :=
+  (tminus t t0) (at level 45, left associativity, format "t  '\-'  t0") : oo_scope.
+
+Notation "t '==' t0" :=
+  (teq t t0) (at level 50, left associativity, format "t  '=='  t0") : oo_scope.
+
+Notation "t \&& t0" :=
+  (tand t t0) (at level 55, left associativity, format "t  '\&&'  t0") : oo_scope.
+
+Notation "t '\||' t0" :=
+  (tor t t0) (at level 61, left associativity, format "t  '\||'  t0") : oo_scope.
 
 Notation "t '<@' n0 '<-' t1" :=
   (tfield_w n0 t1 t) (at level 70, format "t '<@' n0  '<-'  t1") : oo_scope.
@@ -571,6 +635,7 @@ Let ior := @tor cl fn.
 Let iplus := @tplus cl fn.
 Let iminus := @tminus cl fn.
 Let imult := @tmult cl fn.
+Let ieq := @teq cl fn.
 Let ivar := @tvar cl fn.
 Let iref := @tref cl fn.
 Let iassign := @tassign cl fn.
@@ -592,11 +657,11 @@ Variable FNget_first : fn.
 Delimit Scope oo_scope with oo.
 
 Example ex_oo_notation_1:
-  (!(ibool true) || (ibool false) && (ibool false))%oo = ior (inot (ibool true)) (iand (ibool false) (ibool false)).
+  (!(ibool true) \|| (ibool false) \&& (ibool false))%oo = ior (inot (ibool true)) (iand (ibool false) (ibool false)).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_2:
-  ((tnat 1) * (tnat 2) - (tnat 3) + (tnat 4) * (tnat 5))%oo = iplus (iminus (imult (tnat 1) (tnat 2)) (tnat 3)) (imult (tnat 4) (tnat 5)).
+  ((inat 1) \* (inat 2) \- (inat 3) \+ (inat 4) \* (inat 5))%oo = iplus (iminus (imult (inat 1) (inat 2)) (inat 3)) (imult (inat 4) (inat 5)).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_3:
@@ -633,6 +698,10 @@ Proof. reflexivity. Abort.
 
 Example ex_oo_notation_10:
   (inat 4; inat 5; inat 6)%oo = iseq (inat 4) (iseq (inat 5) (inat 6)).
+Proof. reflexivity. Abort.
+
+Example ex_oo_notation_11:
+  ((inat 1) == (inat 3) \|| (ibool true) == (ibool false))%oo = ior (ieq (inat 1) (inat 3)) (ieq (ibool true) (ibool false)).
 Proof. reflexivity. Abort.
 
 End Examples.
