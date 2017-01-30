@@ -12,6 +12,11 @@ Inductive tm : Type :=
   | tnat : nat -> tm
   | tbool : bool -> tm
 
+  (* Boolean operators *)
+  | tnot : tm -> tm
+  | tand : tm -> tm -> tm
+  | tor : tm -> tm -> tm
+
   (* Variables and references *)
   | tvar : nat -> tm
   | tref : nat -> tm
@@ -215,6 +220,50 @@ Reserved Notation "t1 '/' st1 '==>' t2 '/' st2"
   (at level 40, st1 at level 39, t2 at level 39).
 
 Inductive step_base : (prod tm (prod stack store)) -> (prod tm (prod stack store)) -> Prop :=
+  | STnot_r :
+    forall t t' st st',
+    t / st ==> t' / st' ->
+    tnot t / st ==> tnot t' / st'
+  | STnot :
+    forall b st,
+    tnot (tbool b) / st ==> tbool (negb b) / st
+
+  | STand_l :
+    forall t t' t0 st st',
+    t / st ==> t' / st' ->
+    tand t t0 / st ==> tand t' t0 / st'
+  | STand_r :
+    forall t0 t0' st st',
+    t0 / st ==> t0' / st' ->
+    tand (tbool true) t0 / st ==> tand (tbool true) t0' / st'
+  | STand_false_l :
+    forall t0 st,
+    tand (tbool false) t0 / st ==> tbool false / st
+  | STand_false_r :
+    forall st,
+    tand (tbool true) (tbool false) / st ==> tbool false / st
+  | STand_true :
+    forall st,
+    tand (tbool true) (tbool true) / st ==> tbool true / st
+
+  | STor_l :
+    forall t t' t0 st st',
+    t / st ==> t' / st' ->
+    tor t t0 / st ==> tor t' t0 / st'
+  | STor_r :
+    forall t0 t0' st st',
+    t0 / st ==> t0' / st' ->
+    tor (tbool false) t0 / st ==> tor (tbool false) t0' / st'
+  | STor_true_l :
+    forall t0 st,
+    tor (tbool true) t0 / st ==> tbool true / st
+  | STor_true_r :
+    forall st,
+    tor (tbool false) (tbool true) / st ==> tbool true / st
+  | STor_false :
+    forall st,
+    tor (tbool false) (tbool false) / st ==> tbool false / st
+
   | STvar :
     forall n sk sr,
     (tvar n) / (pair sk sr) ==> sk_read_hd n sk / (pair sk sr)
@@ -397,6 +446,9 @@ End LanguageDefinitions.
 Arguments tvoid {cl} {fn}.
 Arguments tnat {cl} {fn} n.
 Arguments tbool {cl} {fn} b.
+Arguments tnot {cl} {fn} b.
+Arguments tand {cl} {fn} b b0.
+Arguments tor {cl} {fn} b b0.
 Arguments tvar {cl} {fn} n.
 Arguments tref {cl} {fn} n.
 Arguments tassign {cl} {fn} t t0.
