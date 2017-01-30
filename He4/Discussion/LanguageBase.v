@@ -418,11 +418,11 @@ Lemma step_base_deterministic:
 Proof with auto.
   intros x y Hxy.
   induction Hxy; intros z Hxz; inversion Hxz; subst;
-  try solve [value_step_impossible]; (* 36, 36 *)
-  try solve [step_base_inductive]; (* 42, 26 *)
-  try solve [auto]; (* 44, 18 *)
-  try solve [rewrite_invert]; (* 46, 12 *)
-  try solve [step_base_impossible]. (* 46, 6 *)
+  try solve [value_step_impossible]; (* 16, 16, 4.7 sec *)
+  try solve [auto]; (* 15, 15, 4.7 *)
+  try solve [step_base_inductive]; (* 15, 15, 4.8 sec *)
+  try solve [rewrite_invert]; (* 6, 6, 4.7 sec *)
+  try solve [step_base_impossible]. (* 32, 32, 31.5 sec *)
   (* STfield_w_r and STfield_w_l *)
   destruct H5 as [H5 | H5].
   { value_step_impossible. }
