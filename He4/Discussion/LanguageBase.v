@@ -537,8 +537,14 @@ Notation "'|(' t ')|'" := (trc t tvoid) (at level 60, format "'|(' t ')|'") : oo
 Notation "'|(' t ',' .. ',' t0 ')|'" :=
   (trc t .. (trc t0 tvoid) ..) (at level 60, format "'|(' t ','  .. ','  t0 ')|'") : oo_scope.
 
+Notation "t '@' n0" :=
+  (tfield_r n0 t) (at level 65, left associativity, format "t '@' n0") : oo_scope.
+
 Notation "t '#' f t0" :=
   (tcall f (trc t t0)) (at level 65, left associativity, format "t  '#'  f t0") : oo_scope.
+
+Notation "t '<@' n0 '<-' t1" :=
+  (tfield_w n0 t1 t) (at level 70, format "t '<@' n0  '<-'  t1") : oo_scope.
 
 Notation "t '::=' t0" :=
   (tassign t t0) (at level 70, right associativity) : oo_scope.
@@ -573,8 +579,11 @@ Let irc := @trc cl fn.
 Let icall := @tcall cl fn.
 Let iexec := @texec cl fn.
 Let ireturn := @treturn cl fn.
-Let inew := @tnew cl fn.
 Let icl := @tcl cl fn.
+Let inew := @tnew cl fn.
+Let idefault := @tdefault cl fn.
+Let ifield_r := @tfield_r cl fn.
+Let ifield_w := @tfield_w cl fn.
 
 (** [FNget_first] is an example function name. *)
 
@@ -603,18 +612,26 @@ Example ex_oo_notation_5:
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_6:
-  (inat 1#FNget_first|(inat 2#FNget_first|()|, inat 4)|)%oo = icall FNget_first (irc (inat 1) (irc (icall FNget_first (irc (inat 2) ivoid)) (irc (inat 4) ivoid))).
+  ((inat 1)#FNget_first|()| @ 2 #FNget_first|()|)%oo = icall FNget_first (irc (ifield_r 2 (icall FNget_first (irc (inat 1) ivoid))) ivoid).
+Proof. reflexivity. Abort.
+
+Example ex_oo_notation_6:
+  ((inat 1)#FNget_first|()| <@ 2 <- (inat 2)#FNget_first|()|)%oo = ifield_w 2 (icall FNget_first (irc (inat 2) ivoid)) (icall FNget_first (irc (inat 1) ivoid)).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_7:
-  (inat 1#FNget_first|(inat 2)|#FNget_first|(inat 4)|)%oo = icall FNget_first (irc (icall FNget_first (irc (inat 1) (irc (inat 2) ivoid))) (irc (inat 4) ivoid)).
+  (inat 1#FNget_first|(inat 2#FNget_first|()|, inat 4)|)%oo = icall FNget_first (irc (inat 1) (irc (icall FNget_first (irc (inat 2) ivoid)) (irc (inat 4) ivoid))).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_8:
-  (ivar 1 ::= ivar 2 ::= inat 3)%oo = iassign (ivar 1) (iassign (ivar 2) (inat 3)).
+  (inat 1#FNget_first|(inat 2)|#FNget_first|(inat 4)|)%oo = icall FNget_first (irc (icall FNget_first (irc (inat 1) (irc (inat 2) ivoid))) (irc (inat 4) ivoid)).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_9:
+  (ivar 1 ::= ivar 2 ::= inat 3)%oo = iassign (ivar 1) (iassign (ivar 2) (inat 3)).
+Proof. reflexivity. Abort.
+
+Example ex_oo_notation_10:
   (inat 4; inat 5; inat 6)%oo = iseq (inat 4) (iseq (inat 5) (inat 6)).
 Proof. reflexivity. Abort.
 
