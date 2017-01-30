@@ -32,6 +32,8 @@ Inductive tm : Type :=
 
   (* Control flow *)
   | tseq : tm -> tm -> tm
+  | tif : tm -> tm -> tm -> tm
+  | twhile : tm -> tm -> tm
 
   (* Records *)
   | trc : tm -> tm -> tm
@@ -382,6 +384,21 @@ Inductive step_base : (prod tm (prod stack store)) -> (prod tm (prod stack store
     forall t0 st,
     tseq tvoid t0 / st ==> t0 / st
 
+  | STif_l :
+    forall t t' t0 t1 st st',
+    t / st ==> t' / st' ->
+    tif t t0 t1 / st ==> tif t' t0 t1 / st'
+  | STif_false :
+    forall t0 t1 st,
+    tif (tbool false) t0 t1 / st ==> t1 / st
+  | STif_true :
+    forall t0 t1 st,
+    tif (tbool true) t0 t1 / st ==> t0 / st
+
+  | STwhile :
+    forall t t0 st,
+    twhile t t0 / st ==> tif t (tseq t0 (twhile t t0)) tvoid / st
+
   | STrc_l :
     forall t t' t0 st st',
     t / st ==> t' / st' ->
@@ -561,6 +578,8 @@ Arguments tvar {cl} {fn} n.
 Arguments tref {cl} {fn} n.
 Arguments tassign {cl} {fn} t t0.
 Arguments tseq {cl} {fn} t t0.
+Arguments tif {cl} {fn} t t0 t1.
+Arguments twhile {cl} {fn} t t0.
 Arguments trc {cl} {fn} t t0.
 Arguments tcall {cl} {fn} f t0.
 Arguments texec {cl} {fn} f.
@@ -616,6 +635,12 @@ Notation "t '::=' t0" :=
 Notation "t ; t0" :=
   (tseq t t0) (at level 80, right associativity, format "'[v' t ';' '/' t0 ']'").
 
+Notation "'\if' t '\then' t0 '\else' t1 '\fi'" :=
+  (tif t t0 t1) (at level 80, right associativity, format "'[' '\if'  t '//' '[v  ' '\then' '/' '[' t0 ']' ']' '//' '[v  ' '\else' '/' '[' t1 ']' ']' '//' '\fi' ']'") : oo_scope.
+
+Notation "'\while' t '\do' t0 '\done'" :=
+  (twhile t t0) (at level 80, right associativity, format "'[' '\while'  t '//' '[v  ' '\do' '/' '[' t0 ']' ']' '//' '\done' ']'") : oo_scope.
+
 Section Examples.
 
 (** *** Notation Examples
@@ -640,6 +665,8 @@ Let ivar := @tvar cl fn.
 Let iref := @tref cl fn.
 Let iassign := @tassign cl fn.
 Let iseq := @tseq cl fn.
+Let iif := @tif cl fn.
+Let iwhile := @twhile cl fn.
 Let irc := @trc cl fn.
 Let icall := @tcall cl fn.
 Let iexec := @texec cl fn.
@@ -702,6 +729,21 @@ Proof. reflexivity. Abort.
 
 Example ex_oo_notation_11:
   ((inat 1) == (inat 3) \|| (ibool true) == (ibool false))%oo = ior (ieq (inat 1) (inat 3)) (ieq (ibool true) (ibool false)).
+Proof. reflexivity. Abort.
+
+Example ex_oo_notation_12:
+  (\if (iref 1) # FNget_first|()| == (inat 0) \then (ivar 1) ::= (inat 4) \else (ivar 1) ::= (inat 5) \fi)%oo =
+  iif
+  (ieq (icall FNget_first (irc (iref 1) ivoid)) (inat 0))
+  (tassign (ivar 1) (inat 4))
+  (tassign (ivar 1) (inat 5)).
+Proof. reflexivity. Abort.
+
+Example ex_oo_notation_13:
+  (\while (iref 1) # FNget_first|()| == (inat 0) \do (ivar 1) ::= (ivar 1) \- (inat 1) \done)%oo = 
+  iwhile
+  (ieq (icall FNget_first (irc (iref 1) ivoid)) (inat 0))
+  (iassign (ivar 1) (iminus (ivar 1) (inat 1))).
 Proof. reflexivity. Abort.
 
 End Examples.
