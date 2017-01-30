@@ -522,11 +522,11 @@ Notation "'|(' t ',' .. ',' t0 ')|'" :=
 Notation "t '#' f t0" :=
   (tcall f (trc t t0)) (at level 20, left associativity, format "t  '#'  f t0") : oo_scope.
 
-Notation "t ; t0" :=
-  (tseq t t0) (at level 80, right associativity, format "'[v' t ';' '/' t0 ']'").
-
 Notation "t '::=' t0" :=
   (tassign t t0) (at level 30, right associativity) : oo_scope.
+
+Notation "t ; t0" :=
+  (tseq t t0) (at level 80, right associativity, format "'[v' t ';' '/' t0 ']'").
 
 Section Examples.
 
@@ -579,11 +579,11 @@ Example ex_oo_notation_5:
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_6:
-  (inat 4; inat 5; inat 6)%oo = iseq (inat 4) (iseq (inat 5) (inat 6)).
+  (ivar 1 ::= ivar 2 ::= inat 3)%oo = iassign (ivar 1) (iassign (ivar 2) (inat 3)).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_7:
-  (ivar 1 ::= ivar 2 ::= inat 3)%oo = iassign (ivar 1) (iassign (ivar 2) (inat 3)).
+  (inat 4; inat 5; inat 6)%oo = iseq (inat 4) (iseq (inat 5) (inat 6)).
 Proof. reflexivity. Abort.
 
 End Examples.
