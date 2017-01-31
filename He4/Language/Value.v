@@ -1,5 +1,7 @@
 Require Import He4.Language.Term.
 
+Section Values.
+
 Inductive value : tm -> Prop :=
 
   (* Base types *)
@@ -27,20 +29,17 @@ Fixpoint valueb (x : tm) : bool :=
   | _ => false
   end.
 
+Hint Constructors value.
+
 Lemma valueb_true_iff:
   forall t,
   valueb t = true <-> value t.
 Proof with auto.
   split.
   - induction t; intros;
-    try solve [inversion H];
-    try solve [constructor].
+    try solve [inversion H]...
     inversion H.
     destruct (valueb t1); destruct (valueb t2);
-    try solve [inversion H1].
-    constructor...
-    inversion H.
-    destruct (valueb t);
     try solve [inversion H1].
     constructor...
   - induction t; intros; simpl;
@@ -54,4 +53,27 @@ Proof with auto.
     apply IHt in H1; clear IHt.
     assumption.
   Qed.
+
+Lemma valueb_false_iff:
+  forall t,
+  valueb t = false <-> ~(value t).
+Proof with auto.
+  unfold not.
+  split.
+  - induction t; simpl; intros;
+    try solve [inversion H0];
+    try solve [inversion H].
+    inversion H0; subst.
+    destruct (valueb t1) eqn:eq1; destruct (valueb t2) eqn:eq2...
+    inversion H0; subst...
+  - induction t; simpl; intros;
+    try solve [auto];
+    try solve [exfalso; auto].
+    destruct (valueb t1) eqn:eq1; destruct (valueb t2) eqn:eq2...
+    rewrite valueb_true_iff in eq1;
+    rewrite valueb_true_iff in eq2.
+    exfalso...
+  Qed.
+
+End Values.
 
