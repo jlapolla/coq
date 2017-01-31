@@ -1,9 +1,7 @@
+Require Export Coq.Strings.String.
 Require Export He4.Discussion.ProgramState.
 
 Section LanguageDefinitions.
-
-Variable cl : Type.
-Variable fn : Type.
 
 Inductive tm : Type :=
 
@@ -39,14 +37,14 @@ Inductive tm : Type :=
   | trc : tm -> tm -> tm
 
   (* Functions *)
-  | tcall : fn -> tm -> tm
-  | texec : fn -> tm
+  | tcall : string -> tm -> tm
+  | texec : string -> tm
   | treturn : tm -> tm
 
   (* Classes *)
-  | tcl : cl -> tm -> tm
-  | tnew : nat -> cl -> tm
-  | tdefault : nat -> cl -> tm
+  | tcl : string -> tm -> tm
+  | tnew : nat -> string -> tm
+  | tdefault : nat -> string -> tm
   | tfield_r : nat -> tm -> tm
   | tfield_w : nat -> tm -> tm -> tm.
 
@@ -564,32 +562,6 @@ Proof with auto.
 
 End LanguageDefinitions.
 
-Arguments tvoid {cl} {fn}.
-Arguments tnat {cl} {fn} n.
-Arguments tbool {cl} {fn} b.
-Arguments tnot {cl} {fn} b.
-Arguments tand {cl} {fn} b b0.
-Arguments tor {cl} {fn} b b0.
-Arguments tplus {cl} {fn} n n0.
-Arguments tminus {cl} {fn} n n0.
-Arguments tmult {cl} {fn} n n0.
-Arguments teq {cl} {fn} t t0.
-Arguments tvar {cl} {fn} n.
-Arguments tref {cl} {fn} n.
-Arguments tassign {cl} {fn} t t0.
-Arguments tseq {cl} {fn} t t0.
-Arguments tif {cl} {fn} t t0 t1.
-Arguments twhile {cl} {fn} t t0.
-Arguments trc {cl} {fn} t t0.
-Arguments tcall {cl} {fn} f t0.
-Arguments texec {cl} {fn} f.
-Arguments treturn {cl} {fn} t.
-Arguments tcl {cl} {fn} c t0.
-Arguments tnew {cl} {fn} n c0.
-Arguments tdefault {cl} {fn} n c0.
-Arguments tfield_r {cl} {fn} n t0.
-Arguments tfield_w {cl} {fn} n t0 t1.
-
 Module ObjectOrientedNotations.
 
 Notation "'|(' ')|'" := tvoid (at level 20, format "'|(' ')|'") : oo_scope.
@@ -643,107 +615,69 @@ Notation "'\while' t '\do' t0 '\done'" :=
 
 Section Examples.
 
-(** *** Notation Examples
-
-    We define a new set of terms, which are [tm]'s bound to a specific
-    [cl] and [fn] type. *)
-
-Variable cl : Type.
-Variable fn : Type.
-
-Let ivoid := @tvoid cl fn.
-Let inat := @tnat cl fn.
-Let ibool := @tbool cl fn.
-Let inot := @tnot cl fn.
-Let iand := @tand cl fn.
-Let ior := @tor cl fn.
-Let iplus := @tplus cl fn.
-Let iminus := @tminus cl fn.
-Let imult := @tmult cl fn.
-Let ieq := @teq cl fn.
-Let ivar := @tvar cl fn.
-Let iref := @tref cl fn.
-Let iassign := @tassign cl fn.
-Let iseq := @tseq cl fn.
-Let iif := @tif cl fn.
-Let iwhile := @twhile cl fn.
-Let irc := @trc cl fn.
-Let icall := @tcall cl fn.
-Let iexec := @texec cl fn.
-Let ireturn := @treturn cl fn.
-Let icl := @tcl cl fn.
-Let inew := @tnew cl fn.
-Let idefault := @tdefault cl fn.
-Let ifield_r := @tfield_r cl fn.
-Let ifield_w := @tfield_w cl fn.
-
-(** [FNget_first] is an example function name. *)
-
-Variable FNget_first : fn.
-
 Delimit Scope oo_scope with oo.
 
 Example ex_oo_notation_1:
-  (!(ibool true) \|| (ibool false) \&& (ibool false))%oo = ior (inot (ibool true)) (iand (ibool false) (ibool false)).
+  (!(tbool true) \|| (tbool false) \&& (tbool false))%oo = tor (tnot (tbool true)) (tand (tbool false) (tbool false)).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_2:
-  ((inat 1) \* (inat 2) \- (inat 3) \+ (inat 4) \* (inat 5))%oo = iplus (iminus (imult (inat 1) (inat 2)) (inat 3)) (imult (inat 4) (inat 5)).
+  ((tnat 1) \* (tnat 2) \- (tnat 3) \+ (tnat 4) \* (tnat 5))%oo = tplus (tminus (tmult (tnat 1) (tnat 2)) (tnat 3)) (tmult (tnat 4) (tnat 5)).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_3:
-  |()|%oo = ivoid.
+  |()|%oo = tvoid.
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_4:
-  |(inat 2)|%oo = irc (inat 2) ivoid.
+  |(tnat 2)|%oo = trc (tnat 2) tvoid.
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_5:
-  |(inat 1, inat 2, inat 4)|%oo = (irc (inat 1) (irc (inat 2) (irc (inat 4) ivoid))).
+  |(tnat 1, tnat 2, tnat 4)|%oo = (trc (tnat 1) (trc (tnat 2) (trc (tnat 4) tvoid))).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_6:
-  ((inat 1)#FNget_first|()| @ 2 #FNget_first|()|)%oo = icall FNget_first (irc (ifield_r 2 (icall FNget_first (irc (inat 1) ivoid))) ivoid).
+  ((tnat 1)#"get_first"|()| @ 2 #"get_first"|()|)%oo = tcall "get_first" (trc (tfield_r 2 (tcall "get_first" (trc (tnat 1) tvoid))) tvoid).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_6:
-  ((inat 1)#FNget_first|()| <@ 2 <- (inat 2)#FNget_first|()|)%oo = ifield_w 2 (icall FNget_first (irc (inat 2) ivoid)) (icall FNget_first (irc (inat 1) ivoid)).
+  ((tnat 1)#"get_first"|()| <@ 2 <- (tnat 2)#"get_first"|()|)%oo = tfield_w 2 (tcall "get_first" (trc (tnat 2) tvoid)) (tcall "get_first" (trc (tnat 1) tvoid)).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_7:
-  (inat 1#FNget_first|(inat 2#FNget_first|()|, inat 4)|)%oo = icall FNget_first (irc (inat 1) (irc (icall FNget_first (irc (inat 2) ivoid)) (irc (inat 4) ivoid))).
+  (tnat 1#"get_first"|(tnat 2#"get_first"|()|, tnat 4)|)%oo = tcall "get_first" (trc (tnat 1) (trc (tcall "get_first" (trc (tnat 2) tvoid)) (trc (tnat 4) tvoid))).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_8:
-  (inat 1#FNget_first|(inat 2)|#FNget_first|(inat 4)|)%oo = icall FNget_first (irc (icall FNget_first (irc (inat 1) (irc (inat 2) ivoid))) (irc (inat 4) ivoid)).
+  (tnat 1#"get_first"|(tnat 2)|#"get_first"|(tnat 4)|)%oo = tcall "get_first" (trc (tcall "get_first" (trc (tnat 1) (trc (tnat 2) tvoid))) (trc (tnat 4) tvoid)).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_9:
-  (ivar 1 ::= ivar 2 ::= inat 3)%oo = iassign (ivar 1) (iassign (ivar 2) (inat 3)).
+  (tvar 1 ::= tvar 2 ::= tnat 3)%oo = tassign (tvar 1) (tassign (tvar 2) (tnat 3)).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_10:
-  (inat 4; inat 5; inat 6)%oo = iseq (inat 4) (iseq (inat 5) (inat 6)).
+  (tnat 4; tnat 5; tnat 6)%oo = tseq (tnat 4) (tseq (tnat 5) (tnat 6)).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_11:
-  ((inat 1) == (inat 3) \|| (ibool true) == (ibool false))%oo = ior (ieq (inat 1) (inat 3)) (ieq (ibool true) (ibool false)).
+  ((tnat 1) == (tnat 3) \|| (tbool true) == (tbool false))%oo = tor (teq (tnat 1) (tnat 3)) (teq (tbool true) (tbool false)).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_12:
-  (\if (iref 1) # FNget_first|()| == (inat 0) \then (ivar 1) ::= (inat 4) \else (ivar 1) ::= (inat 5) \fi)%oo =
-  iif
-  (ieq (icall FNget_first (irc (iref 1) ivoid)) (inat 0))
-  (tassign (ivar 1) (inat 4))
-  (tassign (ivar 1) (inat 5)).
+  (\if (tref 1) # "get_first"|()| == (tnat 0) \then (tvar 1) ::= (tnat 4) \else (tvar 1) ::= (tnat 5) \fi)%oo =
+  tif
+  (teq (tcall "get_first" (trc (tref 1) tvoid)) (tnat 0))
+  (tassign (tvar 1) (tnat 4))
+  (tassign (tvar 1) (tnat 5)).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_13:
-  (\while (iref 1) # FNget_first|()| == (inat 0) \do (ivar 1) ::= (ivar 1) \- (inat 1) \done)%oo = 
-  iwhile
-  (ieq (icall FNget_first (irc (iref 1) ivoid)) (inat 0))
-  (iassign (ivar 1) (iminus (ivar 1) (inat 1))).
+  (\while (tref 1) # "get_first"|()| == (tnat 0) \do (tvar 1) ::= (tvar 1) \- (tnat 1) \done)%oo = 
+  twhile
+  (teq (tcall "get_first" (trc (tref 1) tvoid)) (tnat 0))
+  (tassign (tvar 1) (tminus (tvar 1) (tnat 1))).
 Proof. reflexivity. Abort.
 
 End Examples.
