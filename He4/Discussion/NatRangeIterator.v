@@ -1,4 +1,4 @@
-Require Import He4.Discussion.LanguageBase.
+Require Import He4.Language.Core.
 
 Import ObjectOrientedNotations.
 Delimit Scope oo_scope with oo.
@@ -12,7 +12,7 @@ Reserved Notation "t1 '/' st1 '==>' t2 '/' st2"
 Inductive step : (prod tm (prod stack store)) -> (prod tm (prod stack store)) -> Prop :=
   | STbase :
     forall x x',
-    LanguageBase.step x x' ->
+    Core.step x x' ->
     step x x'
 
   | STexec_NatRangeIterator_make :
