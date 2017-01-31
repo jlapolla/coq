@@ -27,7 +27,7 @@ Fixpoint valueb (x : tm) : bool :=
   | _ => false
   end.
 
-Lemma valueb_eqiv_value:
+Lemma valueb_true_iff:
   forall t,
   valueb t = true <-> value t.
 Proof with auto.
