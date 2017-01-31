@@ -46,3 +46,11 @@ Definition empty_store : store := sr_alloc tvoid nil. (* Position 0 represents t
 
 End Stores.
 
+Section States.
+
+Definition state : Type := prod stack store.
+
+Definition empty_state : state := pair empty_stack empty_store.
+
+End States.
+
