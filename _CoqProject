@@ -12,3 +12,4 @@ He4/Language/Term.v
 He4/Language/Value.v
 He4/Lists/List.v
 He4/Strings/Ascii.v
+He4/Strings/String.v
