@@ -12,7 +12,7 @@ Reserved Notation "t1 '/' st1 '==>' t2 '/' st2"
 Inductive step : (prod tm state) -> (prod tm state) -> Prop :=
   | STbase :
     forall x x',
-    Core.step x x' ->
+    Step.step x x' ->
     step x x'
 
   | STexec_NatRangeIterator_make :
