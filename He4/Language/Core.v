@@ -4,9 +4,6 @@ Require Export He4.Language.Value.
 
 Section LanguageDefinitions.
 
-Definition empty_stack : stack := push nil nil.
-Definition empty_store : store := sr_alloc tvoid nil. (* Position 0 represents the "null" reference *)
-
 (** Records encoded as nested pair terms. *)
 Hint Resolve Lt.lt_S_n.
 

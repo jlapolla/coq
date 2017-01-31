@@ -23,6 +23,8 @@ Definition sk_read_hd (n : nat) (sk : stack) : tm :=
 Definition sk_resize_hd (n : nat) (sk : stack) : stack :=
   push (resize n (hd nil sk) tvoid) (pop sk).
 
+Definition empty_stack : stack := push nil nil.
+
 (** TODO: Fill in Lemmas *)
 
 End Stacks.
@@ -37,6 +39,8 @@ Definition sr_alloc (a : tm) (sr : store) : store :=
 Definition sr_write : nat -> tm -> store -> store := @replace tm.
 
 Definition sr_read (n : nat) (sr : store) : tm := nth n sr tvoid.
+
+Definition empty_store : store := sr_alloc tvoid nil. (* Position 0 represents the "null" reference *)
 
 (** TODO: Fill in Lemmas *)
 
