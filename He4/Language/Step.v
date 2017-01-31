@@ -1,5 +1,5 @@
 Require Import He4.Language.Term.
-Require Import He4.Language.ProgramState.
+Require Import He4.Language.State.
 Require Import He4.Language.Value.
 Require Import He4.Language.Record.
 
