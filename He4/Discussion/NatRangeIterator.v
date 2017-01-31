@@ -9,7 +9,7 @@ Definition called_on_class (c : string) (sk : stack) (sr : store) : Prop :=
 Reserved Notation "t1 '/' st1 '==>' t2 '/' st2"
   (at level 40, st1 at level 39, t2 at level 39).
 
-Inductive step : (prod tm (prod stack store)) -> (prod tm (prod stack store)) -> Prop :=
+Inductive step : (prod tm state) -> (prod tm state) -> Prop :=
   | STbase :
     forall x x',
     Core.step x x' ->

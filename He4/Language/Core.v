@@ -158,7 +158,7 @@ Proof.
 Reserved Notation "t1 '/' st1 '==>' t2 '/' st2"
   (at level 40, st1 at level 39, t2 at level 39).
 
-Inductive step : (prod tm (prod stack store)) -> (prod tm (prod stack store)) -> Prop :=
+Inductive step : (prod tm state) -> (prod tm state) -> Prop :=
   | STnot_r :
     forall t t' st st',
     t / st ==> t' / st' ->
