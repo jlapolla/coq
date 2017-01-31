@@ -1,3 +1,4 @@
+Require Export Coq.Strings.String.
 Require Export He4.Language.Term.
 Require Export He4.Language.ProgramState.
 Require Export He4.Language.Value.

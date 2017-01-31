@@ -1,4 +1,4 @@
-Require Export Coq.Strings.String.
+Require Import Coq.Strings.String.
 
 Inductive tm : Type :=
 
