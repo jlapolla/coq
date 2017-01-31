@@ -60,8 +60,6 @@ Inductive value : tm -> Prop :=
   (* Classes *)
   | vcl : forall c t, value t -> value (tcl c t).
 
-Set Implicit Arguments.
-
 Definition stack := ProgramState.stack tm.
 Definition sk_read_hd (n : nat) (sk : stack) : tm := ProgramState.sk_read_hd n sk tvoid.
 Definition sk_resize_hd (n : nat) (sk : stack) : stack := ProgramState.sk_resize_hd n sk tvoid.
@@ -125,8 +123,6 @@ Fixpoint list_to_rc (l : list tm) : tm :=
   | nil => tvoid
   | cons t' l' => trc t' (list_to_rc l')
   end.
-
-Unset Implicit Arguments.
 
 Lemma rc_create_length:
   forall n,
