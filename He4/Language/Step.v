@@ -306,12 +306,8 @@ Ltac equality_contradiction :=
     solve [exfalso; apply H; reflexivity]
   end.
 
-Lemma step_deterministic:
-  forall x y,
-  step x y ->
-  forall z,
-    step x z ->
-    z = y.
+Lemma deterministic__step:
+  deterministic step.
 Proof with auto.
   intros x y Hxy.
   induction Hxy; intros z Hxz; inversion Hxz; subst;
