@@ -2,13 +2,14 @@ Require Import He4.Language.Term.
 Require Import He4.Language.State.
 Require Import He4.Language.Value.
 Require Import He4.Language.Record.
+Require Import He4.Language.StepProp.
 
 Section Steps.
 
 Reserved Notation "t1 '/' st1 '==>' t2 '/' st2"
   (at level 40, st1 at level 39, t2 at level 39).
 
-Inductive step : (prod tm state) -> (prod tm state) -> Prop :=
+Inductive step : step_relation :=
   | STnot_r :
     forall t t' st st',
     t / st ==> t' / st' ->
@@ -260,20 +261,17 @@ Inductive step : (prod tm state) -> (prod tm state) -> Prop :=
 
   where "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2)).
 
-Lemma value_does_not_step:
-  forall t,
-  value t ->
-  forall st t' st',
-    ~(t / st ==> t' / st').
+Lemma value_irreducible__step:
+  value_irreducible step.
 Proof with auto.
   intros t Hval.
   induction Hval;
-  try solve [intros st t' st' Hcontra; inversion Hcontra].
-  intros st t' st' Hcontra.
+  try solve [intros t' st st' Hcontra; inversion Hcontra].
+  intros t' st st' Hcontra.
   inversion Hcontra; subst.
   apply IHHval1 in H0. inversion H0.
   apply IHHval2 in H5. inversion H5.
-  intros st t' st' Hcontra.
+  intros t' st st' Hcontra.
   inversion Hcontra; subst.
   apply IHHval in H0. inversion H0.
   Qed.
@@ -281,7 +279,7 @@ Proof with auto.
 Ltac value_step_impossible :=
   match goal with
   | H: value ?t, H0: step (pair ?t ?st) (pair ?t' ?st') |- _ =>
-    solve [destruct (value_does_not_step t H st t' st'); assumption]
+    solve [destruct (value_irreducible__step t H t' st st'); assumption]
   end.
 
 Ltac step_impossible :=
