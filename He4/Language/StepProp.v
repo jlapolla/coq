@@ -23,5 +23,12 @@ Definition value_irreducible : Prop :=
     step (pair t st) (pair t' st') ->
     False.
 
+Definition deterministic : Prop :=
+  forall x y,
+  step x y ->
+  forall z,
+    step x z ->
+    z = y.
+
 End StepProps.
 
