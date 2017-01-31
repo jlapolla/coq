@@ -6,3 +6,4 @@ He4/Iterator.v
 He4/Language/Core.v
 He4/Language/ProgramState.v
 He4/Language/Term.v
+He4/Language/Value.v
