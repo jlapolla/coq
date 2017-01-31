@@ -7,6 +7,7 @@ He4/Language/Core.v
 He4/Language/Record.v
 He4/Language/Step.v
 He4/Language/State.v
+He4/Language/StepProp.v
 He4/Language/Term.v
 He4/Language/Value.v
 He4/Lists/List.v
