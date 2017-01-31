@@ -1,5 +1,5 @@
 Require Export Coq.Strings.String.
-Require Export He4.Discussion.ProgramState.
+Require Export He4.Language.ProgramState.
 
 Section LanguageDefinitions.
 
