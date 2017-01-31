@@ -223,7 +223,7 @@ Proof.
 Reserved Notation "t1 '/' st1 '==>' t2 '/' st2"
   (at level 40, st1 at level 39, t2 at level 39).
 
-Inductive step_base : (prod tm (prod stack store)) -> (prod tm (prod stack store)) -> Prop :=
+Inductive step : (prod tm (prod stack store)) -> (prod tm (prod stack store)) -> Prop :=
   | STnot_r :
     forall t t' st st',
     t / st ==> t' / st' ->
@@ -473,7 +473,7 @@ Inductive step_base : (prod tm (prod stack store)) -> (prod tm (prod stack store
     sr_read n0 sr = tcl c t0 ->
     tfield_w n v0 (tref n0) / pair sk sr ==> tvoid / pair sk (sr_write n0 (tcl c (rc_write n v0 t0)) sr)
 
-  where "t1 '/' st1 '==>' t2 '/' st2" := (step_base (pair t1 st1) (pair t2 st2)).
+  where "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2)).
 
 Lemma value_does_not_step:
   forall t,
@@ -495,19 +495,19 @@ Proof with auto.
 
 Ltac value_step_impossible :=
   match goal with
-  | H: value ?t, H0: step_base (pair ?t ?st) (pair ?t' ?st') |- _ =>
+  | H: value ?t, H0: step (pair ?t ?st) (pair ?t' ?st') |- _ =>
     solve [destruct (value_does_not_step t H st t' st'); assumption]
   end.
 
-Ltac step_base_impossible :=
+Ltac step_impossible :=
   match goal with
-  | H: step_base _ _ |- _ =>
+  | H: step _ _ |- _ =>
     solve [inversion H]
   end.
 
-Ltac step_base_inductive :=
+Ltac step_inductive :=
   match goal with
-  | H: forall z, step_base ?x z -> z = ?y, H0: step_base ?x ?a |- _ = _ =>
+  | H: forall z, step ?x z -> z = ?y, H0: step ?x ?a |- _ = _ =>
     solve [apply H in H0; inversion H0; auto]
   end.
 
@@ -523,21 +523,21 @@ Ltac equality_contradiction :=
     solve [exfalso; apply H; reflexivity]
   end.
 
-Lemma step_base_deterministic:
+Lemma step_deterministic:
   forall x y,
-  step_base x y ->
+  step x y ->
   forall z,
-    step_base x z ->
+    step x z ->
     z = y.
 Proof with auto.
   intros x y Hxy.
   induction Hxy; intros z Hxz; inversion Hxz; subst;
   try solve [value_step_impossible];
   try solve [auto];
-  try solve [step_base_inductive];
+  try solve [step_inductive];
   try solve [rewrite_invert];
   try solve [equality_contradiction];
-  try solve [step_base_impossible].
+  try solve [step_impossible].
   (* STfield_w_r and STfield_w_l *)
   destruct H5 as [H5 | H5].
   { value_step_impossible. }
