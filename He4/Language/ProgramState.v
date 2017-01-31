@@ -6,13 +6,13 @@ Set Implicit Arguments.
 
 Section Stacks.
 
-Definition stack_frame := list tm.
+Definition stack_frame : Type := list tm.
 
-Definition stack := list stack_frame.
+Definition stack : Type := list stack_frame.
 
-Definition push := cons.
+Definition push : stack_frame -> stack -> stack := @cons stack_frame.
 
-Definition pop := tl.
+Definition pop : stack -> stack := @tl stack_frame.
 
 Definition sk_write_hd (n : nat) (a : tm) (sk : stack) : stack :=
   push (replace n a (hd nil sk)) (pop sk).
@@ -29,15 +29,16 @@ End Stacks.
 
 Section Stores.
 
-Definition store := list tm.
+Definition store : Type := list tm.
 
-Definition sr_alloc (a : tm) (sr : store) :=
+Definition sr_alloc (a : tm) (sr : store) : store :=
   app sr (cons a nil).
 
-Definition sr_write := replace.
+Definition sr_write : nat -> tm -> store -> store := @replace tm.
 
 Definition sr_read (n : nat) (sr : store) : tm := nth n sr tvoid.
 
 (** TODO: Fill in Lemmas *)
 
 End Stores.
+
