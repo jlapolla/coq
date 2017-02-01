@@ -14,6 +14,11 @@ Notation "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2))
 Notation "t1 '/' st1 '==>*' t2 '/' st2" := (multi step (pair t1 st1) (pair t2 st2))
   (at level 40, st1 at level 39, t2 at level 39).
 
+Ltac reduce_value :=
+  match goal with
+  | |- value _ => constructor
+  end.
+
 Ltac reduce_tnot :=
   match goal with
   | |- step (pair (tnot ?t) _) _ =>
@@ -170,7 +175,16 @@ Ltac reduce_tnew :=
   | |- step (pair (tnew _ _) _) _ => eapply STnew
   end.
 
-Ltac reduce_step := reduce_tnot.
+Ltac reduce_step :=
+     reduce_value
+  || reduce_tnot
+  || reduce_tand
+  || reduce_tor
+  || reduce_tplus
+  || reduce_tminus
+  || reduce_tmult
+  || reduce_teq
+.
 
 Ltac reduce :=
   match goal with
@@ -180,22 +194,126 @@ Ltac reduce :=
     [repeat reduce_step | instantiate; simpl; fold multi]
   end.
 
-Definition test : tm :=(
-  (
-    !(!(tbool true)) \&& !(tbool false)
+Section Examples.
+
+Let ex_reduce_tnot_tm := ((
+    !!tbool true
   )%oo).
-
-Definition test_statement :=
+Let ex_reduce_tnot:
   forall st,
-  test / st ==>* tbool true / st.
-
-(*
-Example test_reduction: test_statement.
+  ex_reduce_tnot_tm / st ==>* tbool true / st.
 Proof.
-  unfold test_statement, test. intros st.
-  reduce. reduce. reduce. reduce. reduce.
-  repeat reduce.
-*)
+  unfold ex_reduce_tnot_tm. intros. repeat reduce. Qed.
+
+Let ex_reduce_tand_tm := ((
+    !tbool false \&& !tbool true \&& tbool true
+  )%oo).
+Let ex_reduce_tand:
+  forall st,
+  ex_reduce_tand_tm / st ==>* tbool false / st.
+Proof.
+  unfold ex_reduce_tand_tm. intros. repeat reduce. Qed.
+
+Let ex_reduce_tor_tm := ((
+    !tbool true \|| !tbool false \|| tbool false
+  )%oo).
+Let ex_reduce_tor:
+  forall st,
+  ex_reduce_tor_tm / st ==>* tbool true / st.
+Proof.
+  unfold ex_reduce_tor_tm. intros. repeat reduce. Qed.
+
+Let ex_reduce_tplus_tm := ((
+    (tnat 3 \+ tnat 4) \+ (tnat 5 \+ tnat 6)
+  )%oo).
+Let ex_reduce_tplus:
+  forall st,
+  ex_reduce_tplus_tm / st ==>* tnat 18 / st.
+Proof.
+  unfold ex_reduce_tplus_tm. intros. repeat reduce. Qed.
+
+Let ex_reduce_tminus_tm := ((
+    (tnat 3 \+ tnat 4) \- (tnat 1 \+ tnat 2)
+  )%oo).
+Let ex_reduce_tminus:
+  forall st,
+  ex_reduce_tminus_tm / st ==>* tnat 4 / st.
+Proof.
+  unfold ex_reduce_tminus_tm. intros. repeat reduce. Qed.
+
+Let ex_reduce_tmult_tm := ((
+    (tnat 3 \+ tnat 4) \* (tnat 1 \+ tnat 2)
+  )%oo).
+Let ex_reduce_tmult:
+  forall st,
+  ex_reduce_tmult_tm / st ==>* tnat 21 / st.
+Proof.
+  unfold ex_reduce_tmult_tm. intros. repeat reduce. Qed.
+
+Let ex_reduce_teq_tm_1 := ((
+    !tbool true == !tbool false
+  )%oo).
+Let ex_reduce_teq_1:
+  forall st,
+  ex_reduce_teq_tm_1 / st ==>* tbool false / st.
+Proof.
+  unfold ex_reduce_teq_tm_1. intros. repeat reduce. Qed.
+
+Let ex_reduce_teq_tm_2 := ((
+    tvoid == tvoid
+  )%oo).
+Let ex_reduce_teq_2:
+  forall st,
+  ex_reduce_teq_tm_2 / st ==>* tbool true / st.
+Proof.
+  unfold ex_reduce_teq_tm_2. intros. repeat reduce. Qed.
+
+Let ex_reduce_teq_tm_3 := ((
+    tnat 0 == tnat 0
+  )%oo).
+Let ex_reduce_teq_3:
+  forall st,
+  ex_reduce_teq_tm_3 / st ==>* tbool true / st.
+Proof.
+  unfold ex_reduce_teq_tm_3. intros. repeat reduce. Qed.
+
+Let ex_reduce_teq_tm_4 := ((
+    tbool true == tbool true
+  )%oo).
+Let ex_reduce_teq_4:
+  forall st,
+  ex_reduce_teq_tm_4 / st ==>* tbool true / st.
+Proof.
+  unfold ex_reduce_teq_tm_4. intros. repeat reduce. Qed.
+
+Let ex_reduce_teq_tm_5 := ((
+    tref 0 == tref 0
+  )%oo).
+Let ex_reduce_teq_5:
+  forall st,
+  ex_reduce_teq_tm_5 / st ==>* tbool true / st.
+Proof.
+  unfold ex_reduce_teq_tm_5. intros. repeat reduce. Qed.
+
+Let ex_reduce_teq_tm_6 := ((
+    trc (tbool true) tvoid == trc (tbool true) tvoid
+  )%oo).
+Let ex_reduce_teq_6:
+  forall st,
+  ex_reduce_teq_tm_6 / st ==>* tbool true / st.
+Proof.
+  unfold ex_reduce_teq_tm_6. intros. repeat reduce. Qed.
+
+Let ex_reduce_teq_tm_7 := ((
+    tcl "Foo" tvoid == tcl "Foo" tvoid
+  )%oo).
+Let ex_reduce_teq_7:
+  forall st,
+  ex_reduce_teq_tm_7 / st ==>* tbool true / st.
+Proof.
+  unfold ex_reduce_teq_tm_7. intros. repeat reduce. Qed.
+
+End Examples.
 
 Definition main : tm := (
   let x := tvar 1 in
