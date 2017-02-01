@@ -16,7 +16,7 @@ Notation "t1 '/' st1 '==>*' t2 '/' st2" := (multi step (pair t1 st1) (pair t2 st
 
 Ltac reduce_multi :=
   match goal with
-  | |- _ / _ ==>* _ / _ => eapply multi_step
+  | |- _ / _ ==>* _ / _ => eapply Relation_Operators.rt1n_trans
   end.
 
 Ltac reduce_tnot :=
@@ -163,6 +163,7 @@ Ltac reduce_teq :=
           | true => eapply STeq_cl
           end
         | pair _ _ => fail
+        end
       end
     end
   end.
