@@ -27,19 +27,12 @@ Inductive step : step_relation :=
     forall t t' t0 st st',
     t / st ==> t' / st' ->
     tand t t0 / st ==> tand t' t0 / st'
-  | STand_r :
-    forall t0 t0' st st',
-    t0 / st ==> t0' / st' ->
-    tand (tbool true) t0 / st ==> tand (tbool true) t0' / st'
-  | STand_false_l :
+  | STand_true :
+    forall t0 st,
+    tand (tbool true) t0 / st ==> t0 / st
+  | STand_false :
     forall t0 st,
     tand (tbool false) t0 / st ==> tbool false / st
-  | STand_false_r :
-    forall st,
-    tand (tbool true) (tbool false) / st ==> tbool false / st
-  | STand_true :
-    forall st,
-    tand (tbool true) (tbool true) / st ==> tbool true / st
 
   | STor_l :
     forall t t' t0 st st',
