@@ -1,3 +1,4 @@
+Require Import He4.Strings.String.
 Require Import He4.Language.Term.
 Require Import He4.Language.State.
 Require Import He4.Language.Value.
@@ -8,6 +9,7 @@ Section Steps.
 
 Let beq_nat : nat -> nat -> bool := NPeano.Nat.eqb.
 Let beq_bool : bool -> bool -> bool := Bool.eqb.
+Let beq_string : String.string -> String.string -> bool := String.eqb.
 
 Reserved Notation "t1 '/' st1 '==>' t2 '/' st2"
   (at level 40, st1 at level 39, t2 at level 39).
@@ -122,17 +124,11 @@ Inductive step : step_relation :=
     value (trc t t0) ->
     value (trc t1 t2) ->
     teq (trc t t0) (trc t1 t2) / st ==> tand (teq t t1) (teq t0 t2) / st
-  | STeq_cl_false :
+  | STeq_cl :
     forall c t0 c1 t2 st,
     value (tcl c t0) ->
     value (tcl c1 t2) ->
-    (c = c1 -> False) ->
-    teq (tcl c t0) (tcl c1 t2) / st ==> tbool false / st
-  | STeq_cl :
-    forall c t0 t2 st,
-    value (tcl c t0) ->
-    value (tcl c t2) ->
-    teq (tcl c t0) (tcl c t2) / st ==> teq t0 t2 / st
+    teq (tcl c t0) (tcl c1 t2) / st ==> tand (tbool (beq_string c c1)) (teq t0 t2) / st
 
   | STvar :
     forall n sk sr,
