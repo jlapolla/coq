@@ -114,13 +114,9 @@ Inductive step : step_relation :=
   | STeq_bool :
     forall b b0 st,
     teq (tbool b) (tbool b0) / st ==> tbool (beq_bool b b0) / st
-  | STeq_ref_false :
+  | STeq_ref :
     forall n n0 st,
-    (n = n0 -> False) ->
-    teq (tref n) (tref n0) / st ==> tbool false / st
-  | STeq_ref_true :
-    forall n st,
-    teq (tref n) (tref n) / st ==> tbool true / st
+    teq (tref n) (tref n0) / st ==> tbool (beq_nat n n0) / st
   | STeq_rc :
     forall t t0 t1 t2 st,
     value (trc t t0) ->
