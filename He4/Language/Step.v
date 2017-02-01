@@ -111,13 +111,9 @@ Inductive step : step_relation :=
   | STeq_nat :
     forall n n0 st,
     teq (tnat n) (tnat n0) / st ==> tbool (beq_nat n n0) / st
-  | STeq_bool_false :
+  | STeq_bool :
     forall b b0 st,
-    (b = b0 -> False) ->
-    teq (tbool b) (tbool b0) / st ==> tbool false / st
-  | STeq_bool_true :
-    forall b st,
-    teq (tbool b) (tbool b) / st ==> tbool true / st
+    teq (tbool b) (tbool b0) / st ==> tbool (beq_bool b b0) / st
   | STeq_ref_false :
     forall n n0 st,
     (n = n0 -> False) ->
