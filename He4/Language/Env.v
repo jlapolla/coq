@@ -179,28 +179,11 @@ Ltac reduce_teq :=
       | true =>
         match eval cbv in (pair t t0) with
         | pair tvoid tvoid => eapply STeq_void
-        | pair (tnat ?n) (tnat ?n0) =>
-          match eqb n n0 with
-          | false => eapply STeq_nat_false
-          | true => eapply STeq_nat_true
-          end
-        | pair (tbool ?b) (tbool ?b0) =>
-          match eval cbv in (pair b b0) with
-          | pair true true => eapply STeq_bool_true
-          | pair false false => eapply STeq_bool_true
-          | _ => eapply STeq_bool_false
-          end
-        | pair (tref ?n) (tref ?n0) =>
-          match eqb n n0 with
-          | false => eapply STeq_ref_false
-          | true => eapply STeq_ref_true
-          end
+        | pair (tnat _) (tnat _) => eapply STeq_nat
+        | pair (tbool _) (tbool _) => eapply STeq_bool
+        | pair (tref _) (tref _) => eapply STeq_ref
         | pair (trc _ _) (trc _ _) => eapply STeq_rc
-        | pair (tcl ?c ?t) (tcl ?c0 ?t0) =>
-          match String.eqb c c0 with
-          | false => eapply STeq_cl_false
-          | true => eapply STeq_cl
-          end
+        | pair (tcl _ _) (tcl _ _) => eapply STeq_cl
         end
       end
     end
