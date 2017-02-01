@@ -105,6 +105,27 @@ Ltac reduce_tmult :=
     end
   end.
 
+Ltac reduce_teq :=
+  match goal with
+  | |- step (pair (teq ?t ?t0) _) _ =>
+    match eval cbv in (valueb t) with
+    | false => eapply STeq_l
+    | true =>
+      match eval cbv in (valueb t0) with
+      | false => eapply STeq_r
+      | true =>
+        match eval cbv in (pair t t0) with
+        | pair tvoid tvoid => eapply STeq_void
+        | pair (tnat _) (tnat _) => eapply STeq_nat
+        | pair (tbool _) (tbool _) => eapply STeq_bool
+        | pair (tref _) (tref _) => eapply STeq_ref
+        | pair (trc _ _) (trc _ _) => eapply STeq_rc
+        | pair (tcl _ _) (tcl _ _) => eapply STeq_cl
+        end
+      end
+    end
+  end.
+
 Ltac reduce_tvar :=
   match goal with
   | |- step (pair (tvar _) _) _ => eapply STvar
@@ -167,25 +188,4 @@ Definition main : tm := (
     \done;
     y
   )%oo).
-
-Ltac reduce_teq :=
-  match goal with
-  | |- step (pair (teq ?t ?t0) _) _ =>
-    match eval cbv in (valueb t) with
-    | false => eapply STeq_l
-    | true =>
-      match eval cbv in (valueb t0) with
-      | false => eapply STeq_r
-      | true =>
-        match eval cbv in (pair t t0) with
-        | pair tvoid tvoid => eapply STeq_void
-        | pair (tnat _) (tnat _) => eapply STeq_nat
-        | pair (tbool _) (tbool _) => eapply STeq_bool
-        | pair (tref _) (tref _) => eapply STeq_ref
-        | pair (trc _ _) (trc _ _) => eapply STeq_rc
-        | pair (tcl _ _) (tcl _ _) => eapply STeq_cl
-        end
-      end
-    end
-  end.
 
