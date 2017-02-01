@@ -22,7 +22,7 @@ Ltac reduce_multi :=
 Ltac reduce_tnot :=
   match goal with
   | |- tnot ?t / _ ==> _ / _ =>
-    match valueb t with
+    match eval cbv in (valueb t) with
     | false => eapply STnot_r
     | true =>
       match t with
@@ -35,13 +35,13 @@ Ltac reduce_tnot :=
 Ltac reduce_tand :=
   match goal with
   | |- tand ?t ?t0 / _ ==> _ / _ =>
-    match valueb t with
+    match eval cbv in (valueb t) with
     | false => eapply STand_l
     | true =>
       match t with
       | tbool false => eapply STand_false_l
       | tbool true =>
-        match valueb t0 with
+        match eval cbv in (valueb t0) with
         | false => eapply STand_r
         | true =>
           match t0 with
@@ -58,13 +58,13 @@ Ltac reduce_tand :=
 Ltac reduce_tor :=
   match goal with
   | |- tor ?t ?t0 / _ ==> _ / _ =>
-    match valueb t with
+    match eval cbv in (valueb t) with
     | false => eapply STor_l
     | true =>
       match t with
       | tbool true => eapply STor_true_l
       | tbool false =>
-        match valueb t0 with
+        match eval cbv in (valueb t0) with
         | false => eapply STor_r
         | true =>
           match t0 with
@@ -81,13 +81,13 @@ Ltac reduce_tor :=
 Ltac reduce_tplus :=
   match goal with
   | |- tplus ?t ?t0 / _ ==> _ / _ =>
-    match valueb t with
+    match eval cbv in (valueb t) with
     | false => eapply STplus_l
     | true =>
-      match valueb t0 with
+      match eval cbv in (valueb t0) with
       | false => eapply STplus_r
       | true =>
-        match pair t t0 with
+        match eval cbv in (pair t t0) with
         | pair (tnat _) (tnat _) => eapply STplus_nat
         | _ => fail
         end
@@ -98,13 +98,13 @@ Ltac reduce_tplus :=
 Ltac reduce_tminus :=
   match goal with
   | |- tminus ?t ?t0 / _ ==> _ / _ =>
-    match valueb t with
+    match eval cbv in (valueb t) with
     | false => eapply STminus_l
     | true =>
-      match valueb t0 with
+      match eval cbv in (valueb t0) with
       | false => eapply STminus_r
       | true =>
-        match pair t t0 with
+        match eval cbv in (pair t t0) with
         | pair (tnat _) (tnat _) => eapply STminus_nat
         | _ => fail
         end
@@ -115,13 +115,13 @@ Ltac reduce_tminus :=
 Ltac reduce_tmult :=
   match goal with
   | |- tmult ?t ?t0 / _ ==> _ / _ =>
-    match valueb t with
+    match eval cbv in (valueb t) with
     | false => eapply STmult_l
     | true =>
-      match valueb t0 with
+      match eval cbv in (valueb t0) with
       | false => eapply STmult_r
       | true =>
-        match pair t t0 with
+        match eval cbv in (pair t t0) with
         | pair (tnat _) (tnat _) => eapply STmult_nat
         | _ => fail
         end
@@ -132,13 +132,13 @@ Ltac reduce_tmult :=
 Ltac reduce_teq :=
   match goal with
   | |- teq ?t ?t0 / _ ==> _ / _ =>
-    match valueb t with
+    match eval cbv in (valueb t) with
     | false => eapply STeq_l
     | true =>
-      match valueb t0 with
+      match eval cbv in (valueb t0) with
       | false => eapply STeq_r
       | true =>
-        match pair t t0 with
+        match eval cbv in (pair t t0) with
         | pair tvoid tvoid => eapply STeq_void
         | pair (tnat n) (tnat n0) =>
           match eqb n n0 with
@@ -146,7 +146,7 @@ Ltac reduce_teq :=
           | true => eapply STeq_nat_true
           end
         | pair (tbool b) (tbool b0) =>
-          match pair b b0 with
+          match eval cbv in (pair b b0) with
           | pair true true => eapply STeq_bool_true
           | pair false false => eapply STeq_bool_true
           | _ => eapply STeq_bool_false
