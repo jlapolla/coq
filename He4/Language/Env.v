@@ -187,25 +187,12 @@ Ltac reduce_step :=
   || reduce_tvar
 .
 
-Ltac reduce_simpl := unfold
-  push,
-  pop,
-  sk_write_hd,
-  sk_read_hd,
-  sk_resize_hd,
-  empty_stack,
-  sr_alloc,
-  sr_write,
-  sr_read,
-  empty_store,
-  empty_state.
-
 Ltac reduce :=
   match goal with
   | |- multi step ?t ?t => apply Relation_Operators.rt1n_refl
   | |- multi step _ _ => 
     eapply Relation_Operators.rt1n_trans;
-    [repeat reduce_step | instantiate; reduce_simpl; simpl; fold multi]
+    [repeat reduce_step | instantiate; simpl; fold multi]
   end.
 
 Section Examples.
@@ -334,7 +321,7 @@ Let ex_reduce_tvar:
   let st := pair (sk_write_hd 0 (tbool true) (sk_resize_hd 1 empty_stack)) empty_store in
   ex_reduce_tvar_tm / st ==>* tbool true / st.
 Proof.
-  unfold ex_reduce_tvar_tm. reduce. repeat reduce. Qed.
+  unfold ex_reduce_tvar_tm. repeat reduce. Qed.
 
 End Examples.
 

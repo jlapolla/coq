@@ -10,9 +10,9 @@ Definition stack_frame : Type := list tm.
 
 Definition stack : Type := list stack_frame.
 
-Definition push : stack_frame -> stack -> stack := @cons stack_frame.
+Definition push (sf : stack_frame) (sk : stack) : stack := @cons stack_frame sf sk.
 
-Definition pop : stack -> stack := @tl stack_frame.
+Definition pop (sk : stack) : stack := @tl stack_frame sk.
 
 Definition sk_write_hd (n : nat) (a : tm) (sk : stack) : stack :=
   push (replace n a (hd nil sk)) (pop sk).
@@ -36,7 +36,7 @@ Definition store : Type := list tm.
 Definition sr_alloc (a : tm) (sr : store) : store :=
   app sr (cons a nil).
 
-Definition sr_write : nat -> tm -> store -> store := @replace tm.
+Definition sr_write (n : nat) (t : tm) (sr : store) : store := @replace tm n t sr.
 
 Definition sr_read (n : nat) (sr : store) : tm := nth n sr tvoid.
 
@@ -53,4 +53,13 @@ Definition state : Type := prod stack store.
 Definition empty_state : state := pair empty_stack empty_store.
 
 End States.
+
+Arguments push sf sk /.
+Arguments pop sk /.
+Arguments sk_write_hd n a sk /.
+Arguments sk_read_hd n sk /.
+Arguments sk_resize_hd n sk /.
+Arguments sr_alloc a sr /.
+Arguments sr_write n t sr /.
+Arguments sr_read n sr /.
 
