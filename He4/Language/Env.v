@@ -27,7 +27,6 @@ Ltac reduce_tnot :=
     | true =>
       match t with
       | tbool _ => eapply STnot
-      | _ => fail
       end
     end
   end.
@@ -47,10 +46,8 @@ Ltac reduce_tand :=
           match t0 with
           | tbool false => eapply STand_false_r
           | tbool true => eapply STand_true
-          | _ => fail
           end
         end
-      | _ => fail
       end
     end
   end.
@@ -70,10 +67,8 @@ Ltac reduce_tor :=
           match t0 with
           | tbool true => eapply STor_true_r
           | tbool false => eapply STor_false
-          | _ => fail
           end
         end
-      | _ => fail
       end
     end
   end.
@@ -89,7 +84,6 @@ Ltac reduce_tplus :=
       | true =>
         match eval cbv in (pair t t0) with
         | pair (tnat _) (tnat _) => eapply STplus_nat
-        | _ => fail
         end
       end
     end
@@ -106,7 +100,6 @@ Ltac reduce_tminus :=
       | true =>
         match eval cbv in (pair t t0) with
         | pair (tnat _) (tnat _) => eapply STminus_nat
-        | _ => fail
         end
       end
     end
@@ -123,7 +116,6 @@ Ltac reduce_tmult :=
       | true =>
         match eval cbv in (pair t t0) with
         | pair (tnat _) (tnat _) => eapply STmult_nat
-        | _ => fail
         end
       end
     end
@@ -225,7 +217,6 @@ Ltac reduce_teq :=
           | false => eapply STeq_cl_false
           | true => eapply STeq_cl
           end
-        | pair _ _ => fail
         end
       end
     end
