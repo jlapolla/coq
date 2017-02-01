@@ -14,11 +14,6 @@ Notation "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2))
 Notation "t1 '/' st1 '==>*' t2 '/' st2" := (multi step (pair t1 st1) (pair t2 st2))
   (at level 40, st1 at level 39, t2 at level 39).
 
-Ltac reduce_multi :=
-  match goal with
-  | |- multi step _ _ => eapply Relation_Operators.rt1n_trans
-  end.
-
 Ltac reduce_tnot :=
   match goal with
   | |- step (pair (tnot ?t) _) _ =>
@@ -174,6 +169,33 @@ Ltac reduce_tnew :=
   match goal with
   | |- step (pair (tnew _ _) _) _ => eapply STnew
   end.
+
+Ltac reduce_step := reduce_tnot.
+
+Ltac reduce :=
+  match goal with
+  | |- multi step ?t ?t => apply Relation_Operators.rt1n_refl
+  | |- multi step _ _ => 
+    eapply Relation_Operators.rt1n_trans;
+    [repeat reduce_step | instantiate; simpl; fold multi]
+  end.
+
+Definition test : tm :=(
+  (
+    !(!(tbool true)) \&& !(tbool false)
+  )%oo).
+
+Definition test_statement :=
+  forall st,
+  test / st ==>* tbool true / st.
+
+(*
+Example test_reduction: test_statement.
+Proof.
+  unfold test_statement, test. intros st.
+  reduce. reduce. reduce. reduce. reduce.
+  repeat reduce.
+*)
 
 Definition main : tm := (
   let x := tvar 1 in
