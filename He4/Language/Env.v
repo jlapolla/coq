@@ -38,16 +38,8 @@ Ltac reduce_tand :=
     | false => eapply STand_l
     | true =>
       match t with
-      | tbool false => eapply STand_false_l
-      | tbool true =>
-        match eval cbv in (valueb t0) with
-        | false => eapply STand_r
-        | true =>
-          match t0 with
-          | tbool false => eapply STand_false_r
-          | tbool true => eapply STand_true
-          end
-        end
+      | tbool true => eapply STand_true
+      | tbool false => eapply STand_false
       end
     end
   end.
@@ -59,16 +51,8 @@ Ltac reduce_tor :=
     | false => eapply STor_l
     | true =>
       match t with
-      | tbool true => eapply STor_true_l
-      | tbool false =>
-        match eval cbv in (valueb t0) with
-        | false => eapply STor_r
-        | true =>
-          match t0 with
-          | tbool true => eapply STor_true_r
-          | tbool false => eapply STor_false
-          end
-        end
+      | tbool false => eapply STor_false
+      | tbool true => eapply STor_true
       end
     end
   end.
