@@ -39,18 +39,11 @@ Inductive step : step_relation :=
     t / st ==> t' / st' ->
     tor t t0 / st ==> tor t' t0 / st'
   | STor_r :
-    forall t0 t0' st st',
-    t0 / st ==> t0' / st' ->
-    tor (tbool false) t0 / st ==> tor (tbool false) t0' / st'
+    forall t0 st,
+    tor (tbool false) t0 / st ==> t0 / st
   | STor_true_l :
     forall t0 st,
     tor (tbool true) t0 / st ==> tbool true / st
-  | STor_true_r :
-    forall st,
-    tor (tbool false) (tbool true) / st ==> tbool true / st
-  | STor_false :
-    forall st,
-    tor (tbool false) (tbool false) / st ==> tbool false / st
 
   | STplus_l :
     forall t t' t0 st st',
