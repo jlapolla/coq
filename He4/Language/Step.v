@@ -38,10 +38,10 @@ Inductive step : step_relation :=
     forall t t' t0 st st',
     t / st ==> t' / st' ->
     tor t t0 / st ==> tor t' t0 / st'
-  | STor_r :
+  | STor_false :
     forall t0 st,
     tor (tbool false) t0 / st ==> t0 / st
-  | STor_true_l :
+  | STor_true :
     forall t0 st,
     tor (tbool true) t0 / st ==> tbool true / st
 
