@@ -16,12 +16,12 @@ Notation "t1 '/' st1 '==>*' t2 '/' st2" := (multi step (pair t1 st1) (pair t2 st
 
 Ltac reduce_multi :=
   match goal with
-  | |- _ / _ ==>* _ / _ => eapply Relation_Operators.rt1n_trans
+  | |- multi step _ _ => eapply Relation_Operators.rt1n_trans
   end.
 
 Ltac reduce_tnot :=
   match goal with
-  | |- tnot ?t / _ ==> _ / _ =>
+  | |- step (pair (tnot ?t) _) _ =>
     match eval cbv in (valueb t) with
     | false => eapply STnot_r
     | true =>
@@ -34,7 +34,7 @@ Ltac reduce_tnot :=
 
 Ltac reduce_tand :=
   match goal with
-  | |- tand ?t ?t0 / _ ==> _ / _ =>
+  | |- step (pair (tand ?t ?t0) _) _ =>
     match eval cbv in (valueb t) with
     | false => eapply STand_l
     | true =>
@@ -57,7 +57,7 @@ Ltac reduce_tand :=
 
 Ltac reduce_tor :=
   match goal with
-  | |- tor ?t ?t0 / _ ==> _ / _ =>
+  | |- step (pair (tor ?t ?t0) _) _ =>
     match eval cbv in (valueb t) with
     | false => eapply STor_l
     | true =>
@@ -80,7 +80,7 @@ Ltac reduce_tor :=
 
 Ltac reduce_tplus :=
   match goal with
-  | |- tplus ?t ?t0 / _ ==> _ / _ =>
+  | |- step (pair (tplus ?t ?t0) _) _ =>
     match eval cbv in (valueb t) with
     | false => eapply STplus_l
     | true =>
@@ -97,7 +97,7 @@ Ltac reduce_tplus :=
 
 Ltac reduce_tminus :=
   match goal with
-  | |- tminus ?t ?t0 / _ ==> _ / _ =>
+  | |- step (pair (tminus ?t ?t0) _) _ =>
     match eval cbv in (valueb t) with
     | false => eapply STminus_l
     | true =>
@@ -114,7 +114,7 @@ Ltac reduce_tminus :=
 
 Ltac reduce_tmult :=
   match goal with
-  | |- tmult ?t ?t0 / _ ==> _ / _ =>
+  | |- step (pair (tmult ?t ?t0) _) _ =>
     match eval cbv in (valueb t) with
     | false => eapply STmult_l
     | true =>
@@ -131,17 +131,17 @@ Ltac reduce_tmult :=
 
 Ltac reduce_tvar :=
   match goal with
-  | |- tvar _ / _ ==> _ / _ => eapply STvar
+  | |- step (pair (tvar _) _) _ => eapply STvar
   end.
 
 Ltac reduce_tassign :=
   match goal with
-  | |- tassign (tvar _) ?t0 / _ ==> _ / _ => fail (* TODO *)
+  | |- step (pair (tassign (tvar _) ?t0) _) _ => fail (* TODO *)
   end.
 
 Ltac reduce_tseq :=
   match goal with
-  | |- tseq ?t _ / _ ==> _ / _ =>
+  | |- step (pair (tseq ?t _) _) _ =>
     match t with
     | tvoid => eapply STseq
     | _ => eapply STseq_l
@@ -150,32 +150,32 @@ Ltac reduce_tseq :=
 
 Ltac reduce_twhile :=
   match goal with
-  | |- twhile _ _ / _ ==> _ / _ => eapply STwhile
+  | |- step (pair (twhile _ _) _) _ => eapply STwhile
   end.
 
 Ltac reduce_trc :=
   match goal with
-  | |- trc ?t ?t0 / _ ==> _ / _ => fail (* TODO *)
+  | |- step (pair (trc ?t ?t0) _) _ => fail (* TODO *)
   end.
 
 Ltac reduce_tcall :=
   match goal with
-  | |- tcall _ ?t0 / _ ==> _ / _ => fail (* TODO *)
+  | |- step (pair (tcall _ ?t0) _) _ => fail (* TODO *)
   end.
 
 Ltac reduce_treturn :=
   match goal with
-  | |- treturn ?t / _ ==> _ / _ => fail (* TODO *)
+  | |- step (pair (treturn ?t) _) _ => fail (* TODO *)
   end.
 
 Ltac reduce_tcl :=
   match goal with
-  | |- tcl _ ?t / _ ==> _ / _ => fail (* TODO *)
+  | |- step (pair (tcl _ ?t) _) _ => fail (* TODO *)
   end.
 
 Ltac reduce_tnew :=
   match goal with
-  | |- tnew _ _ / _ ==> _ / _ => eapply STnew
+  | |- step (pair (tnew _ _) _) _ => eapply STnew
   end.
 
 Definition main : tm := (
@@ -194,7 +194,7 @@ Definition main : tm := (
 
 Ltac reduce_teq :=
   match goal with
-  | |- teq ?t ?t0 / _ ==> _ / _ =>
+  | |- step (pair (teq ?t ?t0) _) _ =>
     match eval cbv in (valueb t) with
     | false => eapply STeq_l
     | true =>
