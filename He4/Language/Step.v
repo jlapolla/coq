@@ -6,6 +6,9 @@ Require Import He4.Language.StepProp.
 
 Section Steps.
 
+Let beq_nat : nat -> nat -> bool := NPeano.Nat.eqb.
+Let beq_bool : bool -> bool -> bool := Bool.eqb.
+
 Reserved Notation "t1 '/' st1 '==>' t2 '/' st2"
   (at level 40, st1 at level 39, t2 at level 39).
 
@@ -105,13 +108,9 @@ Inductive step : step_relation :=
   | STeq_void :
     forall st,
     teq tvoid tvoid / st ==> tbool true / st
-  | STeq_nat_false :
+  | STeq_nat :
     forall n n0 st,
-    (n = n0 -> False) ->
-    teq (tnat n) (tnat n0) / st ==> tbool false / st
-  | STeq_nat_true :
-    forall n st,
-    teq (tnat n) (tnat n) / st ==> tbool true / st
+    teq (tnat n) (tnat n0) / st ==> tbool (beq_nat n n0) / st
   | STeq_bool_false :
     forall b b0 st,
     (b = b0 -> False) ->
