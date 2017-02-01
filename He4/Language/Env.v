@@ -129,45 +129,6 @@ Ltac reduce_tmult :=
     end
   end.
 
-Ltac reduce_teq :=
-  match goal with
-  | |- teq ?t ?t0 / _ ==> _ / _ =>
-    match eval cbv in (valueb t) with
-    | false => eapply STeq_l
-    | true =>
-      match eval cbv in (valueb t0) with
-      | false => eapply STeq_r
-      | true =>
-        match eval cbv in (pair t t0) with
-        | pair tvoid tvoid => eapply STeq_void
-        | pair (tnat n) (tnat n0) =>
-          match eqb n n0 with
-          | false => eapply STeq_nat_false
-          | true => eapply STeq_nat_true
-          end
-        | pair (tbool b) (tbool b0) =>
-          match eval cbv in (pair b b0) with
-          | pair true true => eapply STeq_bool_true
-          | pair false false => eapply STeq_bool_true
-          | _ => eapply STeq_bool_false
-          end
-        | pair (tref n) (tref n0) =>
-          match eqb n n0 with
-          | false => eapply STeq_ref_false
-          | true => eapply STeq_ref_true
-          end
-        | pair (trc _ _) (trc _ _) => eapply STeq_rc
-        | pair (tcl c t) (tcl c0 t0) =>
-          match String.eqb c c0 with
-          | false => eapply STeq_cl_false
-          | true => eapply STeq_cl
-          end
-        | pair _ _ => fail
-        end
-      end
-    end
-  end.
-
 Ltac reduce_tvar :=
   match goal with
   | |- tvar _ / _ ==> _ / _ => eapply STvar
@@ -230,4 +191,43 @@ Definition main : tm := (
     \done;
     y
   )%oo).
+
+Ltac reduce_teq :=
+  match goal with
+  | |- teq ?t ?t0 / _ ==> _ / _ =>
+    match eval cbv in (valueb t) with
+    | false => eapply STeq_l
+    | true =>
+      match eval cbv in (valueb t0) with
+      | false => eapply STeq_r
+      | true =>
+        match eval cbv in (pair t t0) with
+        | pair tvoid tvoid => eapply STeq_void
+        | pair (tnat n) (tnat n0) =>
+          match eqb n n0 with
+          | false => eapply STeq_nat_false
+          | true => eapply STeq_nat_true
+          end
+        | pair (tbool b) (tbool b0) =>
+          match eval cbv in (pair b b0) with
+          | pair true true => eapply STeq_bool_true
+          | pair false false => eapply STeq_bool_true
+          | _ => eapply STeq_bool_false
+          end
+        | pair (tref n) (tref n0) =>
+          match eqb n n0 with
+          | false => eapply STeq_ref_false
+          | true => eapply STeq_ref_true
+          end
+        | pair (trc _ _) (trc _ _) => eapply STeq_rc
+        | pair (tcl c t) (tcl c0 t0) =>
+          match String.eqb c c0 with
+          | false => eapply STeq_cl_false
+          | true => eapply STeq_cl
+          end
+        | pair _ _ => fail
+        end
+      end
+    end
+  end.
 
