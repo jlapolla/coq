@@ -205,6 +205,7 @@ Ltac reduce_step :=
   || reduce_tassign
   || reduce_tseq
   || reduce_tif
+  || reduce_twhile
 .
 
 Ltac reduce :=
@@ -382,6 +383,25 @@ Let ex_reduce_tif:
   ex_reduce_tif_tm / st ==>* tnat 2 / st.
 Proof.
   unfold ex_reduce_tif_tm. intros. repeat reduce. Qed.
+
+Let ex_reduce_twhile_tm := (
+  let x := tvar 1 in
+  let y := tvar 2 in
+  (
+    y ::= tnat 1;
+    \while !(x == tnat 0)
+    \do
+      y ::= x \* y;
+      x ::= x \- tnat 1
+    \done;
+    y
+  )%oo).
+Let ex_reduce_twhile:
+  let st := write_sk_hd 1 (tnat 3) (resize_sk_hd 3 init_state) in
+  let st' := write_sk_hd 1 (tnat 0) (write_sk_hd 2 (tnat 6) st) in
+  ex_reduce_twhile_tm / st ==>* tnat 6 / st'.
+Proof.
+  unfold ex_reduce_twhile_tm. repeat reduce. Qed.
 
 End Examples.
 
