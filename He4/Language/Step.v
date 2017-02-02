@@ -117,17 +117,17 @@ Inductive step : step_relation :=
     teq (tcl c t0) (tcl c1 t2) / st ==> tand (tbool (beq_string c c1)) (teq t0 t2) / st
 
   | STvar :
-    forall n sk sr,
-    (tvar n) / (pair sk sr) ==> sk_read_hd n sk / (pair sk sr)
+    forall n st,
+    (tvar n) / st ==> read_sk_hd n st / st
 
   | STassign_r :
     forall n t0 t0' st st',
     t0 / st ==> t0' / st' ->
     tassign (tvar n) t0 / st ==> tassign (tvar n) t0' / st'
   | STassign :
-    forall n v0 sk sr,
+    forall n v0 st,
     value v0 ->
-    tassign (tvar n) v0 / (pair sk sr) ==> tvoid / (pair (sk_write_hd n v0 sk) sr)
+    tassign (tvar n) v0 / st ==> tvoid / write_sk_hd n v0 st
 
   | STseq_l :
     forall t t' t0 st st',
@@ -167,18 +167,18 @@ Inductive step : step_relation :=
     t0 / st ==> t0' / st' ->
     tcall f t0 / st ==> tcall f t0' / st'
   | STcall :
-    forall f v0 sk sr,
+    forall f v0 st,
     value v0 ->
-    tcall f v0 / (pair sk sr) ==> treturn (texec f) / (pair (push (rc_to_list v0) sk) sr)
+    tcall f v0 / st ==> treturn (texec f) / push_sf (rc_to_list v0) st
 
   | STreturn_r :
     forall t t' st st',
     t / st ==> t' / st' ->
     treturn t / st ==> treturn t' / st'
   | STreturn :
-    forall v sk sr,
+    forall v st,
     value v ->
-    treturn v / (pair sk sr) ==> v / (pair (pop sk) sr)
+    treturn v / st ==> v / pop_sf st
 
   | STcl_r :
     forall c t0 t0' st st',
@@ -186,8 +186,8 @@ Inductive step : step_relation :=
     tcl c t0 / st ==> tcl c t0' / st'
 
   | STnew :
-    forall n c0 sk sr,
-    tnew n c0 / pair sk sr ==> tref (length sr) / pair sk (sr_alloc (tcl c0 (rc_create n)) sr)
+    forall n c0 st,
+    tnew n c0 / st ==> tref (length (get_store st)) / alloc_sr (tcl c0 (rc_create n)) st
 
   | STdefault :
     forall n c0 st,
@@ -198,9 +198,9 @@ Inductive step : step_relation :=
     t0 / st ==> t0' / st' ->
     tfield_r n t0 / st ==> tfield_r n t0' / st'
   | STfield_r_ref :
-    forall n n0 c t0 sk sr,
-    sr_read n0 sr = tcl c t0 ->
-    tfield_r n (tref n0) / pair sk sr ==> rc_read n t0 / pair sk sr
+    forall n n0 c t0 st,
+    read_sr n0 st = tcl c t0 ->
+    tfield_r n (tref n0) / st ==> rc_read n t0 / st
   | STfield_r_cl :
     forall n c t0 st,
     value (tcl c t0) ->
@@ -217,20 +217,20 @@ Inductive step : step_relation :=
     t0 / st ==> t0' / st' ->
     tfield_w n t0 v1 / st ==> tfield_w n t0' v1 / st'
   | STfield_w_var :
-    forall n n0 t0 v0 c sk sr,
+    forall n n0 t0 v0 c st,
     value v0 ->
-    sk_read_hd n0 sk = tcl c t0 ->
-    tfield_w n v0 (tvar n0) / pair sk sr ==> tvoid / pair (sk_write_hd n0 (tcl c (rc_write n v0 t0)) sk) sr
+    read_sk_hd n0 st = tcl c t0 ->
+    tfield_w n v0 (tvar n0) / st ==> tvoid / write_sk_hd n0 (tcl c (rc_write n v0 t0)) st
   | STfield_w_var_ref :
-    forall n n0 n1 v0 sk sr,
+    forall n n0 n1 v0 st,
     value v0 ->
-    sk_read_hd n0 sk = tref n1 ->
-    tfield_w n v0 (tvar n0) / pair sk sr ==> tfield_w n v0 (tref n1) / pair sk sr
+    read_sk_hd n0 st = tref n1 ->
+    tfield_w n v0 (tvar n0) / st ==> tfield_w n v0 (tref n1) / st
   | STfield_w_ref :
-    forall n n0 t0 v0 c sk sr,
+    forall n n0 t0 v0 c st,
     value v0 ->
-    sr_read n0 sr = tcl c t0 ->
-    tfield_w n v0 (tref n0) / pair sk sr ==> tvoid / pair sk (sr_write n0 (tcl c (rc_write n v0 t0)) sr)
+    read_sr n0 st = tcl c t0 ->
+    tfield_w n v0 (tref n0) / st ==> tvoid / write_sr n0 (tcl c (rc_write n v0 t0)) st
 
   where "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2)).
 
