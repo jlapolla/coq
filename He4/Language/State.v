@@ -5,11 +5,8 @@ Require Import He4.Lists.List.
 (** * Types *)
 
 Definition stack_frame : Type := list tm.
-
 Definition stack : Type := list stack_frame.
-
 Definition store : Type := list tm.
-
 Definition state : Type := prod stack store.
 
 (** * Functions *)
@@ -57,9 +54,11 @@ Arguments sr_alloc a sr /.
 Arguments sr_write n t sr /.
 Arguments sr_read n sr /.
 
-(** * Constants *)
+(** * Constants
+
+    Position [0] in a [store] represents the "null reference". *)
 
 Definition empty_stack : stack := push nil nil.
-Definition empty_store : store := sr_alloc tvoid nil. (* Position 0 represents the "null" reference *)
+Definition empty_store : store := sr_alloc tvoid nil.
 Definition empty_state : state := pair empty_stack empty_store.
 
