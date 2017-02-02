@@ -228,6 +228,7 @@ Ltac reduce_step :=
   || reduce_tcall
   || reduce_treturn
   || reduce_tcl
+  || reduce_tnew
 .
 
 Ltac reduce :=
@@ -458,6 +459,14 @@ Let ex_reduce_tcl:
   ex_reduce_tcl_tm / st ==>* tcl "foo" (trc (tnat 2) tvoid) / st.
 Proof.
   unfold ex_reduce_tcl_tm. intros. repeat reduce. Qed.
+
+Let ex_reduce_tnew_tm := ((
+    tnew 2 "foo"
+  )%oo).
+Let ex_reduce_tnew:
+  ex_reduce_tnew_tm / init_state ==>* tref 1 / alloc_sr (tcl "foo" (|(tvoid, tvoid)|))%oo init_state.
+Proof.
+  unfold ex_reduce_tnew_tm. repeat reduce. Qed.
 
 End Examples.
 
