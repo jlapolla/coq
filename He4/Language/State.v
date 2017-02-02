@@ -2,10 +2,10 @@ Require Import He4.Language.Term.
 Require Import Coq.Lists.List.
 Require Import He4.Lists.List.
 Require Export He4.Language.Stack.
+Require Export He4.Language.Store.
 
 (** * Types *)
 
-Definition store : Type := list tm.
 Definition state : Type := prod stack store.
 
 (** * Functions *)
@@ -35,23 +35,14 @@ Definition resize_sk_hd (n : nat) (st : state) : state :=
 
 (** ** Store functions *)
 
-Definition sr_alloc (a : tm) (sr : store) : store :=
-  app sr (cons a nil).
-
 Definition alloc_sr (a : tm) (st : state) : state :=
   set_store (sr_alloc a (get_store st)) st.
-
-Definition sr_write (n : nat) (t : tm) (sr : store) : store := replace n t sr.
 
 Definition write_sr (n : nat) (t : tm) (st : state) : state :=
   set_store (sr_write n t (get_store st)) st.
 
-Definition sr_read (n : nat) (sr : store) : tm := nth n sr tvoid.
-
 Definition read_sr (n : nat) (st : state) : tm :=
   sr_read n (get_store st).
-
-(** TODO: Lemmas *)
 
 (** ** Function unfolding
 
@@ -70,17 +61,11 @@ Arguments pop_sf st /.
 Arguments write_sk_hd n a st /.
 Arguments read_sk_hd n st /.
 Arguments resize_sk_hd n st /.
-Arguments sr_alloc a sr /.
 Arguments alloc_sr a st /.
-Arguments sr_write n t sr /.
 Arguments write_sr n t st /.
-Arguments sr_read n sr /.
 Arguments read_sr n st /.
 
-(** * Constants
+(** * Constants *)
 
-    Position [0] in a [store] represents the "null reference". *)
-
-Definition empty_store : store := sr_alloc tvoid nil.
 Definition empty_state : state := pair empty_stack empty_store.
 
