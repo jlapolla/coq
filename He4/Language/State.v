@@ -25,13 +25,13 @@ Definition pop_sf (st : state) : state :=
   set_stack (pop (get_stack st)) st.
 
 Definition write_sk_hd (n : nat) (a : tm) (st : state) : state :=
-  set_stack (sk_write_hd n a (get_stack st)) st.
+  set_stack (write_hd n a (get_stack st)) st.
 
 Definition read_sk_hd (n : nat) (st : state) : tm :=
-  sk_read_hd n (get_stack st).
+  read_hd n (get_stack st).
 
 Definition resize_sk_hd (n : nat) (st : state) : state :=
-  set_stack (sk_resize_hd n (get_stack st)) st.
+  set_stack (resize_hd n (get_stack st)) st.
 
 (** ** Store functions *)
 
