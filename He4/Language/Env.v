@@ -210,6 +210,11 @@ Ltac reduce_tnew :=
   | |- step (pair (tnew _ _) _) _ => eapply STnew
   end.
 
+Ltac reduce_tdefault :=
+  match goal with
+  | |- step (pair (tdefault _ _) _) _ => eapply STdefault
+  end.
+
 Ltac reduce_step :=
      reduce_value
   || reduce_tnot
@@ -229,6 +234,7 @@ Ltac reduce_step :=
   || reduce_treturn
   || reduce_tcl
   || reduce_tnew
+  || reduce_tdefault
 .
 
 Ltac reduce :=
@@ -467,6 +473,15 @@ Let ex_reduce_tnew:
   ex_reduce_tnew_tm / init_state ==>* tref 1 / alloc_sr (tcl "foo" (|(tvoid, tvoid)|))%oo init_state.
 Proof.
   unfold ex_reduce_tnew_tm. repeat reduce. Qed.
+
+Let ex_reduce_tdefault_tm := ((
+    tdefault 2 "foo"
+  )%oo).
+Let ex_reduce_tdefault:
+  forall st,
+  ex_reduce_tdefault_tm / st ==>* (tcl "foo" (|(tvoid, tvoid)|))%oo / st.
+Proof.
+  unfold ex_reduce_tdefault_tm. intros. repeat reduce. Qed.
 
 End Examples.
 
