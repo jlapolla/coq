@@ -433,11 +433,11 @@ Proof.
   unfold ex_reduce_trc_tm. intros. simpl. repeat reduce. Qed.
 
 Let ex_reduce_tcall_tm := ((
-    tvoid # "foo" |(tnat 1 \+ tnat 1)|
+    tcall "foo" (|(tnat 1 \+ tnat 1)|)
   )%oo).
 Let ex_reduce_tcall:
   forall st,
-  ex_reduce_tcall_tm / st ==>* treturn (texec "foo") / push_sf (cons tvoid (cons (tnat 2) nil)) st.
+  ex_reduce_tcall_tm / st ==>* treturn (texec "foo") / push_sf (cons (tnat 2) nil) st.
 Proof.
   unfold ex_reduce_tcall_tm. intros. simpl. repeat reduce. Qed.
 
