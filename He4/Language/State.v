@@ -10,6 +10,13 @@ Definition store : Type := list tm.
 Definition state : Type := prod stack store.
 
 (** * Functions *)
+(** ** State accessors *)
+
+Definition get_stack (st : state) : stack := fst st.
+Definition get_store (st : state) : store := snd st.
+Definition set_stack (sk : stack) (st : state) : state := pair sk (get_store st).
+Definition set_store (sr : store) (st : state) : state := pair (get_stack st) sr.
+
 (** ** Stack functions *)
 
 Definition push (sf : stack_frame) (sk : stack) : stack := @cons stack_frame sf sk.
@@ -46,6 +53,10 @@ Definition sr_read (n : nat) (sr : store) : tm := nth n sr tvoid.
     [[1]] #<a href="https://coq.inria.fr/distrib/8.4pl4/refman/Reference-Manual010.html##sec395">
            https://coq.inria.fr/distrib/8.4pl4/refman/Reference-Manual010.html##sec395</a># *)
 
+Arguments get_stack st /.
+Arguments get_store st /.
+Arguments set_stack sk st /.
+Arguments set_store sr st /.
 Arguments push sf sk /.
 Arguments pop sk /.
 Arguments sk_write_hd n a sk /.
