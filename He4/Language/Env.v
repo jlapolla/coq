@@ -149,6 +149,19 @@ Ltac reduce_tseq :=
     end
   end.
 
+Ltac reduce_tif :=
+  match goal with
+  | |- step (pair (tif ?t _ _) _) _ =>
+    match eval cbv in (valueb t) with
+    | false => eapply STif_l
+    | true =>
+      match t with
+      | tbool false => eapply STif_false
+      | tbool true => eapply STif_true
+      end
+    end
+  end.
+
 Ltac reduce_twhile :=
   match goal with
   | |- step (pair (twhile _ _) _) _ => eapply STwhile
@@ -191,6 +204,7 @@ Ltac reduce_step :=
   || reduce_tvar
   || reduce_tassign
   || reduce_tseq
+  || reduce_tif
 .
 
 Ltac reduce :=
@@ -349,6 +363,25 @@ Let ex_reduce_tseq:
   ex_reduce_tseq_tm / st ==>* tnat 5 / st'.
 Proof.
   unfold ex_reduce_tseq_tm. repeat reduce. Qed.
+
+Let ex_reduce_tif_tm := ((
+    \if !tbool true
+    \then
+      tnat 1
+    \else
+      \if tbool true
+      \then
+        tnat 2
+      \else
+        tnat 3
+      \fi
+    \fi
+  )%oo).
+Let ex_reduce_tif:
+  forall st,
+  ex_reduce_tif_tm / st ==>* tnat 2 / st.
+Proof.
+  unfold ex_reduce_tif_tm. intros. repeat reduce. Qed.
 
 End Examples.
 
