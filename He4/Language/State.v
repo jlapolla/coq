@@ -2,8 +2,6 @@ Require Import He4.Language.Term.
 Require Import Coq.Lists.List.
 Require Import He4.Lists.List.
 
-Section Stacks.
-
 Definition stack_frame : Type := list tm.
 
 Definition stack : Type := list stack_frame.
@@ -25,10 +23,6 @@ Definition empty_stack : stack := push nil nil.
 
 (** TODO: Fill in Lemmas *)
 
-End Stacks.
-
-Section Stores.
-
 Definition store : Type := list tm.
 
 Definition sr_alloc (a : tm) (sr : store) : store :=
@@ -42,15 +36,9 @@ Definition empty_store : store := sr_alloc tvoid nil. (* Position 0 represents t
 
 (** TODO: Fill in Lemmas *)
 
-End Stores.
-
-Section States.
-
 Definition state : Type := prod stack store.
 
 Definition empty_state : state := pair empty_stack empty_store.
-
-End States.
 
 (** [Arguments] statement with [/] tells tactic [simpl] to unfold these
     functions when arguments before the [/] are provided [[1]].
