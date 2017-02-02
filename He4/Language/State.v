@@ -2,8 +2,6 @@ Require Import He4.Language.Term.
 Require Import Coq.Lists.List.
 Require Import He4.Lists.List.
 
-Set Implicit Arguments.
-
 Section Stacks.
 
 Definition stack_frame : Type := list tm.
