@@ -19,9 +19,9 @@ Definition set_store (sr : store) (st : state) : state := pair (get_stack st) sr
 
 (** ** Stack functions *)
 
-Definition push (sf : stack_frame) (sk : stack) : stack := @cons stack_frame sf sk.
+Definition push (sf : stack_frame) (sk : stack) : stack := cons sf sk.
 
-Definition pop (sk : stack) : stack := @tl stack_frame sk.
+Definition pop (sk : stack) : stack := tl sk.
 
 Definition sk_write_hd (n : nat) (a : tm) (sk : stack) : stack :=
   push (replace n a (hd nil sk)) (pop sk).
@@ -39,7 +39,7 @@ Definition sk_resize_hd (n : nat) (sk : stack) : stack :=
 Definition sr_alloc (a : tm) (sr : store) : store :=
   app sr (cons a nil).
 
-Definition sr_write (n : nat) (t : tm) (sr : store) : store := @replace tm n t sr.
+Definition sr_write (n : nat) (t : tm) (sr : store) : store := replace n t sr.
 
 Definition sr_read (n : nat) (sr : store) : tm := nth n sr tvoid.
 
