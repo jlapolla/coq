@@ -43,7 +43,8 @@ Definition sr_read (n : nat) (sr : store) : tm := nth n sr tvoid.
     [Arguments] statement with [/] tells tactic [simpl] to unfold these
     functions when arguments before the [/] are provided [[1]].
 
-    [[1]] https://coq.inria.fr/distrib/8.4pl4/refman/Reference-Manual010.html##sec395 *)
+    [[1]] #<a href="https://coq.inria.fr/distrib/8.4pl4/refman/Reference-Manual010.html##sec395">
+           https://coq.inria.fr/distrib/8.4pl4/refman/Reference-Manual010.html##sec395</a># *)
 
 Arguments push sf sk /.
 Arguments pop sk /.
