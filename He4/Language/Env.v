@@ -19,6 +19,33 @@ Ltac reduce_value :=
   | |- value _ => constructor
   end.
 
+Ltac reduce_var :=
+  match goal with
+  | |- _ = tvar _ => reflexivity
+  end.
+
+Ltac reduce_not_var :=
+  match goal with
+  | |- forall n, _ <> tvar n => intros
+  | |- _ <> tvar _ => unfold not
+  | |- _ = tvar _ -> False => intros
+  | H: _ = tvar _ |- False => inversion H
+  end.
+
+Ltac reduce_value_or_var :=
+  match goal with
+  | |- value ?t \/ ?t = tvar _ =>
+    match t with
+    | tvar _ => right
+    | _ => left
+    end
+  end.
+
+Ltac reduce_read_stack :=
+  match goal with
+  | |- read_sk_hd _ _ = _ => reflexivity
+  end.
+
 Ltac reduce_read_store :=
   match goal with
   | |- read_sr _ _ = _ => reflexivity
@@ -236,8 +263,43 @@ Ltac reduce_tfield_r :=
     end
   end.
 
+Ltac reduce_tfield_w :=
+  match goal with
+  | |- step (pair (tfield_w _ ?t0 ?t1) ?st) _ =>
+    match t1 with
+    | tvar ?n0 =>
+      match eval cbv in (valueb t0) with
+      | false => eapply STfield_w_l
+      | true =>
+        match eval cbv in (read_sk_hd n0 st) with
+        | tcl _ _ => eapply STfield_w_var
+        | tref _ => eapply STfield_w_var_ref
+        end
+      end
+    | _ =>
+      match eval cbv in (valueb t1) with
+      | false => eapply STfield_w_r
+      | true =>
+        match eval cbv in (valueb t0) with
+        | false => eapply STfield_w_l
+        | true =>
+          match t1 with
+          | tref ?n0 =>
+            match eval cbv in (read_sr n0 st) with
+            | tcl _ _ => eapply STfield_w_ref
+            end
+          end
+        end
+      end
+    end
+  end.
+
 Ltac reduce_step :=
      reduce_value
+  || reduce_var
+  || reduce_not_var
+  || reduce_value_or_var
+  || reduce_read_stack
   || reduce_read_store
   || reduce_tnot
   || reduce_tand
@@ -258,6 +320,7 @@ Ltac reduce_step :=
   || reduce_tnew
   || reduce_tdefault
   || reduce_tfield_r
+  || reduce_tfield_w
 .
 
 Ltac reduce :=
@@ -523,6 +586,36 @@ Let ex_reduce_tfield_r_2:
   ex_reduce_tfield_r_2_tm / st ==>* tnat 2 / st.
 Proof.
   unfold ex_reduce_tfield_r_2_tm. intros. repeat reduce. Qed.
+
+Let ex_reduce_tfield_w_1_tm := ((
+    (tvar 0) <@ 1 <- (tnat 1 \+ tnat 1)
+  )%oo).
+Let ex_reduce_tfield_w_1:
+  let st := write_sk_hd 0 (tcl "foo" (|(tvoid, tvoid)|))%oo (resize_sk_hd 1 init_state) in
+  let st' := write_sk_hd 0 (tcl "foo" (|(tvoid, tnat 2)|))%oo st in
+  ex_reduce_tfield_w_1_tm / st ==>* tvoid / st'.
+Proof.
+  unfold ex_reduce_tfield_w_1_tm. repeat reduce. Qed.
+
+Let ex_reduce_tfield_w_2_tm := ((
+    (tvar 0) <@ 1 <- (tnat 1 \+ tnat 1)
+  )%oo).
+Let ex_reduce_tfield_w_2:
+  let st := write_sk_hd 0 (tref 1) (resize_sk_hd 1 (alloc_sr (tcl "foo" (|(tvoid, tvoid)|))%oo init_state)) in
+  let st' := write_sr 1 (tcl "foo" (|(tvoid, tnat 2)|))%oo st in
+  ex_reduce_tfield_w_2_tm / st ==>* tvoid / st'.
+Proof.
+  unfold ex_reduce_tfield_w_2_tm. repeat reduce. Qed.
+
+Let ex_reduce_tfield_w_3_tm := ((
+    (treturn (tref 1)) <@ 1 <- (tnat 1 \+ tnat 1)
+  )%oo).
+Let ex_reduce_tfield_w_3:
+  let st := push_sf nil (alloc_sr (tcl "foo" (|(tvoid, tvoid)|))%oo init_state) in
+  let st' := write_sr 1 (tcl "foo" (|(tvoid, tnat 2)|))%oo (pop_sf st) in
+  ex_reduce_tfield_w_3_tm / st ==>* tvoid / st'.
+Proof.
+  unfold ex_reduce_tfield_w_3_tm. repeat reduce. Existential 1 := O. Qed.
 
 End Examples.
 
