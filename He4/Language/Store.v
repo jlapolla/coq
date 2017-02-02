@@ -27,5 +27,5 @@ Arguments read n sr /.
 
     Position [0] in a [store] represents the "null reference". *)
 
-Definition empty_store : store := alloc tvoid nil.
+Definition init_store : store := alloc tvoid nil.
 

@@ -318,7 +318,7 @@ Let ex_reduce_tvar_tm := ((
     tvar 0
   )%oo).
 Let ex_reduce_tvar:
-  let st := write_sk_hd 0 (tbool true) (resize_sk_hd 1 empty_state) in
+  let st := write_sk_hd 0 (tbool true) (resize_sk_hd 1 init_state) in
   ex_reduce_tvar_tm / st ==>* tbool true / st.
 Proof.
   unfold ex_reduce_tvar_tm. repeat reduce. Qed.

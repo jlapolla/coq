@@ -67,5 +67,5 @@ Arguments read_sr n st /.
 
 (** * Constants *)
 
-Definition empty_state : state := pair empty_stack empty_store.
+Definition init_state : state := pair init_stack init_store.
 

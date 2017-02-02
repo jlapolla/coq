@@ -34,5 +34,5 @@ Arguments resize_hd n sk /.
 
 (** * Constants *)
 
-Definition empty_stack : stack := push nil nil.
+Definition init_stack : stack := push nil nil.
 
