@@ -169,7 +169,14 @@ Ltac reduce_twhile :=
 
 Ltac reduce_trc :=
   match goal with
-  | |- step (pair (trc ?t ?t0) _) _ => fail (* TODO *)
+  | |- step (pair (trc ?t ?t0) _) _ =>
+    match eval cbv in (valueb t) with
+    | false => eapply STrc_l
+    | true =>
+      match eval cbv in (valueb t0) with
+      | false => eapply STrc_r
+      end
+    end
   end.
 
 Ltac reduce_tcall :=
@@ -206,6 +213,7 @@ Ltac reduce_step :=
   || reduce_tseq
   || reduce_tif
   || reduce_twhile
+  || reduce_trc
 .
 
 Ltac reduce :=
@@ -402,6 +410,13 @@ Let ex_reduce_twhile:
   ex_reduce_twhile_tm / st ==>* tnat 6 / st'.
 Proof.
   unfold ex_reduce_twhile_tm. repeat reduce. Qed.
+
+Let ex_reduce_trc_tm := list_to_rc (cons (tnat 1 \+ tnat 2)%oo (cons (tnat 3 \+ tnat 4)%oo nil)).
+Let ex_reduce_trc:
+  forall st,
+  ex_reduce_trc_tm / st ==>* list_to_rc (cons (tnat 3) (cons (tnat 7) nil)) / st.
+Proof.
+  unfold ex_reduce_trc_tm. intros. simpl. repeat reduce. Qed.
 
 End Examples.
 
