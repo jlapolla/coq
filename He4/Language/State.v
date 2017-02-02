@@ -1,11 +1,10 @@
 Require Import He4.Language.Term.
 Require Import Coq.Lists.List.
 Require Import He4.Lists.List.
+Require Export He4.Language.Stack.
 
 (** * Types *)
 
-Definition stack_frame : Type := list tm.
-Definition stack : Type := list stack_frame.
 Definition store : Type := list tm.
 Definition state : Type := prod stack store.
 
@@ -19,35 +18,20 @@ Definition set_store (sr : store) (st : state) : state := pair (get_stack st) sr
 
 (** ** Stack functions *)
 
-Definition push (sf : stack_frame) (sk : stack) : stack := cons sf sk.
-
 Definition push_sf (sf : stack_frame) (st : state) : state :=
   set_stack (push sf (get_stack st)) st.
-
-Definition pop (sk : stack) : stack := tl sk.
 
 Definition pop_sf (st : state) : state :=
   set_stack (pop (get_stack st)) st.
 
-Definition sk_write_hd (n : nat) (a : tm) (sk : stack) : stack :=
-  push (replace n a (hd nil sk)) (pop sk).
-
 Definition write_sk_hd (n : nat) (a : tm) (st : state) : state :=
   set_stack (sk_write_hd n a (get_stack st)) st.
-
-Definition sk_read_hd (n : nat) (sk : stack) : tm :=
-  nth n (hd nil sk) tvoid.
 
 Definition read_sk_hd (n : nat) (st : state) : tm :=
   sk_read_hd n (get_stack st).
 
-Definition sk_resize_hd (n : nat) (sk : stack) : stack :=
-  push (resize n (hd nil sk) tvoid) (pop sk).
-
 Definition resize_sk_hd (n : nat) (st : state) : state :=
   set_stack (sk_resize_hd n (get_stack st)) st.
-
-(** TODO: Lemmas *)
 
 (** ** Store functions *)
 
@@ -81,15 +65,10 @@ Arguments get_stack st /.
 Arguments get_store st /.
 Arguments set_stack sk st /.
 Arguments set_store sr st /.
-Arguments push sf sk /.
 Arguments push_sf sf st /.
-Arguments pop sk /.
 Arguments pop_sf st /.
-Arguments sk_write_hd n a sk /.
 Arguments write_sk_hd n a st /.
-Arguments sk_read_hd n sk /.
 Arguments read_sk_hd n st /.
-Arguments sk_resize_hd n sk /.
 Arguments resize_sk_hd n st /.
 Arguments sr_alloc a sr /.
 Arguments alloc_sr a st /.
@@ -102,7 +81,6 @@ Arguments read_sr n st /.
 
     Position [0] in a [store] represents the "null reference". *)
 
-Definition empty_stack : stack := push nil nil.
 Definition empty_store : store := sr_alloc tvoid nil.
 Definition empty_state : state := pair empty_stack empty_store.
 
