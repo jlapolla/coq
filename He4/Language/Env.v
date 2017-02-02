@@ -190,7 +190,11 @@ Ltac reduce_tcall :=
 
 Ltac reduce_treturn :=
   match goal with
-  | |- step (pair (treturn ?t) _) _ => fail (* TODO *)
+  | |- step (pair (treturn ?t) _) _ =>
+    match eval cbv in (valueb t) with
+    | false => eapply STreturn_r
+    | true => eapply STreturn
+    end
   end.
 
 Ltac reduce_tcl :=
@@ -219,6 +223,7 @@ Ltac reduce_step :=
   || reduce_twhile
   || reduce_trc
   || reduce_tcall
+  || reduce_treturn
 .
 
 Ltac reduce :=
@@ -431,6 +436,15 @@ Let ex_reduce_tcall:
   ex_reduce_tcall_tm / st ==>* treturn (texec "foo") / push_sf (cons tvoid (cons (tnat 2) nil)) st.
 Proof.
   unfold ex_reduce_tcall_tm. intros. simpl. repeat reduce. Qed.
+
+Let ex_reduce_treturn_tm := ((
+    treturn (tnat 1 \+ tnat 1)
+  )%oo).
+Let ex_reduce_treturn:
+  forall st,
+  ex_reduce_treturn_tm / st ==>* tnat 2 / pop_sf st.
+Proof.
+  unfold ex_reduce_treturn_tm. intros. repeat reduce. Qed.
 
 End Examples.
 
