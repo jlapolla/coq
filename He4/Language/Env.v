@@ -133,7 +133,11 @@ Ltac reduce_tvar :=
 
 Ltac reduce_tassign :=
   match goal with
-  | |- step (pair (tassign (tvar _) ?t0) _) _ => fail (* TODO *)
+  | |- step (pair (tassign (tvar _) ?t0) _) _ =>
+    match eval cbv in (valueb t0) with
+    | false => eapply STassign_r
+    | true => eapply STassign
+    end
   end.
 
 Ltac reduce_tseq :=
@@ -185,6 +189,7 @@ Ltac reduce_step :=
   || reduce_tmult
   || reduce_teq
   || reduce_tvar
+  || reduce_tassign
 .
 
 Ltac reduce :=
@@ -322,6 +327,16 @@ Let ex_reduce_tvar:
   ex_reduce_tvar_tm / st ==>* tbool true / st.
 Proof.
   unfold ex_reduce_tvar_tm. repeat reduce. Qed.
+
+Let ex_reduce_tassign_tm := ((
+    tvar 0 ::= tnat 1 \+ tnat 1
+  )%oo).
+Let ex_reduce_tassign:
+  let st := resize_sk_hd 1 init_state in
+  let st' := write_sk_hd 0 (tnat 2) st in
+  ex_reduce_tassign_tm / st ==>* tvoid / st'.
+Proof.
+  unfold ex_reduce_tassign_tm. repeat reduce. Qed.
 
 End Examples.
 
