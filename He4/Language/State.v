@@ -36,13 +36,13 @@ Definition resize_sk_hd (n : nat) (st : state) : state :=
 (** ** Store functions *)
 
 Definition alloc_sr (a : tm) (st : state) : state :=
-  set_store (sr_alloc a (get_store st)) st.
+  set_store (alloc a (get_store st)) st.
 
 Definition write_sr (n : nat) (t : tm) (st : state) : state :=
-  set_store (sr_write n t (get_store st)) st.
+  set_store (write n t (get_store st)) st.
 
 Definition read_sr (n : nat) (st : state) : tm :=
-  sr_read n (get_store st).
+  read n (get_store st).
 
 (** ** Function unfolding
 
