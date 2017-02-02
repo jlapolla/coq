@@ -1,8 +1,8 @@
 Require Import He4.Language.Term.
 Require Import Coq.Lists.List.
 Require Import He4.Lists.List.
-Require Export He4.Language.Stack.
-Require Export He4.Language.Store.
+Require Import He4.Language.Stack.
+Require Import He4.Language.Store.
 
 (** * Types *)
 
