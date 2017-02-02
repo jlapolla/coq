@@ -19,6 +19,11 @@ Ltac reduce_value :=
   | |- value _ => constructor
   end.
 
+Ltac reduce_read_store :=
+  match goal with
+  | |- read_sr _ _ = _ => reflexivity
+  end.
+
 Ltac reduce_tnot :=
   match goal with
   | |- step (pair (tnot ?t) _) _ =>
@@ -215,8 +220,25 @@ Ltac reduce_tdefault :=
   | |- step (pair (tdefault _ _) _) _ => eapply STdefault
   end.
 
+Ltac reduce_tfield_r :=
+  match goal with
+  | |- step (pair (tfield_r _ ?t0) ?st) _ =>
+    match eval cbv in (valueb t0) with
+    | false => eapply STfield_r_r
+    | true =>
+      match t0 with
+      | tref ?n0 =>
+        match eval cbv in (read_sr n0 st) with
+        | tcl _ _ => eapply STfield_r_ref
+        end
+      | tcl _ _ => eapply STfield_r_cl
+      end
+    end
+  end.
+
 Ltac reduce_step :=
      reduce_value
+  || reduce_read_store
   || reduce_tnot
   || reduce_tand
   || reduce_tor
@@ -235,6 +257,7 @@ Ltac reduce_step :=
   || reduce_tcl
   || reduce_tnew
   || reduce_tdefault
+  || reduce_tfield_r
 .
 
 Ltac reduce :=
@@ -482,6 +505,24 @@ Let ex_reduce_tdefault:
   ex_reduce_tdefault_tm / st ==>* (tcl "foo" (|(tvoid, tvoid)|))%oo / st.
 Proof.
   unfold ex_reduce_tdefault_tm. intros. repeat reduce. Qed.
+
+Let ex_reduce_tfield_r_1_tm := ((
+    (tref 1)@2
+  )%oo).
+Let ex_reduce_tfield_r_1:
+  let st := alloc_sr (tcl "foo" (|(tvoid, tnat 1, tnat 2)|))%oo init_state in
+  ex_reduce_tfield_r_1_tm / st ==>* tnat 2 / st.
+Proof.
+  unfold ex_reduce_tfield_r_1_tm. repeat reduce. Qed.
+
+Let ex_reduce_tfield_r_2_tm := ((
+    tcl "foo" (|(tvoid, tnat 1, tnat 1 \+ tnat 1)|)@2
+  )%oo).
+Let ex_reduce_tfield_r_2:
+  forall st,
+  ex_reduce_tfield_r_2_tm / st ==>* tnat 2 / st.
+Proof.
+  unfold ex_reduce_tfield_r_2_tm. intros. repeat reduce. Qed.
 
 End Examples.
 
