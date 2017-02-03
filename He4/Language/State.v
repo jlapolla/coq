@@ -96,6 +96,16 @@ Definition push_call (args : tm) (st : state) : state :=
       ) st
     ).
 
+Definition pop_call (st : state) : state :=
+  set_call_stack (
+    CallStack.pop (get_call_stack st)
+  ) ( set_stack (
+        push (
+          return_refpass_args (hd nil (get_call_stack st)) (hd nil (get_stack st)) (nth 1 (get_stack st) nil)
+        ) (pop (pop (get_stack st)))
+      ) st
+    ).
+
 (** ** Stack functions *)
 
 Definition push_sf (sf : stack_frame) (st : state) : state :=
@@ -142,6 +152,7 @@ Arguments args_to_call_frame args /.
 Arguments args_to_stack_frame args context /.
 Arguments return_refpass_args cf source target /.
 Arguments push_call args st /.
+Arguments pop_call st /.
 Arguments push_sf sf st /.
 Arguments pop_sf st /.
 Arguments write_sk_hd n a st /.
