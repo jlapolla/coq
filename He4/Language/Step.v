@@ -193,14 +193,10 @@ Inductive step : step_relation :=
     forall n t0 t0' st st',
     t0 / st ==> t0' / st' ->
     tfield_r n t0 / st ==> tfield_r n t0' / st'
-  | STfield_r_ref :
+  | STfield_r :
     forall n n0 c t0 st,
     read_sr n0 st = tcl c t0 ->
     tfield_r n (tref n0) / st ==> rc_read n t0 / st
-  | STfield_r_cl :
-    forall n c t0 st,
-    value (tcl c t0) ->
-    tfield_r n (tcl c t0) / st ==> rc_read n t0 / st
 
   | STfield_w_r :
     forall n t0 t1 t1' st st',
@@ -231,6 +227,17 @@ Inductive step : step_relation :=
   | STvnew :
     forall n c0 st,
     tvnew n c0 / st ==> tcl c0 (rc_create n) / st
+
+(*
+  | STvfield_r_r :
+    forall n t0 t0' st st',
+    t0 / st ==> t0' / st' ->
+    tfield_r n t0 / st ==> tfield_r n t0' / st'
+  | STvfield_r :
+    forall n c t0 st,
+    value (tcl c t0) ->
+    tfield_r n (tcl c t0) / st ==> rc_read n t0 / st
+*)
 
   where "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2)).
 

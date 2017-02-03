@@ -251,9 +251,8 @@ Ltac reduce_tfield_r :=
       match t0 with
       | tref ?n0 =>
         match eval cbv in (read_sr n0 st) with
-        | tcl _ _ => eapply STfield_r_ref
+        | tcl _ _ => eapply STfield_r
         end
-      | tcl _ _ => eapply STfield_r_cl
       end
     end
   end.
@@ -560,23 +559,15 @@ Let ex_reduce_tnew:
 Proof.
   unfold ex_reduce_tnew_tm. repeat reduce. Qed.
 
-Let ex_reduce_tfield_r_1_tm := ((
-    (tref 1)@2
+Let ex_reduce_tfield_r_tm := ((
+    (treturn (tref 1))@2
   )%oo).
-Let ex_reduce_tfield_r_1:
-  let st := alloc_sr (tcl "foo" (|(tvoid, tnat 1, tnat 2)|))%oo init_state in
-  ex_reduce_tfield_r_1_tm / st ==>* tnat 2 / st.
+Let ex_reduce_tfield_r:
+  let st := push_sf nil (alloc_sr (tcl "foo" (|(tvoid, tnat 1, tnat 2)|))%oo init_state) in
+  let st' := pop_sf st in
+  ex_reduce_tfield_r_tm / st ==>* tnat 2 / st'.
 Proof.
-  unfold ex_reduce_tfield_r_1_tm. repeat reduce. Qed.
-
-Let ex_reduce_tfield_r_2_tm := ((
-    tcl "foo" (|(tvoid, tnat 1, tnat 1 \+ tnat 1)|)@2
-  )%oo).
-Let ex_reduce_tfield_r_2:
-  forall st,
-  ex_reduce_tfield_r_2_tm / st ==>* tnat 2 / st.
-Proof.
-  unfold ex_reduce_tfield_r_2_tm. intros. repeat reduce. Qed.
+  unfold ex_reduce_tfield_r_tm. repeat reduce. Qed.
 
 Let ex_reduce_tfield_w_1_tm := ((
     (tvar 0) <@ 1 <- (tnat 1 \+ tnat 1)
@@ -616,6 +607,17 @@ Let ex_reduce_tvnew:
   ex_reduce_tvnew_tm / st ==>* (tcl "foo" (|(tvoid, tvoid)|))%oo / st.
 Proof.
   unfold ex_reduce_tvnew_tm. intros. repeat reduce. Qed.
+
+(*
+Let ex_reduce_tvfield_r_tm := ((
+    tcl "foo" (|(tvoid, tnat 1, tnat 1 \+ tnat 1)|)@2
+  )%oo).
+Let ex_reduce_tvfield_r:
+  forall st,
+  ex_reduce_tvfield_r_tm / st ==>* tnat 2 / st.
+Proof.
+  unfold ex_reduce_tvfield_r_tm. intros. repeat reduce. Qed.
+*)
 
 End Examples.
 
