@@ -242,9 +242,9 @@ Ltac reduce_tnew :=
   | |- step (pair (tnew _ _) _) _ => eapply STnew
   end.
 
-Ltac reduce_tdefault :=
+Ltac reduce_tvnew :=
   match goal with
-  | |- step (pair (tdefault _ _) _) _ => eapply STdefault
+  | |- step (pair (tvnew _ _) _) _ => eapply STvnew
   end.
 
 Ltac reduce_tfield_r :=
@@ -318,7 +318,7 @@ Ltac reduce_step :=
   || reduce_treturn
   || reduce_tcl
   || reduce_tnew
-  || reduce_tdefault
+  || reduce_tvnew
   || reduce_tfield_r
   || reduce_tfield_w
 .
@@ -560,14 +560,14 @@ Let ex_reduce_tnew:
 Proof.
   unfold ex_reduce_tnew_tm. repeat reduce. Qed.
 
-Let ex_reduce_tdefault_tm := ((
-    tdefault 2 "foo"
+Let ex_reduce_tvnew_tm := ((
+    tvnew 2 "foo"
   )%oo).
-Let ex_reduce_tdefault:
+Let ex_reduce_tvnew:
   forall st,
-  ex_reduce_tdefault_tm / st ==>* (tcl "foo" (|(tvoid, tvoid)|))%oo / st.
+  ex_reduce_tvnew_tm / st ==>* (tcl "foo" (|(tvoid, tvoid)|))%oo / st.
 Proof.
-  unfold ex_reduce_tdefault_tm. intros. repeat reduce. Qed.
+  unfold ex_reduce_tvnew_tm. intros. repeat reduce. Qed.
 
 Let ex_reduce_tfield_r_1_tm := ((
     (tref 1)@2

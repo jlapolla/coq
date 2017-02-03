@@ -189,9 +189,9 @@ Inductive step : step_relation :=
     forall n c0 st,
     tnew n c0 / st ==> tref (length (get_store st)) / alloc_sr (tcl c0 (rc_create n)) st
 
-  | STdefault :
+  | STvnew :
     forall n c0 st,
-    tdefault n c0 / st ==> tcl c0 (rc_create n) / st
+    tvnew n c0 / st ==> tcl c0 (rc_create n) / st
 
   | STfield_r_r :
     forall n t0 t0' st st',
