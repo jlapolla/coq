@@ -46,6 +46,8 @@ Definition set_store (sr : store) (st : state) : state :=
 
 (** ** Function call *)
 
+Section FunctionCalls.
+
 Fixpoint args_to_call_frame (args : list tm) : call_frame :=
   match args with
   | nil => nil
@@ -105,6 +107,49 @@ Definition pop_call (st : state) : state :=
         ) (pop (pop (get_stack st)))
       ) st
     ).
+
+Hint Resolve Lt.lt_S_n List.nth_indep.
+
+Lemma args_to_call_frame_length:
+  forall args,
+  length (args_to_call_frame args) = length args.
+Proof with auto.
+  induction args...
+  destruct a; simpl...
+  destruct a; simpl...
+  Qed.
+
+Lemma args_to_call_frame_correct_1:
+  forall args m d1 d2,
+  lt m (length args) ->
+  (forall n, nth m args d1 <> trefpass (tvar n)) ->
+  nth m (args_to_call_frame args) d2 = None.
+Proof with auto.
+  induction args; try solve [intros; inversion H].
+  destruct m; simpl; intros d1 d2 Hlen Hstruct.
+  destruct a; simpl...
+  destruct a; simpl...
+  exfalso. apply (Hstruct n)...
+  destruct a; try solve [simpl; apply IHargs with d1; auto].
+  destruct a; try solve [simpl; apply IHargs with d1; auto].
+  Qed.
+
+Lemma args_to_call_frame_correct_2:
+  forall args m n d1 d2,
+  lt m (length args) ->
+  nth m args d1 = trefpass (tvar n) ->
+  nth m (args_to_call_frame args) d2 = Some n.
+Proof with auto.
+  induction args; try solve [intros; inversion H].
+  destruct m; simpl; intros n d1 d2 Hlen Hstruct.
+  destruct a; try solve [inversion Hstruct].
+  destruct a; try solve [inversion Hstruct].
+  inversion Hstruct; subst...
+  destruct a; try solve [simpl; apply IHargs with d1; auto].
+  destruct a; try solve [simpl; apply IHargs with d1; auto].
+  Qed.
+
+End FunctionCalls.
 
 (** ** Stack functions *)
 
