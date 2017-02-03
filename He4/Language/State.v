@@ -4,15 +4,31 @@ Require Import He4.Language.Store.
 
 (** * Types *)
 
-Definition state : Type := prod stack store.
+Inductive state : Type :=
+  | Cstate: stack -> store -> state.
 
 (** * Functions *)
 (** ** State accessors *)
 
-Definition get_stack (st : state) : stack := fst st.
-Definition get_store (st : state) : store := snd st.
-Definition set_stack (sk : stack) (st : state) : state := pair sk (get_store st).
-Definition set_store (sr : store) (st : state) : state := pair (get_stack st) sr.
+Definition get_stack (st : state) : stack :=
+  match st with
+  | Cstate sk _ => sk
+  end.
+
+Definition get_store (st : state) : store :=
+  match st with
+  | Cstate _ sr => sr
+  end.
+
+Definition set_stack (sk : stack) (st : state) : state :=
+  match st with
+  | Cstate _ sr => Cstate sk sr
+  end.
+
+Definition set_store (sr : store) (st : state) : state :=
+  match st with
+  | Cstate sk _ => Cstate sk sr
+  end.
 
 (** ** Stack functions *)
 
@@ -65,5 +81,5 @@ Arguments read_sr n st /.
 
 (** * Constants *)
 
-Definition init_state : state := pair init_stack init_store.
+Definition init_state : state := Cstate init_stack init_store.
 
