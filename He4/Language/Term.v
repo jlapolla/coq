@@ -40,10 +40,16 @@ Inductive tm : Type :=
 
   (* Classes *)
   | tcl : string -> tm -> tm
+
+  (* Reference types *)
   | tnew : nat -> string -> tm
   | tfield_r : nat -> tm -> tm
   | tfield_w : nat -> tm -> tm -> tm
-  | tvnew : nat -> string -> tm.
+
+  (* Value types *)
+  | tvnew : nat -> string -> tm
+  | tvfield_r : nat -> tm -> tm
+  | tvfield_w : nat -> tm -> tm -> tm.
 
 Module ObjectOrientedNotations.
 
@@ -56,6 +62,9 @@ Notation "'|(' t ',' .. ',' t0 ')|'" :=
 
 Notation "t '@' n0" :=
   (tfield_r n0 t) (at level 26, left associativity, format "t '@' n0") : oo_scope.
+
+Notation "t '?@' n0" :=
+  (tvfield_r n0 t) (at level 26, left associativity, format "t '?@' n0") : oo_scope.
 
 Notation "t '#' f t0" :=
   (tcall f (trc t t0)) (at level 26, left associativity, format "t  '#'  f t0") : oo_scope.
@@ -83,6 +92,9 @@ Notation "t '\||' t0" :=
 
 Notation "t '<@' n0 '<-' t1" :=
   (tfield_w n0 t1 t) (at level 70, format "t '<@' n0  '<-'  t1") : oo_scope.
+
+Notation "t '<?@' n0 '<-' t1" :=
+  (tvfield_w n0 t1 t) (at level 70, format "t '<?@' n0  '<-'  t1") : oo_scope.
 
 Notation "t '::=' t0" :=
   (tassign t t0) (at level 70, right associativity) : oo_scope.
@@ -124,8 +136,16 @@ Example ex_oo_notation_6:
   ((tnat 1)#"get_first"|()| @ 2 #"get_first"|()|)%oo = tcall "get_first" (trc (tfield_r 2 (tcall "get_first" (trc (tnat 1) tvoid))) tvoid).
 Proof. reflexivity. Abort.
 
+Example ex_tvfield_r:
+  ((tnat 1)#"get_first"|()| ?@ 2 #"get_first"|()|)%oo = tcall "get_first" (trc (tvfield_r 2 (tcall "get_first" (trc (tnat 1) tvoid))) tvoid).
+Proof. reflexivity. Abort.
+
 Example ex_oo_notation_6:
   ((tnat 1)#"get_first"|()| <@ 2 <- (tnat 2)#"get_first"|()|)%oo = tfield_w 2 (tcall "get_first" (trc (tnat 2) tvoid)) (tcall "get_first" (trc (tnat 1) tvoid)).
+Proof. reflexivity. Abort.
+
+Example ex_tvfield_w:
+  ((tnat 1)#"get_first"|()| <?@ 2 <- (tnat 2)#"get_first"|()|)%oo = tvfield_w 2 (tcall "get_first" (trc (tnat 2) tvoid)) (tcall "get_first" (trc (tnat 1) tvoid)).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_7:
