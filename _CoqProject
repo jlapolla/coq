@@ -4,10 +4,13 @@ He4/Discussion/Introduction.v
 He4/Discussion/NatRangeIterator.v
 He4/Iterator.v
 He4/Language/Core.v
+He4/Language/Env.v
 He4/Language/Record.v
 He4/Language/Step.v
+He4/Language/Stack.v
 He4/Language/State.v
 He4/Language/StepProp.v
+He4/Language/Store.v
 He4/Language/Term.v
 He4/Language/Value.v
 He4/Lists/List.v
