@@ -37,6 +37,7 @@ Inductive tm : Type :=
   | tcall : string -> tm -> tm
   | texec : string -> tm
   | treturn : tm -> tm
+  | trefpass : tm -> tm
 
   (* Classes *)
   | tcl : string -> tm -> tm
@@ -71,6 +72,9 @@ Notation "t '#' f t0" :=
 
 Notation "'!' t" :=
   (tnot t) (at level 35, right associativity, format "'!' t") : oo_scope.
+
+Notation "'\ref' t" :=
+  (trefpass t) (at level 35, right associativity, format "'\ref'  t") : oo_scope.
 
 Notation "t '\*' t0" :=
   (tmult t t0) (at level 40, left associativity, format "t  '\*'  t0") : oo_scope.
@@ -114,6 +118,10 @@ Delimit Scope oo_scope with oo.
 
 Example ex_oo_notation_1:
   (!(tbool true) \|| (tbool false) \&& (tbool false))%oo = tor (tnot (tbool true)) (tand (tbool false) (tbool false)).
+Proof. reflexivity. Abort.
+
+Example ex_trefpass:
+  (tnat 1#"get_first"|(\ref tnat 2, tnat 4)|)%oo = tcall "get_first" (trc (tnat 1) (trc (trefpass (tnat 2)) (trc (tnat 4) tvoid))).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_2:
