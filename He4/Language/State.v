@@ -1,3 +1,4 @@
+Require Import Coq.Lists.List.
 Require Import He4.Language.CallStack.
 Require Import He4.Language.Term.
 Require Import He4.Language.Stack.
@@ -53,6 +54,16 @@ Fixpoint args_to_call_frame (args : list tm) : call_frame :=
     end
   end.
 
+Fixpoint args_to_stack_frame (args : list tm) (context : stack_frame) : stack_frame :=
+  match args with
+  | nil => nil
+  | cons t args' =>
+    match t with
+    | trefpass (tvar n) => cons (nth n context tvoid) (args_to_stack_frame args' context)
+    | _ => cons t (args_to_stack_frame args' context)
+    end
+  end.
+
 (** ** Stack functions *)
 
 Definition push_sf (sf : stack_frame) (st : state) : state :=
@@ -96,6 +107,7 @@ Arguments set_stack sk st /.
 Arguments set_call_stack csk st /.
 Arguments set_store sr st /.
 Arguments args_to_call_frame args /.
+Arguments args_to_stack_frame args context /.
 Arguments push_sf sf st /.
 Arguments pop_sf st /.
 Arguments write_sk_hd n a st /.
