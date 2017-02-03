@@ -149,6 +149,45 @@ Proof with auto.
   destruct a; try solve [simpl; apply IHargs with d1; auto].
   Qed.
 
+Lemma args_to_stack_frame_length:
+  forall args context,
+  length (args_to_stack_frame args context) = length args.
+Proof with auto.
+  induction args...
+  destruct a; simpl...
+  destruct a; simpl...
+  Qed.
+
+Lemma args_to_stack_frame_correct_1:
+  forall args m context d1 d2 d3,
+  lt m (length args) ->
+  (forall n, nth m args d1 <> trefpass (tvar n)) ->
+  nth m (args_to_stack_frame args context) d2 = nth m args d3.
+Proof with auto.
+  induction args; try solve [intros; inversion H].
+  destruct m; simpl; intros context d1 d2 d3 Hlen Hstruct.
+  destruct a; simpl...
+  destruct a; simpl...
+  exfalso. apply (Hstruct n)...
+  destruct a; try solve [simpl; apply IHargs with d1; auto].
+  destruct a; try solve [simpl; apply IHargs with d1; auto].
+  Qed.
+
+Lemma args_to_stack_frame_correct_2:
+  forall args m n context d1 d2,
+  lt m (length args) ->
+  nth m args d1 = trefpass (tvar n) ->
+  nth m (args_to_stack_frame args context) d2 = nth n context tvoid.
+Proof with auto.
+  induction args; try solve [intros; inversion H].
+  destruct m; simpl; intros n context d1 d2 Hlen Hstruct.
+  destruct a; try solve [inversion Hstruct].
+  destruct a; try solve [inversion Hstruct].
+  inversion Hstruct; simpl...
+  destruct a; try solve [simpl; apply IHargs with d1; auto].
+  destruct a; try solve [simpl; apply IHargs with d1; auto].
+  Qed.
+
 End FunctionCalls.
 
 (** ** Stack functions *)
