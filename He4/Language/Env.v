@@ -19,28 +19,6 @@ Ltac reduce_value :=
   | |- value _ => constructor
   end.
 
-Ltac reduce_var :=
-  match goal with
-  | |- _ = tvar _ => reflexivity
-  end.
-
-Ltac reduce_not_var :=
-  match goal with
-  | |- forall n, _ <> tvar n => intros
-  | |- _ <> tvar _ => unfold not
-  | |- _ = tvar _ -> False => intros
-  | H: _ = tvar _ |- False => inversion H
-  end.
-
-Ltac reduce_value_or_var :=
-  match goal with
-  | |- value ?t \/ ?t = tvar _ =>
-    match t with
-    | tvar _ => right
-    | _ => left
-    end
-  end.
-
 Ltac reduce_read_stack :=
   match goal with
   | |- read_sk_hd _ _ = _ => reflexivity
@@ -283,9 +261,6 @@ Ltac reduce_tvnew :=
 
 Ltac reduce_step :=
      reduce_value
-  || reduce_var
-  || reduce_not_var
-  || reduce_value_or_var
   || reduce_read_stack
   || reduce_read_store
   || reduce_tnot
