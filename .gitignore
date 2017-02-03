@@ -1,5 +1,5 @@
-Makefile
-Makefile.bak
+/Makefile
+/Makefile.bak
 *.glob
 *.v.d
 *.vo
