@@ -259,6 +259,18 @@ Ltac reduce_tvnew :=
   | |- step (pair (tvnew _ _) _) _ => eapply STvnew
   end.
 
+Ltac reduce_tvfield_r :=
+  match goal with
+  | |- step (pair (tvfield_r _ ?t0) ?st) _ =>
+    match eval cbv in (valueb t0) with
+    | false => eapply STvfield_r_r
+    | true =>
+      match t0 with
+      | tcl _ _ => eapply STvfield_r
+      end
+    end
+  end.
+
 Ltac reduce_step :=
      reduce_value
   || reduce_read_stack
@@ -283,6 +295,7 @@ Ltac reduce_step :=
   || reduce_tfield_r
   || reduce_tfield_w
   || reduce_tvnew
+  || reduce_tvfield_r
 .
 
 Ltac reduce :=
@@ -551,7 +564,6 @@ Let ex_reduce_tvnew:
 Proof.
   unfold ex_reduce_tvnew_tm. intros. repeat reduce. Qed.
 
-(*
 Let ex_reduce_tvfield_r_tm := ((
     tcl "foo" (|(tvoid, tnat 1, tnat 1 \+ tnat 1)|)?@2
   )%oo).
@@ -561,6 +573,7 @@ Let ex_reduce_tvfield_r:
 Proof.
   unfold ex_reduce_tvfield_r_tm. intros. repeat reduce. Qed.
 
+(*
 Let ex_reduce_tvfield_w_tm := ((
     (tvar 0) <?@ 1 <- (tnat 1 \+ tnat 1)
   )%oo).
