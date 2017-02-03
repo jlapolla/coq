@@ -41,9 +41,9 @@ Inductive tm : Type :=
   (* Classes *)
   | tcl : string -> tm -> tm
   | tnew : nat -> string -> tm
-  | tvnew : nat -> string -> tm
   | tfield_r : nat -> tm -> tm
-  | tfield_w : nat -> tm -> tm -> tm.
+  | tfield_w : nat -> tm -> tm -> tm
+  | tvnew : nat -> string -> tm.
 
 Module ObjectOrientedNotations.
 

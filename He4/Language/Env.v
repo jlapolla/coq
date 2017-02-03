@@ -242,11 +242,6 @@ Ltac reduce_tnew :=
   | |- step (pair (tnew _ _) _) _ => eapply STnew
   end.
 
-Ltac reduce_tvnew :=
-  match goal with
-  | |- step (pair (tvnew _ _) _) _ => eapply STvnew
-  end.
-
 Ltac reduce_tfield_r :=
   match goal with
   | |- step (pair (tfield_r _ ?t0) ?st) _ =>
@@ -294,6 +289,11 @@ Ltac reduce_tfield_w :=
     end
   end.
 
+Ltac reduce_tvnew :=
+  match goal with
+  | |- step (pair (tvnew _ _) _) _ => eapply STvnew
+  end.
+
 Ltac reduce_step :=
      reduce_value
   || reduce_var
@@ -318,9 +318,9 @@ Ltac reduce_step :=
   || reduce_treturn
   || reduce_tcl
   || reduce_tnew
-  || reduce_tvnew
   || reduce_tfield_r
   || reduce_tfield_w
+  || reduce_tvnew
 .
 
 Ltac reduce :=
@@ -560,15 +560,6 @@ Let ex_reduce_tnew:
 Proof.
   unfold ex_reduce_tnew_tm. repeat reduce. Qed.
 
-Let ex_reduce_tvnew_tm := ((
-    tvnew 2 "foo"
-  )%oo).
-Let ex_reduce_tvnew:
-  forall st,
-  ex_reduce_tvnew_tm / st ==>* (tcl "foo" (|(tvoid, tvoid)|))%oo / st.
-Proof.
-  unfold ex_reduce_tvnew_tm. intros. repeat reduce. Qed.
-
 Let ex_reduce_tfield_r_1_tm := ((
     (tref 1)@2
   )%oo).
@@ -616,6 +607,15 @@ Let ex_reduce_tfield_w_3:
   ex_reduce_tfield_w_3_tm / st ==>* tvoid / st'.
 Proof.
   unfold ex_reduce_tfield_w_3_tm. repeat reduce. Existential 1 := O. Qed.
+
+Let ex_reduce_tvnew_tm := ((
+    tvnew 2 "foo"
+  )%oo).
+Let ex_reduce_tvnew:
+  forall st,
+  ex_reduce_tvnew_tm / st ==>* (tcl "foo" (|(tvoid, tvoid)|))%oo / st.
+Proof.
+  unfold ex_reduce_tvnew_tm. intros. repeat reduce. Qed.
 
 End Examples.
 

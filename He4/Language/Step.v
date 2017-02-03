@@ -189,10 +189,6 @@ Inductive step : step_relation :=
     forall n c0 st,
     tnew n c0 / st ==> tref (length (get_store st)) / alloc_sr (tcl c0 (rc_create n)) st
 
-  | STvnew :
-    forall n c0 st,
-    tvnew n c0 / st ==> tcl c0 (rc_create n) / st
-
   | STfield_r_r :
     forall n t0 t0' st st',
     t0 / st ==> t0' / st' ->
@@ -231,6 +227,10 @@ Inductive step : step_relation :=
     value v0 ->
     read_sr n0 st = tcl c t0 ->
     tfield_w n v0 (tref n0) / st ==> tvoid / write_sr n0 (tcl c (rc_write n v0 t0)) st
+
+  | STvnew :
+    forall n c0 st,
+    tvnew n c0 / st ==> tcl c0 (rc_create n) / st
 
   where "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2)).
 
