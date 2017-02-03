@@ -50,7 +50,11 @@ Fixpoint args_to_call_frame (args : list tm) : call_frame :=
   | nil => nil
   | cons t args' =>
     match t with
-    | trefpass (tvar n) => cons (Some n) (args_to_call_frame args')
+    | trefpass t' =>
+      match t' with
+      | tvar n => cons (Some n) (args_to_call_frame args')
+      | _ => cons None (args_to_call_frame args')
+      end
     | _ => cons None (args_to_call_frame args')
     end
   end.
@@ -60,7 +64,11 @@ Fixpoint args_to_stack_frame (args : list tm) (context : stack_frame) : stack_fr
   | nil => nil
   | cons t args' =>
     match t with
-    | trefpass (tvar n) => cons (nth n context tvoid) (args_to_stack_frame args' context)
+    | trefpass t' =>
+      match t' with
+      | tvar n => cons (nth n context tvoid) (args_to_stack_frame args' context)
+      | _ => cons t (args_to_stack_frame args' context)
+      end
     | _ => cons t (args_to_stack_frame args' context)
     end
   end.
