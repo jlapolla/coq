@@ -226,7 +226,6 @@ Inductive step : step_relation :=
     value (tcl c t0) ->
     tvfield_r n (tcl c t0) / st ==> rc_read n t0 / st
 
-(*
   | STvfield_w_l :
     forall n t0 t0' t1 st st',
     t0 / st ==> t0' / st' ->
@@ -236,7 +235,6 @@ Inductive step : step_relation :=
     value v0 ->
     read_sk_hd n0 st = tcl c t0 ->
     tvfield_w n v0 (tvar n0) / st ==> tvoid / write_sk_hd n0 (tcl c (rc_write n v0 t0)) st
-*)
 
   where "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2)).
 
