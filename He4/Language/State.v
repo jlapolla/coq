@@ -41,6 +41,18 @@ Definition set_store (sr : store) (st : state) : state :=
   | Cstate sk csk _ => Cstate sk csk sr
   end.
 
+(** ** Function call *)
+
+Fixpoint args_to_call_frame (args : list tm) : call_frame :=
+  match args with
+  | nil => nil
+  | cons t args' =>
+    match t with
+    | trefpass (tvar n) => cons (Some n) (args_to_call_frame args')
+    | _ => cons None (args_to_call_frame args')
+    end
+  end.
+
 (** ** Stack functions *)
 
 Definition push_sf (sf : stack_frame) (st : state) : state :=
@@ -83,6 +95,7 @@ Arguments get_store st /.
 Arguments set_stack sk st /.
 Arguments set_call_stack csk st /.
 Arguments set_store sr st /.
+Arguments args_to_call_frame args /.
 Arguments push_sf sf st /.
 Arguments pop_sf st /.
 Arguments write_sk_hd n a st /.
