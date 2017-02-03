@@ -200,25 +200,14 @@ Inductive step : step_relation :=
 
   | STfield_w_r :
     forall n t0 t1 t1' st st',
-    (forall n0, t1 <> tvar n0) ->
     t1 / st ==> t1' / st' ->
     tfield_w n t0 t1 / st ==> tfield_w n t0 t1' / st'
   | STfield_w_l :
-    forall n n0 t0 t0' v1 st st',
-    value v1 \/ v1 = tvar n0 ->
+    forall n t0 t0' v1 st st',
+    value v1 ->
     t0 / st ==> t0' / st' ->
     tfield_w n t0 v1 / st ==> tfield_w n t0' v1 / st'
-  | STfield_w_var :
-    forall n n0 t0 v0 c st,
-    value v0 ->
-    read_sk_hd n0 st = tcl c t0 ->
-    tfield_w n v0 (tvar n0) / st ==> tvoid / write_sk_hd n0 (tcl c (rc_write n v0 t0)) st
-  | STfield_w_var_ref :
-    forall n n0 n1 v0 st,
-    value v0 ->
-    read_sk_hd n0 st = tref n1 ->
-    tfield_w n v0 (tvar n0) / st ==> tfield_w n v0 (tref n1) / st
-  | STfield_w_ref :
+  | STfield_w :
     forall n n0 t0 v0 c st,
     value v0 ->
     read_sr n0 st = tcl c t0 ->
@@ -237,6 +226,16 @@ Inductive step : step_relation :=
     forall n c t0 st,
     value (tcl c t0) ->
     tfield_r n (tcl c t0) / st ==> rc_read n t0 / st
+
+  | STvfield_w_l :
+    forall n t0 t0' t1 st st',
+    t0 / st ==> t0' / st' ->
+    tfield_w n t0 t1 / st ==> tfield_w n t0' t1 / st'
+  | STvfield_w :
+    forall n n0 t0 v0 c st,
+    value v0 ->
+    read_sk_hd n0 st = tcl c t0 ->
+    tfield_w n v0 (tvar n0) / st ==> tvoid / write_sk_hd n0 (tcl c (rc_write n v0 t0)) st
 *)
 
   where "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2)).
@@ -297,22 +296,6 @@ Proof with auto.
   try solve [rewrite_invert];
   try solve [equality_contradiction];
   try solve [step_impossible].
-  (* STfield_w_r and STfield_w_l *)
-  destruct H5 as [H5 | H5].
-  { value_step_impossible. }
-  { exfalso. apply (H n1). assumption. }
-  (* STfield_w_r and STfield_w_var *)
-  exfalso. apply (H n1). reflexivity.
-  (* STfield_w_r and STfield_w_var_ref *)
-  exfalso. apply (H n1). reflexivity.
-  (* STfield_w_l and STfield_w_r *)
-  destruct H as [H | H].
-  { value_step_impossible. }
-  { exfalso. apply (H5 n0). assumption. }
-  (* STfield_w_var and STfield_w_r *)
-  exfalso. apply (H6 n0). reflexivity.
-  (* STfield_w_var_ref and STfield_w_r *)
-  exfalso. apply (H6 n0). reflexivity.
   Qed.
 
 End Steps.
