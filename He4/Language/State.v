@@ -1,3 +1,4 @@
+Require Import He4.Language.CallStack.
 Require Import He4.Language.Term.
 Require Import He4.Language.Stack.
 Require Import He4.Language.Store.
@@ -5,29 +6,39 @@ Require Import He4.Language.Store.
 (** * Types *)
 
 Inductive state : Type :=
-  | Cstate: stack -> store -> state.
+  | Cstate: stack -> call_stack -> store -> state.
 
 (** * Functions *)
 (** ** State accessors *)
 
 Definition get_stack (st : state) : stack :=
   match st with
-  | Cstate sk _ => sk
+  | Cstate sk _ _ => sk
+  end.
+
+Definition get_call_stack (st : state) : call_stack :=
+  match st with
+  | Cstate _ csk _ => csk
   end.
 
 Definition get_store (st : state) : store :=
   match st with
-  | Cstate _ sr => sr
+  | Cstate _ _ sr => sr
   end.
 
 Definition set_stack (sk : stack) (st : state) : state :=
   match st with
-  | Cstate _ sr => Cstate sk sr
+  | Cstate _ csk sr => Cstate sk csk sr
+  end.
+
+Definition set_call_stack (csk : call_stack) (st : state) : state :=
+  match st with
+  | Cstate sk _ sr => Cstate sk csk sr
   end.
 
 Definition set_store (sr : store) (st : state) : state :=
   match st with
-  | Cstate sk _ => Cstate sk sr
+  | Cstate sk csk _ => Cstate sk csk sr
   end.
 
 (** ** Stack functions *)
@@ -67,8 +78,10 @@ Definition read_sr (n : nat) (st : state) : tm :=
            https://coq.inria.fr/distrib/8.4pl4/refman/Reference-Manual010.html##sec395</a># *)
 
 Arguments get_stack st /.
+Arguments get_call_stack st /.
 Arguments get_store st /.
 Arguments set_stack sk st /.
+Arguments set_call_stack csk st /.
 Arguments set_store sr st /.
 Arguments push_sf sf st /.
 Arguments pop_sf st /.
@@ -81,5 +94,5 @@ Arguments read_sr n st /.
 
 (** * Constants *)
 
-Definition init_state : state := Cstate init_stack init_store.
+Definition init_state : state := Cstate init_stack init_call_stack init_store.
 
