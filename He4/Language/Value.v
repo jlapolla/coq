@@ -10,6 +10,7 @@ Inductive value : tm -> Prop :=
   | vbool : forall b, value (tbool b)
   | vref : forall n, value (tref n)
   | vrc : forall t rc, value t -> value rc -> value (trc t rc)
+  | vrefpass : forall t, value (trefpass t)
 
   (* Classes *)
   | vcl : forall c t, value t -> value (tcl c t).
@@ -25,6 +26,7 @@ Fixpoint valueb (x : tm) : bool :=
     | true => valueb rc
     | false => false
     end
+  | trefpass _ => true
   | tcl _ t => valueb t
   | _ => false
   end.
