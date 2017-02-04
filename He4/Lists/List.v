@@ -8,7 +8,7 @@ Hint Resolve Lt.lt_S_n List.nth_indep.
 
 Variable A : Type.
 
-Fixpoint replace (n : nat) (a : A) (l : list A) : list A :=
+Fixpoint replace (n : nat) (a : A) (l : list A) {struct l} : list A :=
   match l with
   | nil => nil
   | cons a' l' =>
