@@ -82,7 +82,7 @@ Fixpoint return_refpass_args (cf : call_frame) (source target : stack_frame) : s
   | cons c cf' =>
     match c with
     | None => return_refpass_args cf' (tl source) target
-    | Some n => return_refpass_args cf' (tl source) (replace n (nth 0 source tvoid) target)
+    | Some n => return_refpass_args cf' (tl source) (replace n (hd tvoid source) target)
     end
   end.
 
@@ -187,6 +187,29 @@ Proof with auto.
   destruct a; try solve [simpl; apply IHargs with d1; auto].
   destruct a; try solve [simpl; apply IHargs with d1; auto].
   Qed.
+
+Lemma return_refpass_args_length:
+  forall cf target source,
+  length (return_refpass_args cf source target) = length target.
+Proof.
+  Abort.
+
+Lemma return_refpass_args_correct_1:
+  forall cf target n source d1 d2 d3,
+  (forall m, lt m (length cf) -> nth m cf d1 <> Some n) ->
+  lt n (length target) ->
+  nth n (return_refpass_args cf source target) d2 = nth n target d3.
+Proof.
+  Abort.
+
+Lemma return_refpass_args_correct_2:
+  forall cf target m n source d1 d2,
+  lt m (length cf) ->
+  nth m cf d1 = Some n ->
+  lt n (length target) ->
+  nth n (return_refpass_args cf source target) d2 = nth m source tvoid.
+Proof.
+  Abort.
 
 End FunctionCalls.
 
