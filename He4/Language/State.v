@@ -256,15 +256,231 @@ Definition refpass_unique (cf : call_frame) : Prop :=
   nth m' cf d2 = Some n ->
   m' = m.
 
+Lemma refpass_unique_nil:
+  refpass_unique nil.
+Proof with auto.
+  unfold refpass_unique.
+  intros. inversion H.
+  Qed.
+
+Lemma refpass_unique_cons:
+  forall cf a,
+  refpass_unique (cons a cf) ->
+  refpass_unique cf.
+Proof with auto.
+  induction cf. intros. apply refpass_unique_nil.
+  unfold refpass_unique. intros.
+  apply (H (S m) (S m') n d1 d2) in H3.
+    inversion H3. reflexivity.
+    simpl. apply Lt.lt_n_S. assumption.
+    simpl. destruct m; assumption.
+    simpl. apply Lt.lt_n_S. assumption.
+  Qed.
+
 Lemma return_refpass_args_correct_2:
-  forall cf target m n source d1 d2,
+  forall source cf target n m d1 d2,
   refpass_unique cf ->
   lt m (length cf) ->
   nth m cf d1 = Some n ->
   lt n (length target) ->
   nth n (return_refpass_args cf source target) d2 = nth m source tvoid.
-Proof.
-  Abort.
+Proof with auto.
+  induction source.
+  (* source = nil *)
+    induction cf. intros. inversion H0.
+    (* cf <> nil *)
+    destruct target. intros. inversion H2.
+    (* target <> nil *)
+    destruct a.
+    (* cf = Some n0 :: cf' *)
+      intros n0. destruct (EqNat.beq_nat n0 n) eqn:Hnvals.
+      (* n0 = n *)
+        apply EqNat.beq_nat_true_iff in Hnvals. subst.
+        intros.
+        assert (m = 0) as H3.
+        {
+          unfold refpass_unique in H.
+          apply (H 0 m n d1 d1).
+            simpl. apply Lt.lt_0_Sn.
+            reflexivity.
+            assumption.
+            assumption.
+        }
+        subst.
+        destruct n.
+        (* n = 0 *)
+          simpl return_refpass_args.
+          rewrite return_refpass_args_correct_1 with (d1 := d1) (d3 := d2).
+            reflexivity.
+            intros m H3 H4. unfold refpass_unique in H.
+              simpl length in H, H0.
+              apply (H 0 (S m) 0 d1 d1) in H4; try solve [assumption].
+                inversion H4.
+                apply Lt.lt_n_S. assumption.
+            simpl. apply Lt.lt_0_Sn.
+        (* n = S n' *)
+          simpl return_refpass_args.
+          rewrite return_refpass_args_correct_1 with (d1 := d1) (d3 := d2).
+            simpl. rewrite replace_correct_2.
+              reflexivity.
+              apply Lt.lt_S_n. assumption.
+            intros m H3 H4. unfold refpass_unique in H.
+              simpl length in H, H0.
+              apply (H 0 (S m) (S n) d1 d1) in H4; try solve [assumption].
+                inversion H4.
+                apply Lt.lt_n_S. assumption.
+            simpl. rewrite replace_length. assumption.
+      (* n0 <> n *)
+        apply EqNat.beq_nat_false_iff in Hnvals.
+        destruct n0; destruct n.
+        (* n0 = 0 /\ n = 0 *)
+          exfalso. apply Hnvals. reflexivity.
+        (* n0 = 0 /\ n = S n *)
+          destruct m.
+          (* m = 0 *)
+            intros. inversion H1.
+          (* m = S m' *)
+            intros. simpl return_refpass_args.
+            rewrite IHcf with (m := m) (d1 := d1).
+              destruct m; reflexivity.
+              apply refpass_unique_cons in H. assumption.
+              simpl in H0. apply Lt.lt_S_n. assumption.
+              assumption.
+              simpl. rewrite replace_length. assumption.
+        (* n0 = S n0' /\ n = 0 *)
+          destruct m.
+          (* m = 0 *)
+            intros. inversion H1.
+          (* m = S m' *)
+            intros. simpl return_refpass_args.
+            rewrite IHcf with (m := m) (d1 := d1).
+              destruct m; reflexivity.
+              apply refpass_unique_cons in H. assumption.
+              simpl in H0. apply Lt.lt_S_n. assumption.
+              assumption.
+              assumption.
+        (* n0 = S n0' /\ n = S n' *)
+          destruct m.
+          (* m = 0 *)
+            intros. inversion H1; subst. exfalso. apply Hnvals. reflexivity.
+          (* m = S m' *)
+            intros. simpl return_refpass_args.
+            rewrite IHcf with (m := m) (d1 := d1).
+              destruct m; reflexivity.
+              apply refpass_unique_cons in H. assumption.
+              simpl in H0. apply Lt.lt_S_n. assumption.
+              assumption.
+              simpl. rewrite replace_length. assumption.
+    (* cf = None :: cf' *)
+      destruct m.
+      (* m = 0 *)
+        intros. inversion H1.
+      (* m = S m' *)
+        intros. simpl return_refpass_args.
+        rewrite IHcf with (m := m) (d1 := d1).
+          destruct m; reflexivity.
+          apply refpass_unique_cons in H. assumption.
+          simpl in H0. apply Lt.lt_S_n. assumption.
+          assumption.
+          simpl. assumption.
+  (* source <> nil *)
+    destruct cf. intros. inversion H0.
+    (* cf <> nil *)
+    destruct target. intros. inversion H2.
+    (* target <> nil *)
+    destruct o.
+    (* cf = Some n0 :: cf' *)
+      intros n0. destruct (EqNat.beq_nat n0 n) eqn:Hnvals.
+      (* n0 = n *)
+        apply EqNat.beq_nat_true_iff in Hnvals. subst.
+        intros.
+        assert (m = 0) as H3.
+        {
+          unfold refpass_unique in H.
+          apply (H 0 m n d1 d1).
+            simpl. apply Lt.lt_0_Sn.
+            reflexivity.
+            assumption.
+            assumption.
+        }
+        subst.
+        destruct n.
+        (* n = 0 *)
+          simpl return_refpass_args.
+          rewrite return_refpass_args_correct_1 with (d1 := d1) (d3 := d2).
+            reflexivity.
+            intros m H3 H4. unfold refpass_unique in H.
+              simpl length in H, H0.
+              apply (H 0 (S m) 0 d1 d1) in H4; try solve [assumption].
+                inversion H4.
+                apply Lt.lt_n_S. assumption.
+            simpl. apply Lt.lt_0_Sn.
+        (* n = S n' *)
+          simpl return_refpass_args.
+          rewrite return_refpass_args_correct_1 with (d1 := d1) (d3 := d2).
+            simpl. rewrite replace_correct_2.
+              reflexivity.
+              apply Lt.lt_S_n. assumption.
+            intros m H3 H4. unfold refpass_unique in H.
+              simpl length in H, H0.
+              apply (H 0 (S m) (S n) d1 d1) in H4; try solve [assumption].
+                inversion H4.
+                apply Lt.lt_n_S. assumption.
+            simpl. rewrite replace_length. assumption.
+      (* n0 <> n *)
+        apply EqNat.beq_nat_false_iff in Hnvals.
+        destruct n0; destruct n.
+        (* n0 = 0 /\ n = 0 *)
+          exfalso. apply Hnvals. reflexivity.
+        (* n0 = 0 /\ n = S n *)
+          destruct m.
+          (* m = 0 *)
+            intros. inversion H1.
+          (* m = S m' *)
+            intros. simpl.
+            rewrite IHsource with (m := m) (d1 := d1).
+              reflexivity.
+              apply refpass_unique_cons in H. assumption.
+              simpl in H0. apply Lt.lt_S_n. assumption.
+              assumption.
+              simpl. rewrite replace_length. assumption.
+        (* n0 = S n0' /\ n = 0 *)
+          destruct m.
+          (* m = 0 *)
+            intros. inversion H1.
+          (* m = S m' *)
+            intros. simpl.
+            rewrite IHsource with (m := m) (d1 := d1).
+              destruct m; reflexivity.
+              apply refpass_unique_cons in H. assumption.
+              simpl in H0. apply Lt.lt_S_n. assumption.
+              assumption.
+              assumption.
+        (* n0 = S n0' /\ n = S n' *)
+          destruct m.
+          (* m = 0 *)
+            intros. inversion H1; subst. exfalso. apply Hnvals. reflexivity.
+          (* m = S m' *)
+            intros. simpl.
+            rewrite IHsource with (m := m) (d1 := d1).
+              destruct m; reflexivity.
+              apply refpass_unique_cons in H. assumption.
+              simpl in H0. apply Lt.lt_S_n. assumption.
+              assumption.
+              simpl. rewrite replace_length. assumption.
+    (* cf = None :: cf' *)
+      destruct m.
+      (* m = 0 *)
+        intros. inversion H1.
+      (* m = S m' *)
+        intros. simpl.
+        rewrite IHsource with (m := m) (d1 := d1).
+          destruct m; reflexivity.
+          apply refpass_unique_cons in H. assumption.
+          simpl in H0. apply Lt.lt_S_n. assumption.
+          assumption.
+          simpl. assumption.
+  Qed.
 
 End FunctionCalls.
 
