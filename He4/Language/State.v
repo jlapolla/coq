@@ -207,8 +207,17 @@ Lemma return_refpass_args_correct_1:
 Proof.
   Abort.
 
+Definition refpass_unique (cf : call_frame) : Prop :=
+  forall m m' n d1 d2,
+  lt m (length cf) ->
+  nth m cf d1 = Some n ->
+  lt m' (length cf) ->
+  nth m' cf d2 = Some n ->
+  m' = m.
+
 Lemma return_refpass_args_correct_2:
   forall cf target m n source d1 d2,
+  refpass_unique cf ->
   lt m (length cf) ->
   nth m cf d1 = Some n ->
   lt n (length target) ->
