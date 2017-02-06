@@ -191,8 +191,13 @@ Proof with auto.
 Lemma return_refpass_args_length:
   forall cf target source,
   length (return_refpass_args cf source target) = length target.
-Proof.
-  Abort.
+Proof with auto using replace_length.
+  induction cf...
+  destruct target.
+  destruct a; intros; simpl return_refpass_args...
+  destruct a; try solve [intros; simpl; rewrite IHcf; auto].
+  destruct n; intros; simpl; rewrite IHcf; simpl...
+  Qed.
 
 Lemma return_refpass_args_correct_1:
   forall cf target n source d1 d2 d3,
