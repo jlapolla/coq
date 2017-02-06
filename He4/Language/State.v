@@ -204,8 +204,49 @@ Lemma return_refpass_args_correct_1:
   (forall m, lt m (length cf) -> nth m cf d1 <> Some n) ->
   lt n (length target) ->
   nth n (return_refpass_args cf source target) d2 = nth n target d3.
-Proof.
-  Abort.
+Proof with auto.
+  induction cf. simpl...
+  (* cf <> nil *)
+  destruct target. intros. inversion H0.
+  (* target <> nil *)
+  destruct a.
+  (* cf = Some n0 :: cf' *)
+    intros n0. destruct (EqNat.beq_nat n0 n) eqn:Hnvals.
+    (* n0 = n *)
+      apply EqNat.beq_nat_true_iff in Hnvals. subst.
+      intros. exfalso. apply (H 0).
+        simpl. apply Lt.lt_0_Sn.
+        reflexivity.
+    (* n0 <> n*)
+      apply EqNat.beq_nat_false_iff in Hnvals.
+      destruct n; destruct n0.
+      (* n0 = 0 /\ n = 0 *)
+        exfalso. apply Hnvals. reflexivity.
+      (* n0 = S n0' /\ n = 0 *)
+        intros. simpl return_refpass_args. rewrite IHcf with (d1 := d1) (d3 := d3).
+          reflexivity.
+          intros. apply (H (S m)). simpl. apply Lt.lt_n_S. assumption.
+          simpl. assumption.
+      (* n0 = 0 /\ n = S n' *)
+        intros. simpl return_refpass_args. rewrite IHcf with (d1 := d1) (d3 := d3).
+          reflexivity.
+          intros. apply (H (S m)). simpl. apply Lt.lt_n_S. assumption.
+          simpl. rewrite replace_length. assumption.
+      (* n0 = S n0' /\ n = S n' *)
+        intros. simpl return_refpass_args. rewrite IHcf with (d1 := d1) (d3 := d3).
+          simpl. rewrite replace_correct_1 with (d2 := d3).
+            reflexivity.
+            apply Lt.lt_S_n. assumption.
+            apply not_eq_n. assumption.
+        intros. apply (H (S m)).
+          simpl. apply Lt.lt_n_S. assumption.
+        simpl. rewrite replace_length. assumption.
+  (* cf = None :: cf' *)
+    intros. simpl return_refpass_args. rewrite IHcf with (d1 := d1) (d3 := d3).
+      reflexivity.
+      intros. apply (H (S m)). simpl. apply Lt.lt_n_S. assumption.
+      simpl. assumption.
+  Qed.
 
 Definition refpass_unique (cf : call_frame) : Prop :=
   forall m m' n d1 d2,
