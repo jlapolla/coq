@@ -540,6 +540,70 @@ Proof.
   induction st. intros. reflexivity.
   Qed.
 
+Lemma pop_call_length_1:
+  forall st n,
+  length (get_call_stack st) = S n ->
+  length (get_call_stack (pop_call st)) = n.
+Proof.
+  induction st. intros n. simpl.
+  destruct c. intros. inversion H.
+  simpl. intros. injection H. intros. assumption.
+  Qed.
+
+Lemma pop_call_length_2:
+  forall st n,
+  length (get_stack st) = S (S n) ->
+  length (get_stack (pop_call st)) = S n.
+Proof.
+  induction st. intros n. simpl.
+  destruct s. simpl. intros. discriminate H.
+  destruct s1. simpl. intros. discriminate H.
+  simpl. intros. injection H. intros. rewrite H0. reflexivity.
+  Qed.
+
+(** Tail of [call_stack] is unchanged. *)
+
+Lemma pop_call_correct_1:
+  forall st m d1 d2,
+  lt (S m) (length (get_call_stack st)) ->
+  nth m (get_call_stack (pop_call st)) d1 = nth (S m) (get_call_stack st) d2.
+Proof.
+  induction st. intros m d1 d2. simpl.
+  destruct c. intros. inversion H.
+  simpl. intros. apply nth_indep. apply Lt.lt_S_n. assumption.
+  Qed.
+
+(** Tail of [stack] is unchanged. *)
+
+Lemma pop_call_correct_2:
+  forall st m d1 d2,
+  lt (S (S m)) (length (get_stack st)) ->
+  nth (S m) (get_stack (pop_call st)) d1 = nth (S (S m)) (get_stack st) d2.
+Proof.
+  induction st. intros m d1 d2. simpl.
+  destruct s. intros. inversion H.
+  destruct s1. intros. simpl in H. apply Lt.lt_S_n in H. inversion H.
+  simpl. intros. apply nth_indep. do 2 apply Lt.lt_S_n. assumption.
+  Qed.
+
+(** Head of [stack] is changed. *)
+
+Lemma pop_call_correct_3:
+  forall st d,
+  hd d (get_stack (pop_call st)) = return_refpass_args (hd nil (get_call_stack st)) (hd nil (get_stack st)) (nth 1 (get_stack st) nil).
+Proof.
+  induction st. reflexivity.
+  Qed.
+
+(** [store] is unchanged. *)
+
+Lemma pop_call_correct_4:
+  forall st,
+  get_store (pop_call st) = get_store st.
+Proof.
+  induction st. reflexivity.
+  Qed.
+
 End FunctionCalls.
 
 (** ** Stack functions *)
