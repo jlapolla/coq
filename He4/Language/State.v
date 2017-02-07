@@ -608,12 +608,6 @@ End FunctionCalls.
 
 (** ** Stack functions *)
 
-Definition push_sf (sf : stack_frame) (st : state) : state :=
-  set_stack (push sf (get_stack st)) st.
-
-Definition pop_sf (st : state) : state :=
-  set_stack (pop (get_stack st)) st.
-
 Definition write_sk_hd (n : nat) (a : tm) (st : state) : state :=
   set_stack (write_hd n a (get_stack st)) st.
 
@@ -653,8 +647,6 @@ Arguments args_to_stack_frame args context /.
 Arguments return_refpass_args cf source target /.
 Arguments push_call args st /.
 Arguments pop_call st /.
-Arguments push_sf sf st /.
-Arguments pop_sf st /.
 Arguments write_sk_hd n a st /.
 Arguments read_sk_hd n st /.
 Arguments resize_sk_hd n st /.
