@@ -658,3 +658,12 @@ Arguments read_sr n st /.
 
 Definition init_state : state := Cstate init_stack init_call_stack init_store.
 
+(** * Notations *)
+
+Module StateNotations.
+
+Notation "'\stack' sk '\call_stack' csk '\store' sr" :=
+  (Cstate sk csk sr) (at level 80, format "'[' '[v  ' \stack '/' '[' sk ']' ']' '//' '[v  ' \call_stack '/' '[' csk ']' ']' '//' '[v  ' \store '/' '[' sr ']' ']' ']'") : state_scope.
+
+End StateNotations.
+

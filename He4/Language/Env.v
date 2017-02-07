@@ -7,6 +7,7 @@ Require Export He4.Language.Value.
 Require Import He4.Strings.String.
 Import ObjectOrientedNotations.
 Delimit Scope oo_scope with oo.
+Import StateNotations.
 
 Notation "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2))
   (at level 40, st1 at level 39, t2 at level 39).
@@ -323,6 +324,7 @@ Ltac reduce :=
   end.
 
 Section Examples.
+Open Scope state_scope.
 
 Let ex_reduce_tnot_tm := ((
     !!tbool true
