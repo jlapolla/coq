@@ -164,6 +164,15 @@ Example ex_tvfield_w_single:
   tvar 1 <?@ 2 <- tvar 3 = tvfield_w 2 (tvar 3) (tvar 1).
 Proof. reflexivity. Qed.
 
+Example ex_tassign_single:
+  (tvar 1 ::= tvar 2) = tassign (tvar 1) (tvar 2).
+Proof. reflexivity. Qed.
+
+Example ex_tassign_multi:
+  let tresult1 := tvar 2 ::= tvar 3 in
+  (tvar 1 ::= tvar 2 ::= tvar 3) = (tvar 1 ::= tresult1).
+Proof. simpl. reflexivity. Qed.
+
 End Examples.
 
 
