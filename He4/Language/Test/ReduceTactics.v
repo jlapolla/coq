@@ -246,19 +246,3 @@ Proof.
 
 End Examples.
 
-Open Scope oo_scope.
-
-Definition main : tm := (
-  let x := tvar 1 in
-  let y := tvar 2 in
-  (
-    x ::= tnat 1 \+ tnat 2;
-    y ::= tnat 1;
-    \while !(x \== tnat 0)
-    \do
-      y ::= x \* y;
-      x ::= x \- tnat 1
-    \done;
-    y
-  )).
-
