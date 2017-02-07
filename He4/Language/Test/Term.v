@@ -10,8 +10,9 @@ Example ex_trc_single:
 Proof. reflexivity. Qed.
 
 Example ex_trc_single_nested:
-  <(<(tnat 2)>)> = trc (trc (tnat 2) tvoid) tvoid.
-Proof. reflexivity. Qed.
+  let elem1 := <(tnat 2)> in
+  <(<(tnat 2)>)> = <(elem1)>.
+Proof. simpl. reflexivity. Qed.
 
 Example ex_trc_multi:
   <(tnat 1, tnat 2, tnat 4)> =
@@ -22,46 +23,38 @@ Example ex_trc_multi:
 Proof. reflexivity. Qed.
 
 Example ex_trc_multi_nested:
-  <(tnat 1, <(tnat 2)>, <(tnat 4, tnat 8)>)> =
-    (trc (tnat 1)
-    (trc (trc (tnat 2) tvoid)
-    (trc (trc (tnat 4) (trc (tnat 8) tvoid))
-      tvoid))).
-Proof. reflexivity. Qed.
+  let elem1 := tnat 1 in
+  let elem2 := <(tnat 2)> in
+  let elem3 := <(tnat 4, tnat 8)> in
+  <(tnat 1, <(tnat 2)>, <(tnat 4, tnat 8)>)> = <(elem1, elem2, elem3)>.
+Proof. simpl. reflexivity. Qed.
 
 Example ex_tfield_r_single:
   (tref 0) @ 2 = tfield_r 2 (tref 0).
 Proof. reflexivity. Qed.
 
 Example ex_tfield_r_multi:
-  (tref 0) @ 2 @ 4 =
-    tfield_r 4
-    (tfield_r 2
-    (tref 0
-      )).
-Proof. reflexivity. Qed.
+  let result1 := (tref 0) @ 2 in
+  (tref 0) @ 2 @ 4 = result1 @ 4.
+Proof. simpl. reflexivity. Qed.
 
 Example ex_tvfield_r_single:
   (tvar 1) ?@ 2 = tvfield_r 2 (tvar 1).
 Proof. reflexivity. Qed.
 
 Example ex_tvfield_r_multi:
-  (tvar 1) ?@ 2 ?@ 4 =
-    tvfield_r 4
-    (tvfield_r 2
-    (tvar 1
-      )).
-Proof. reflexivity. Qed.
+  let result1 := (tvar 1) ?@ 2 in
+  (tvar 1) ?@ 2 ?@ 4 = result1 ?@ 4.
+Proof. simpl. reflexivity. Qed.
 
 Example ex_tcall_chain_no_arguments_single:
   (tref 0) # "foo"|()| = tcall "foo" (trc (tref 0) tvoid).
 Proof. reflexivity. Qed.
 
 Example ex_tcall_chain_no_arguments_multi:
-  let foo_result := (tref 0) # "foo"|()| in
-  let bar_result := foo_result # "bar"|()| in
-  (tref 0) # "foo"|()| # "bar"|()| = bar_result.
-Proof. reflexivity. Qed.
+  let result1 := (tref 0) # "foo"|()| in
+  (tref 0) # "foo"|()| # "bar"|()| = result1 # "bar"|()|.
+Proof. simpl. reflexivity. Qed.
 
 Example ex_tcall_chain_one_argument_single:
   (tref 0) # "foo"|(tnat 1)| = tcall "foo" (trc (tref 0) (trc (tnat 1) tvoid)).
