@@ -87,26 +87,17 @@ Fixpoint return_refpass_args (cf : call_frame) (source target : stack_frame) : s
   end.
 
 Definition push_call (args : tm) (st : state) : state :=
-  set_call_stack (
-    CallStack.push (
-      args_to_call_frame (rc_to_list args)
-    ) (get_call_stack st)
-  ) ( set_stack (
-        push (
-          args_to_stack_frame (rc_to_list args) (hd nil (get_stack st))
-        ) (get_stack st)
-      ) st
-    ).
+  let sk := get_stack st in
+  let csk := get_call_stack st in
+  let sk' := push (args_to_stack_frame (rc_to_list args) (hd nil sk)) sk in
+  let csk' := CallStack.push (args_to_call_frame (rc_to_list args)) csk in
+  set_call_stack csk' (set_stack sk' st).
 
 Definition pop_call (st : state) : state :=
-  set_call_stack (
-    CallStack.pop (get_call_stack st)
-  ) ( set_stack (
-        push (
-          return_refpass_args (hd nil (get_call_stack st)) (hd nil (get_stack st)) (nth 1 (get_stack st) nil)
-        ) (pop (pop (get_stack st)))
-      ) st
-    ).
+  let sk := get_stack st in
+  let csk := get_call_stack st in
+  let sk' := push (return_refpass_args (hd nil csk) (hd nil sk) (nth 1 sk nil)) (pop (pop sk)) in
+  set_call_stack (CallStack.pop csk) (set_stack sk' st).
 
 Hint Resolve Lt.lt_S_n List.nth_indep.
 
