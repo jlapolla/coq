@@ -47,10 +47,6 @@ Example ex_tvfield_r_multi:
   (tvar 1) ?@ 2 ?@ 4 = result1 ?@ 4.
 Proof. simpl. reflexivity. Qed.
 
-Example ex_tcall_no_arguments_single:
-  "foo"|()| = tcall "foo" tvoid.
-Proof. reflexivity. Qed.
-
 Example ex_tcall_chain_no_arguments_single:
   (tref 0) # "foo"|()| = tcall "foo" (trc (tref 0) tvoid).
 Proof. reflexivity. Qed.

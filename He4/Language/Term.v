@@ -65,17 +65,14 @@ Notation "t '@' n0" :=
 Notation "t '?@' n0" :=
   (tvfield_r n0 t) (at level 26, left associativity, format "t  '?@'  n0") : oo_scope.
 
-Notation "f '|(' ')|'" :=
-  (tcall f tvoid) (at level 26, left associativity, format "f '|(' ')|'") : oo_scope.
-
 Notation "t '#' f '|(' ')|'" :=
-  (tcall f (trc t tvoid)) (at level 26, f at level 24, left associativity, format "t  '#'  f '|(' ')|'") : oo_scope.
+  (tcall f (trc t tvoid)) (at level 26, left associativity, format "t  '#'  f '|(' ')|'") : oo_scope.
 
 Notation "t '#' f '|(' t0 ')|'" :=
-  (tcall f (trc t t0)) (at level 26, f at level 24, left associativity, format "t  '#'  f '|(' t0 ')|'") : oo_scope.
+  (tcall f (trc t t0)) (at level 26, left associativity, format "t  '#'  f '|(' t0 ')|'") : oo_scope.
 
 Notation "t '#' f '|(' t0 ',' .. ',' t1 ')|'" :=
-  (tcall f (trc t (trc t0 .. (trc t1 tvoid) ..))) (at level 26, f at level 24, left associativity, format "t  '#'  f '|(' t0 ','  .. ','  t1 ')|'") : oo_scope.
+  (tcall f (trc t (trc t0 .. (trc t1 tvoid) ..))) (at level 26, left associativity, format "t  '#'  f '|(' t0 ','  .. ','  t1 ')|'") : oo_scope.
 
 Notation "'!' t" :=
   (tnot t) (at level 35, right associativity, format "'!' t") : oo_scope.
