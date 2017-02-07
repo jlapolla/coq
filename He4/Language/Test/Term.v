@@ -3,8 +3,60 @@ Import ObjectOrientedNotations.
 
 Section Examples.
 
-Delimit Scope oo_scope with oo.
+Open Scope oo_scope.
 
+Example ex_trc_single:
+  <(tnat 2)> = trc (tnat 2) tvoid.
+Proof. reflexivity. Qed.
+
+Example ex_trc_single_nested:
+  <(<(tnat 2)>)> = trc (trc (tnat 2) tvoid) tvoid.
+Proof. reflexivity. Qed.
+
+Example ex_trc_multi:
+  <(tnat 1, tnat 2, tnat 4)> =
+    (trc (tnat 1)
+    (trc (tnat 2)
+    (trc (tnat 4)
+      tvoid))).
+Proof. reflexivity. Qed.
+
+Example ex_trc_multi_nested:
+  <(tnat 1, <(tnat 2)>, <(tnat 4, tnat 8)>)> =
+    (trc (tnat 1)
+    (trc (trc (tnat 2) tvoid)
+    (trc (trc (tnat 4) (trc (tnat 8) tvoid))
+      tvoid))).
+Proof. reflexivity. Qed.
+
+Example ex_tfield_r_single:
+  (tref 0) @ 2 = tfield_r 2 (tref 0).
+Proof. reflexivity. Qed.
+
+Example ex_tfield_r_multi:
+  (tref 0) @ 2 @ 4 =
+    tfield_r 4
+    (tfield_r 2
+    (tref 0
+      )).
+Proof. reflexivity. Qed.
+
+Example ex_tvfield_r_single:
+  (tvar 1) ?@ 2 = tvfield_r 2 (tvar 1).
+Proof. reflexivity. Qed.
+
+Example ex_tvfield_r_multi:
+  (tvar 1) ?@ 2 ?@ 4 =
+    tvfield_r 4
+    (tvfield_r 2
+    (tvar 1
+      )).
+Proof. reflexivity. Qed.
+
+End Examples.
+
+
+(*
 Example ex_oo_notation_1:
   (!(tbool true) \|| (tbool false) \&& (tbool false))%oo = tor (tnot (tbool true)) (tand (tbool false) (tbool false)).
 Proof. reflexivity. Abort.
@@ -15,14 +67,6 @@ Proof. reflexivity. Abort.
 
 Example ex_oo_notation_2:
   ((tnat 1) \* (tnat 2) \- (tnat 3) \+ (tnat 4) \* (tnat 5))%oo = tplus (tminus (tmult (tnat 1) (tnat 2)) (tnat 3)) (tmult (tnat 4) (tnat 5)).
-Proof. reflexivity. Abort.
-
-Example ex_oo_notation_4:
-  <(tnat 2)>%oo = trc (tnat 2) tvoid.
-Proof. reflexivity. Abort.
-
-Example ex_oo_notation_5:
-  <(tnat 1, tnat 2, tnat 4)>%oo = (trc (tnat 1) (trc (tnat 2) (trc (tnat 4) tvoid))).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_6:
@@ -75,6 +119,5 @@ Example ex_oo_notation_13:
   (teq (tcall "get_first" (trc (tref 1) tvoid)) (tnat 0))
   (tassign (tvar 1) (tminus (tvar 1) (tnat 1))).
 Proof. reflexivity. Abort.
-
-End Examples.
+*)
 
