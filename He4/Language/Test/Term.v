@@ -84,6 +84,28 @@ Example ex_tcall_chain_n_argument_nested:
   (tref 0) # "foo"|(tnat 1, tnat 2, (tref 1) # "foo"|(tnat 1, tnat 2, tnat 3)|)| = (tref 0) # "foo"|(tnat 1, tnat 2, result1)|.
 Proof. simpl. reflexivity. Qed.
 
+Example ex_tcall_no_arguments_single:
+  "foo"|()| = tcall "foo" tvoid.
+Proof. reflexivity. Qed.
+
+Example ex_tcall_one_argument_single:
+  "foo"|(tnat 1)| = tcall "foo" (trc (tnat 1) tvoid).
+Proof. reflexivity. Qed.
+
+Example ex_tcall_one_argument_nested:
+  let result1 := "bar"|(tnat 1)| in
+  "foo"|("bar"|(tnat 1)|)| = "foo"|(result1)|.
+Proof. simpl. reflexivity. Qed.
+
+Example ex_tcall_n_argument_single:
+  "foo"|(tnat 1, tnat 2, tnat 3)| = tcall "foo" (trc (tnat 1) (trc (tnat 2) (trc (tnat 3) tvoid))).
+Proof. reflexivity. Qed.
+
+Example ex_tcall_n_argument_nested:
+  let result1 := "bar"|(tnat 1, tnat 2, tnat 3)| in
+  "foo"|(tnat 1, tnat 2, "bar"|(tnat 1, tnat 2, tnat 3)|)| = "foo"|(tnat 1, tnat 2, result1)|.
+Proof. simpl. reflexivity. Qed.
+
 End Examples.
 
 
