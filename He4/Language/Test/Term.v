@@ -173,6 +173,15 @@ Example ex_tassign_multi:
   (tvar 1 ::= tvar 2 ::= tvar 3) = (tvar 1 ::= tresult1).
 Proof. simpl. reflexivity. Qed.
 
+Example ex_tseq_single:
+  (tvar 1 ::= tnat 1; tvar 2 ::= tnat 2) = tseq (tassign (tvar 1) (tnat 1)) (tassign (tvar 2) (tnat 2)).
+Proof. reflexivity. Qed.
+
+Example ex_tseq_multi:
+  let result1 := tvar 2 ::= tnat 2; tvar 3 ::= tnat 3 in
+  (tvar 1 ::= tnat 1; tvar 2 ::= tnat 2; tvar 3 ::= tnat 3) = (tvar 1 ::= tnat 1; result1).
+Proof. simpl. reflexivity. Qed.
+
 End Examples.
 
 

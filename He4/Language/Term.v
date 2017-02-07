@@ -108,7 +108,7 @@ Notation "t '::=' t0" :=
   (tassign t t0) (at level 70, right associativity) : oo_scope.
 
 Notation "t ; t0" :=
-  (tseq t t0) (at level 80, right associativity, format "'[v' t ';' '/' t0 ']'") : oo_scope.
+  (tseq t t0) (at level 80, right associativity, format "'[' t ';' '//' t0 ']'") : oo_scope.
 
 Notation "'\if' t '\then' t0 '\else' t1 '\fi'" :=
   (tif t t0 t1) (at level 80, right associativity, format "'[' '\if'  t '//' '[v  ' '\then' '/' '[' t0 ']' ']' '//' '[v  ' '\else' '/' '[' t1 ']' ']' '//' '\fi' ']'") : oo_scope.
