@@ -130,12 +130,12 @@ Example ex_tminus_multi:
 Proof. simpl. reflexivity. Qed.
 
 Example ex_teq_single:
-  tvar 1 == tvar 2 = teq (tvar 1) (tvar 2).
+  tvar 1 \== tvar 2 = teq (tvar 1) (tvar 2).
 Proof. reflexivity. Qed.
 
 Example ex_teq_multi:
-  let result1 := tvar 1 == tvar 2 in
-  tvar 1 == tvar 2 == tvar 3 = result1 == tvar 3.
+  let result1 := tvar 1 \== tvar 2 in
+  tvar 1 \== tvar 2 \== tvar 3 = result1 \== tvar 3.
 Proof. simpl. reflexivity. Qed.
 
 Example ex_tand_single:

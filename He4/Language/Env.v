@@ -381,7 +381,7 @@ Proof.
   unfold ex_reduce_tmult_tm. intros. repeat reduce. Qed.
 
 Let ex_reduce_teq_tm_1 := ((
-    !tbool true == !tbool false
+    !tbool true \== !tbool false
   )%oo).
 Let ex_reduce_teq_1:
   forall st,
@@ -390,7 +390,7 @@ Proof.
   unfold ex_reduce_teq_tm_1. intros. repeat reduce. Qed.
 
 Let ex_reduce_teq_tm_2 := ((
-    tvoid == tvoid
+    tvoid \== tvoid
   )%oo).
 Let ex_reduce_teq_2:
   forall st,
@@ -399,7 +399,7 @@ Proof.
   unfold ex_reduce_teq_tm_2. intros. repeat reduce. Qed.
 
 Let ex_reduce_teq_tm_3 := ((
-    tnat 0 == tnat 0
+    tnat 0 \== tnat 0
   )%oo).
 Let ex_reduce_teq_3:
   forall st,
@@ -408,7 +408,7 @@ Proof.
   unfold ex_reduce_teq_tm_3. intros. repeat reduce. Qed.
 
 Let ex_reduce_teq_tm_4 := ((
-    tbool true == tbool true
+    tbool true \== tbool true
   )%oo).
 Let ex_reduce_teq_4:
   forall st,
@@ -417,7 +417,7 @@ Proof.
   unfold ex_reduce_teq_tm_4. intros. repeat reduce. Qed.
 
 Let ex_reduce_teq_tm_5 := ((
-    tref 0 == tref 0
+    tref 0 \== tref 0
   )%oo).
 Let ex_reduce_teq_5:
   forall st,
@@ -426,7 +426,7 @@ Proof.
   unfold ex_reduce_teq_tm_5. intros. repeat reduce. Qed.
 
 Let ex_reduce_teq_tm_6 := ((
-    trc (tbool true) tvoid == trc (tbool true) tvoid
+    trc (tbool true) tvoid \== trc (tbool true) tvoid
   )%oo).
 Let ex_reduce_teq_6:
   forall st,
@@ -435,7 +435,7 @@ Proof.
   unfold ex_reduce_teq_tm_6. intros. repeat reduce. Qed.
 
 Let ex_reduce_teq_tm_7 := ((
-    tcl "Foo" tvoid == tcl "Foo" tvoid
+    tcl "Foo" tvoid \== tcl "Foo" tvoid
   )%oo).
 Let ex_reduce_teq_7:
   forall st,
@@ -497,7 +497,7 @@ Let ex_reduce_twhile_tm := (
   let y := tvar 2 in
   (
     y ::= tnat 1;
-    \while !(x == tnat 0)
+    \while !(x \== tnat 0)
     \do
       y ::= x \* y;
       x ::= x \- tnat 1
@@ -609,7 +609,7 @@ Definition main : tm := (
   (
     x ::= tnat 1 \+ tnat 2;
     y ::= tnat 1;
-    \while !(x == tnat 0)
+    \while !(x \== tnat 0)
     \do
       y ::= x \* y;
       x ::= x \- tnat 1

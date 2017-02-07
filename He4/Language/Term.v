@@ -89,8 +89,8 @@ Notation "t '\+' t0" :=
 Notation "t '\-' t0" :=
   (tminus t t0) (at level 45, left associativity, format "t  '\-'  t0") : oo_scope.
 
-Notation "t '==' t0" :=
-  (teq t t0) (at level 50, left associativity, format "t  '=='  t0") : oo_scope.
+Notation "t '\==' t0" :=
+  (teq t t0) (at level 50, left associativity, format "t  '\=='  t0") : oo_scope.
 
 Notation "t \&& t0" :=
   (tand t t0) (at level 55, left associativity, format "t  '\&&'  t0") : oo_scope.
