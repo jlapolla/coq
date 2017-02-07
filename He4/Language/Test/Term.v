@@ -84,6 +84,15 @@ Example ex_tcall_chain_n_arguments_nested:
   (tref 0) # "foo"|(tnat 1, tnat 2, (tref 1) # "foo"|(tnat 1, tnat 2, tnat 3)|)| = (tref 0) # "foo"|(tnat 1, tnat 2, result1)|.
 Proof. simpl. reflexivity. Qed.
 
+Example ex_tnot_single:
+  !tbool false = tnot (tbool false).
+Proof. reflexivity. Qed.
+
+Example ex_tnot_multi:
+  let result1 := !tbool false in
+  !!tbool false = !result1.
+Proof. simpl. reflexivity. Qed.
+
 End Examples.
 
 
