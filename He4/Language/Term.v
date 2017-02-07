@@ -54,12 +54,10 @@ Inductive tm : Type :=
 
 Module ObjectOrientedNotations.
 
-Notation "'|(' ')|'" := tvoid (at level 20, format "'|(' ')|'") : oo_scope.
+Notation "'<(' t ')>'" := (trc t tvoid) (at level 20, format "'<(' t ')>'") : oo_scope.
 
-Notation "'|(' t ')|'" := (trc t tvoid) (at level 20, format "'|(' t ')|'") : oo_scope.
-
-Notation "'|(' t ',' .. ',' t0 ')|'" :=
-  (trc t .. (trc t0 tvoid) ..) (at level 20, format "'|(' t ','  .. ','  t0 ')|'") : oo_scope.
+Notation "'<(' t ',' .. ',' t0 ')>'" :=
+  (trc t .. (trc t0 tvoid) ..) (at level 20, format "'<(' t ','  .. ','  t0 ')>'") : oo_scope.
 
 Notation "t '@' n0" :=
   (tfield_r n0 t) (at level 26, left associativity, format "t '@' n0") : oo_scope.
@@ -67,8 +65,14 @@ Notation "t '@' n0" :=
 Notation "t '?@' n0" :=
   (tvfield_r n0 t) (at level 26, left associativity, format "t '?@' n0") : oo_scope.
 
-Notation "t '#' f t0" :=
-  (tcall f (trc t t0)) (at level 26, left associativity, format "t  '#'  f t0") : oo_scope.
+Notation "t '#' f '|(' ')|'" :=
+  (tcall f (trc t tvoid)) (at level 26, left associativity, format "t  '#'  f '|(' ')|'") : oo_scope.
+
+Notation "t '#' f '|(' t0 ')|'" :=
+  (tcall f (trc t t0)) (at level 26, left associativity, format "t  '#'  f '|(' t0 ')|'") : oo_scope.
+
+Notation "t '#' f '|(' t0 ',' .. ',' t1 ')|'" :=
+  (tcall f (trc t (trc t0 .. (trc t1 tvoid) ..))) (at level 26, left associativity, format "t  '#'  f '|(' t0 ','  .. ','  t1 ')|'") : oo_scope.
 
 Notation "'!' t" :=
   (tnot t) (at level 35, right associativity, format "'!' t") : oo_scope.
@@ -128,16 +132,12 @@ Example ex_oo_notation_2:
   ((tnat 1) \* (tnat 2) \- (tnat 3) \+ (tnat 4) \* (tnat 5))%oo = tplus (tminus (tmult (tnat 1) (tnat 2)) (tnat 3)) (tmult (tnat 4) (tnat 5)).
 Proof. reflexivity. Abort.
 
-Example ex_oo_notation_3:
-  |()|%oo = tvoid.
-Proof. reflexivity. Abort.
-
 Example ex_oo_notation_4:
-  |(tnat 2)|%oo = trc (tnat 2) tvoid.
+  <(tnat 2)>%oo = trc (tnat 2) tvoid.
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_5:
-  |(tnat 1, tnat 2, tnat 4)|%oo = (trc (tnat 1) (trc (tnat 2) (trc (tnat 4) tvoid))).
+  <(tnat 1, tnat 2, tnat 4)>%oo = (trc (tnat 1) (trc (tnat 2) (trc (tnat 4) tvoid))).
 Proof. reflexivity. Abort.
 
 Example ex_oo_notation_6:

@@ -519,7 +519,7 @@ Proof.
   unfold ex_reduce_trc_tm. intros. simpl. repeat reduce. Qed.
 
 Let ex_reduce_tcall_tm := ((
-    tcall "foo" (|(tnat 1 \+ tnat 1)|)
+    tcall "foo" (<(tnat 1 \+ tnat 1)>)
   )%oo).
 Let ex_reduce_tcall:
   forall st,
@@ -537,7 +537,7 @@ Proof.
   unfold ex_reduce_treturn_tm. intros. repeat reduce. Qed.
 
 Let ex_reduce_tcl_tm := ((
-    tcl "foo" (|(tnat 1 \+ tnat 1)|)
+    tcl "foo" (<(tnat 1 \+ tnat 1)>)
   )%oo).
 Let ex_reduce_tcl:
   forall st,
@@ -549,7 +549,7 @@ Let ex_reduce_tnew_tm := ((
     tnew 2 "foo"
   )%oo).
 Let ex_reduce_tnew:
-  ex_reduce_tnew_tm / init_state ==>* tref 1 / alloc_sr (tcl "foo" (|(tvoid, tvoid)|))%oo init_state.
+  ex_reduce_tnew_tm / init_state ==>* tref 1 / alloc_sr (tcl "foo" (<(tvoid, tvoid)>))%oo init_state.
 Proof.
   unfold ex_reduce_tnew_tm. repeat reduce. Qed.
 
@@ -557,7 +557,7 @@ Let ex_reduce_tfield_r_tm := ((
     (treturn (tref 1))@2
   )%oo).
 Let ex_reduce_tfield_r:
-  let st := push_call tvoid (alloc_sr (tcl "foo" (|(tvoid, tnat 1, tnat 2)|))%oo init_state) in
+  let st := push_call tvoid (alloc_sr (tcl "foo" (<(tvoid, tnat 1, tnat 2)>))%oo init_state) in
   let st' := pop_call st in
   ex_reduce_tfield_r_tm / st ==>* tnat 2 / st'.
 Proof.
@@ -567,8 +567,8 @@ Let ex_reduce_tfield_w_tm := ((
     (treturn (tref 1)) <@ 1 <- (tnat 1 \+ tnat 1)
   )%oo).
 Let ex_reduce_tfield_w:
-  let st := push_call tvoid (alloc_sr (tcl "foo" (|(tvoid, tvoid)|))%oo init_state) in
-  let st' := write_sr 1 (tcl "foo" (|(tvoid, tnat 2)|))%oo (pop_call st) in
+  let st := push_call tvoid (alloc_sr (tcl "foo" (<(tvoid, tvoid)>))%oo init_state) in
+  let st' := write_sr 1 (tcl "foo" (<(tvoid, tnat 2)>))%oo (pop_call st) in
   ex_reduce_tfield_w_tm / st ==>* tvoid / st'.
 Proof.
   unfold ex_reduce_tfield_w_tm. repeat reduce. Qed.
@@ -578,12 +578,12 @@ Let ex_reduce_tvnew_tm := ((
   )%oo).
 Let ex_reduce_tvnew:
   forall st,
-  ex_reduce_tvnew_tm / st ==>* (tcl "foo" (|(tvoid, tvoid)|))%oo / st.
+  ex_reduce_tvnew_tm / st ==>* (tcl "foo" (<(tvoid, tvoid)>))%oo / st.
 Proof.
   unfold ex_reduce_tvnew_tm. intros. repeat reduce. Qed.
 
 Let ex_reduce_tvfield_r_tm := ((
-    tcl "foo" (|(tvoid, tnat 1, tnat 1 \+ tnat 1)|)?@2
+    tcl "foo" (<(tvoid, tnat 1, tnat 1 \+ tnat 1)>)?@2
   )%oo).
 Let ex_reduce_tvfield_r:
   forall st,
@@ -595,8 +595,8 @@ Let ex_reduce_tvfield_w_tm := ((
     (tvar 0) <?@ 1 <- (tnat 1 \+ tnat 1)
   )%oo).
 Let ex_reduce_tvfield_w:
-  let st := write_sk_hd 0 (tcl "foo" (|(tvoid, tvoid)|))%oo (resize_sk_hd 1 init_state) in
-  let st' := write_sk_hd 0 (tcl "foo" (|(tvoid, tnat 2)|))%oo st in
+  let st := write_sk_hd 0 (tcl "foo" (<(tvoid, tvoid)>))%oo (resize_sk_hd 1 init_state) in
+  let st' := write_sk_hd 0 (tcl "foo" (<(tvoid, tnat 2)>))%oo st in
   ex_reduce_tvfield_w_tm / st ==>* tvoid / st'.
 Proof.
   unfold ex_reduce_tvfield_w_tm. repeat reduce. Qed.
