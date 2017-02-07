@@ -99,10 +99,10 @@ Notation "t '\||' t0" :=
   (tor t t0) (at level 61, left associativity, format "t  '\||'  t0") : oo_scope.
 
 Notation "t '<@' n0 '<-' t1" :=
-  (tfield_w n0 t1 t) (at level 70, format "t '<@' n0  '<-'  t1") : oo_scope.
+  (tfield_w n0 t1 t) (at level 70, format "t  '<@'  n0  '<-'  t1") : oo_scope.
 
 Notation "t '<?@' n0 '<-' t1" :=
-  (tvfield_w n0 t1 t) (at level 70, format "t '<?@' n0  '<-'  t1") : oo_scope.
+  (tvfield_w n0 t1 t) (at level 70, format "t  '<?@'  n0  '<-'  t1") : oo_scope.
 
 Notation "t '::=' t0" :=
   (tassign t t0) (at level 70, right associativity) : oo_scope.

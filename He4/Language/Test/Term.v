@@ -156,6 +156,14 @@ Example ex_tor_multi:
   tvar 1 \|| tvar 2 \|| tvar 3 = result1 \|| tvar 3.
 Proof. simpl. reflexivity. Qed.
 
+Example ex_tfield_w_single:
+  tvar 1 <@ 2 <- tvar 3 = tfield_w 2 (tvar 3) (tvar 1).
+Proof. reflexivity. Qed.
+
+Example ex_tvfield_w_single:
+  tvar 1 <?@ 2 <- tvar 3 = tvfield_w 2 (tvar 3) (tvar 1).
+Proof. reflexivity. Qed.
+
 End Examples.
 
 
