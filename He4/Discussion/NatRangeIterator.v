@@ -85,7 +85,7 @@ Inductive step : (prod tm state) -> (prod tm state) -> Prop :=
     texec "off" / st ==> (
     let this := tvar 0 in
     (
-      this#"get_count"|()| == (tnat 0) \|| this#"get_at_start"|()|
+      this#"get_count"|()| \== (tnat 0) \|| this#"get_at_start"|()|
     )%oo) / resize_sk_hd 1 st
   | STexec_after :
     forall st,
@@ -93,7 +93,7 @@ Inductive step : (prod tm state) -> (prod tm state) -> Prop :=
     texec "after" / st ==> (
     let this := tvar 0 in
     (
-      this#"get_count"|()| == (tnat 0) \&& !this#"get_at_start"|()|
+      this#"get_count"|()| \== (tnat 0) \&& !this#"get_at_start"|()|
     )%oo) / resize_sk_hd 1 st
   | STexec_forth :
     forall st,
