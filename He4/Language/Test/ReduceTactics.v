@@ -19,154 +19,154 @@ Notation "t1 '/' st1 '==>*' t2 '/' st2" := (multi step (pair t1 st1) (pair t2 st
 Section Examples.
 Open Scope state_scope.
 
-Let ex_reduce_tnot_tm := ((
+Definition ex_reduce_tnot_tm := ((
     !!tbool true
   )%oo).
-Let ex_reduce_tnot:
+Example ex_reduce_tnot:
   forall st,
   ex_reduce_tnot_tm / st ==>* tbool true / st.
 Proof.
   unfold ex_reduce_tnot_tm. intros. repeat reduce. Qed.
 
-Let ex_reduce_tand_tm := ((
+Definition ex_reduce_tand_tm := ((
     !tbool false \&& !tbool true \&& tbool true
   )%oo).
-Let ex_reduce_tand:
+Example ex_reduce_tand:
   forall st,
   ex_reduce_tand_tm / st ==>* tbool false / st.
 Proof.
   unfold ex_reduce_tand_tm. intros. repeat reduce. Qed.
 
-Let ex_reduce_tor_tm := ((
+Definition ex_reduce_tor_tm := ((
     !tbool true \|| !tbool false \|| tbool false
   )%oo).
-Let ex_reduce_tor:
+Example ex_reduce_tor:
   forall st,
   ex_reduce_tor_tm / st ==>* tbool true / st.
 Proof.
   unfold ex_reduce_tor_tm. intros. repeat reduce. Qed.
 
-Let ex_reduce_tplus_tm := ((
+Definition ex_reduce_tplus_tm := ((
     (tnat 3 \+ tnat 4) \+ (tnat 5 \+ tnat 6)
   )%oo).
-Let ex_reduce_tplus:
+Example ex_reduce_tplus:
   forall st,
   ex_reduce_tplus_tm / st ==>* tnat 18 / st.
 Proof.
   unfold ex_reduce_tplus_tm. intros. repeat reduce. Qed.
 
-Let ex_reduce_tminus_tm := ((
+Definition ex_reduce_tminus_tm := ((
     (tnat 3 \+ tnat 4) \- (tnat 1 \+ tnat 2)
   )%oo).
-Let ex_reduce_tminus:
+Example ex_reduce_tminus:
   forall st,
   ex_reduce_tminus_tm / st ==>* tnat 4 / st.
 Proof.
   unfold ex_reduce_tminus_tm. intros. repeat reduce. Qed.
 
-Let ex_reduce_tmult_tm := ((
+Definition ex_reduce_tmult_tm := ((
     (tnat 3 \+ tnat 4) \* (tnat 1 \+ tnat 2)
   )%oo).
-Let ex_reduce_tmult:
+Example ex_reduce_tmult:
   forall st,
   ex_reduce_tmult_tm / st ==>* tnat 21 / st.
 Proof.
   unfold ex_reduce_tmult_tm. intros. repeat reduce. Qed.
 
-Let ex_reduce_teq_tm_1 := ((
+Definition ex_reduce_teq_tm_1 := ((
     !tbool true \== !tbool false
   )%oo).
-Let ex_reduce_teq_1:
+Example ex_reduce_teq_1:
   forall st,
   ex_reduce_teq_tm_1 / st ==>* tbool false / st.
 Proof.
   unfold ex_reduce_teq_tm_1. intros. repeat reduce. Qed.
 
-Let ex_reduce_teq_tm_2 := ((
+Definition ex_reduce_teq_tm_2 := ((
     tvoid \== tvoid
   )%oo).
-Let ex_reduce_teq_2:
+Example ex_reduce_teq_2:
   forall st,
   ex_reduce_teq_tm_2 / st ==>* tbool true / st.
 Proof.
   unfold ex_reduce_teq_tm_2. intros. repeat reduce. Qed.
 
-Let ex_reduce_teq_tm_3 := ((
+Definition ex_reduce_teq_tm_3 := ((
     tnat 0 \== tnat 0
   )%oo).
-Let ex_reduce_teq_3:
+Example ex_reduce_teq_3:
   forall st,
   ex_reduce_teq_tm_3 / st ==>* tbool true / st.
 Proof.
   unfold ex_reduce_teq_tm_3. intros. repeat reduce. Qed.
 
-Let ex_reduce_teq_tm_4 := ((
+Definition ex_reduce_teq_tm_4 := ((
     tbool true \== tbool true
   )%oo).
-Let ex_reduce_teq_4:
+Example ex_reduce_teq_4:
   forall st,
   ex_reduce_teq_tm_4 / st ==>* tbool true / st.
 Proof.
   unfold ex_reduce_teq_tm_4. intros. repeat reduce. Qed.
 
-Let ex_reduce_teq_tm_5 := ((
+Definition ex_reduce_teq_tm_5 := ((
     tref 0 \== tref 0
   )%oo).
-Let ex_reduce_teq_5:
+Example ex_reduce_teq_5:
   forall st,
   ex_reduce_teq_tm_5 / st ==>* tbool true / st.
 Proof.
   unfold ex_reduce_teq_tm_5. intros. repeat reduce. Qed.
 
-Let ex_reduce_teq_tm_6 := ((
+Definition ex_reduce_teq_tm_6 := ((
     trc (tbool true) tvoid \== trc (tbool true) tvoid
   )%oo).
-Let ex_reduce_teq_6:
+Example ex_reduce_teq_6:
   forall st,
   ex_reduce_teq_tm_6 / st ==>* tbool true / st.
 Proof.
   unfold ex_reduce_teq_tm_6. intros. repeat reduce. Qed.
 
-Let ex_reduce_teq_tm_7 := ((
+Definition ex_reduce_teq_tm_7 := ((
     tcl "Foo" tvoid \== tcl "Foo" tvoid
   )%oo).
-Let ex_reduce_teq_7:
+Example ex_reduce_teq_7:
   forall st,
   ex_reduce_teq_tm_7 / st ==>* tbool true / st.
 Proof.
   unfold ex_reduce_teq_tm_7. intros. repeat reduce. Qed.
 
-Let ex_reduce_tvar_tm := ((
+Definition ex_reduce_tvar_tm := ((
     tvar 0
   )%oo).
-Let ex_reduce_tvar:
+Example ex_reduce_tvar:
   let st := write_sk_hd 0 (tbool true) (resize_sk_hd 1 init_state) in
   ex_reduce_tvar_tm / st ==>* tbool true / st.
 Proof.
   unfold ex_reduce_tvar_tm. repeat reduce. Qed.
 
-Let ex_reduce_tassign_tm := ((
+Definition ex_reduce_tassign_tm := ((
     tvar 0 ::= tnat 1 \+ tnat 1
   )%oo).
-Let ex_reduce_tassign:
+Example ex_reduce_tassign:
   let st := resize_sk_hd 1 init_state in
   let st' := write_sk_hd 0 (tnat 2) st in
   ex_reduce_tassign_tm / st ==>* tvoid / st'.
 Proof.
   unfold ex_reduce_tassign_tm. repeat reduce. Qed.
 
-Let ex_reduce_tseq_tm := ((
+Definition ex_reduce_tseq_tm := ((
     tvar 0 ::= tnat 1 \+ tnat 1;
     tnat 3 \+ tvar 0
   )%oo).
-Let ex_reduce_tseq:
+Example ex_reduce_tseq:
   let st := resize_sk_hd 1 init_state in
   let st' := write_sk_hd 0 (tnat 2) st in
   ex_reduce_tseq_tm / st ==>* tnat 5 / st'.
 Proof.
   unfold ex_reduce_tseq_tm. repeat reduce. Qed.
 
-Let ex_reduce_tif_tm := ((
+Definition ex_reduce_tif_tm := ((
     \if !tbool true
     \then
       tnat 1
@@ -179,13 +179,13 @@ Let ex_reduce_tif_tm := ((
       \fi
     \fi
   )%oo).
-Let ex_reduce_tif:
+Example ex_reduce_tif:
   forall st,
   ex_reduce_tif_tm / st ==>* tnat 2 / st.
 Proof.
   unfold ex_reduce_tif_tm. intros. repeat reduce. Qed.
 
-Let ex_reduce_twhile_tm := (
+Definition ex_reduce_twhile_tm := (
   let x := tvar 1 in
   let y := tvar 2 in
   (
@@ -197,97 +197,97 @@ Let ex_reduce_twhile_tm := (
     \done;
     y
   )%oo).
-Let ex_reduce_twhile:
+Example ex_reduce_twhile:
   let st := write_sk_hd 1 (tnat 3) (resize_sk_hd 3 init_state) in
   let st' := write_sk_hd 1 (tnat 0) (write_sk_hd 2 (tnat 6) st) in
   ex_reduce_twhile_tm / st ==>* tnat 6 / st'.
 Proof.
   unfold ex_reduce_twhile_tm. repeat reduce. Qed.
 
-Let ex_reduce_trc_tm := list_to_rc (cons (tnat 1 \+ tnat 2)%oo (cons (tnat 3 \+ tnat 4)%oo nil)).
-Let ex_reduce_trc:
+Definition ex_reduce_trc_tm := list_to_rc (cons (tnat 1 \+ tnat 2)%oo (cons (tnat 3 \+ tnat 4)%oo nil)).
+Example ex_reduce_trc:
   forall st,
   ex_reduce_trc_tm / st ==>* list_to_rc (cons (tnat 3) (cons (tnat 7) nil)) / st.
 Proof.
   unfold ex_reduce_trc_tm. intros. simpl. repeat reduce. Qed.
 
-Let ex_reduce_tcall_tm := ((
+Definition ex_reduce_tcall_tm := ((
     tcall "foo" (<(tnat 1 \+ tnat 1)>)
   )%oo).
-Let ex_reduce_tcall:
+Example ex_reduce_tcall:
   forall st,
   ex_reduce_tcall_tm / st ==>* treturn (texec "foo") / push_call (trc (tnat 2) tvoid) st.
 Proof.
   unfold ex_reduce_tcall_tm. intros. simpl. repeat reduce. Qed.
 
-Let ex_reduce_treturn_tm := ((
+Definition ex_reduce_treturn_tm := ((
     treturn (tnat 1 \+ tnat 1)
   )%oo).
-Let ex_reduce_treturn:
+Example ex_reduce_treturn:
   forall st,
   ex_reduce_treturn_tm / st ==>* tnat 2 / pop_call st.
 Proof.
   unfold ex_reduce_treturn_tm. intros. repeat reduce. Qed.
 
-Let ex_reduce_tcl_tm := ((
+Definition ex_reduce_tcl_tm := ((
     tcl "foo" (<(tnat 1 \+ tnat 1)>)
   )%oo).
-Let ex_reduce_tcl:
+Example ex_reduce_tcl:
   forall st,
   ex_reduce_tcl_tm / st ==>* tcl "foo" (trc (tnat 2) tvoid) / st.
 Proof.
   unfold ex_reduce_tcl_tm. intros. repeat reduce. Qed.
 
-Let ex_reduce_tnew_tm := ((
+Definition ex_reduce_tnew_tm := ((
     tnew 2 "foo"
   )%oo).
-Let ex_reduce_tnew:
+Example ex_reduce_tnew:
   ex_reduce_tnew_tm / init_state ==>* tref 1 / alloc_sr (tcl "foo" (<(tvoid, tvoid)>))%oo init_state.
 Proof.
   unfold ex_reduce_tnew_tm. repeat reduce. Qed.
 
-Let ex_reduce_tfield_r_tm := ((
+Definition ex_reduce_tfield_r_tm := ((
     (treturn (tref 1))@2
   )%oo).
-Let ex_reduce_tfield_r:
+Example ex_reduce_tfield_r:
   let st := push_call tvoid (alloc_sr (tcl "foo" (<(tvoid, tnat 1, tnat 2)>))%oo init_state) in
   let st' := pop_call st in
   ex_reduce_tfield_r_tm / st ==>* tnat 2 / st'.
 Proof.
   unfold ex_reduce_tfield_r_tm. repeat reduce. Qed.
 
-Let ex_reduce_tfield_w_tm := ((
+Definition ex_reduce_tfield_w_tm := ((
     (treturn (tref 1)) <@ 1 <- (tnat 1 \+ tnat 1)
   )%oo).
-Let ex_reduce_tfield_w:
+Example ex_reduce_tfield_w:
   let st := push_call tvoid (alloc_sr (tcl "foo" (<(tvoid, tvoid)>))%oo init_state) in
   let st' := write_sr 1 (tcl "foo" (<(tvoid, tnat 2)>))%oo (pop_call st) in
   ex_reduce_tfield_w_tm / st ==>* tvoid / st'.
 Proof.
   unfold ex_reduce_tfield_w_tm. repeat reduce. Qed.
 
-Let ex_reduce_tvnew_tm := ((
+Definition ex_reduce_tvnew_tm := ((
     tvnew 2 "foo"
   )%oo).
-Let ex_reduce_tvnew:
+Example ex_reduce_tvnew:
   forall st,
   ex_reduce_tvnew_tm / st ==>* (tcl "foo" (<(tvoid, tvoid)>))%oo / st.
 Proof.
   unfold ex_reduce_tvnew_tm. intros. repeat reduce. Qed.
 
-Let ex_reduce_tvfield_r_tm := ((
+Definition ex_reduce_tvfield_r_tm := ((
     tcl "foo" (<(tvoid, tnat 1, tnat 1 \+ tnat 1)>)?@2
   )%oo).
-Let ex_reduce_tvfield_r:
+Example ex_reduce_tvfield_r:
   forall st,
   ex_reduce_tvfield_r_tm / st ==>* tnat 2 / st.
 Proof.
   unfold ex_reduce_tvfield_r_tm. intros. repeat reduce. Qed.
 
-Let ex_reduce_tvfield_w_tm := ((
+Definition ex_reduce_tvfield_w_tm := ((
     (tvar 0) <?@ 1 <- (tnat 1 \+ tnat 1)
   )%oo).
-Let ex_reduce_tvfield_w:
+Example ex_reduce_tvfield_w:
   let st := write_sk_hd 0 (tcl "foo" (<(tvoid, tvoid)>))%oo (resize_sk_hd 1 init_state) in
   let st' := write_sk_hd 0 (tcl "foo" (<(tvoid, tnat 2)>))%oo st in
   ex_reduce_tvfield_w_tm / st ==>* tvoid / st'.
