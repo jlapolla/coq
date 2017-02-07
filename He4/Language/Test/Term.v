@@ -191,6 +191,15 @@ Example ex_tif_nested:
   \if tbool true \then \if tvar 1 \then tvoid \else tvoid \fi \else tbool true \fi = \if tbool true \then nested \else tbool true \fi.
 Proof. simpl. reflexivity. Qed.
 
+Example ex_twhile_single:
+  \while tvar 1 \do tvoid \done = twhile (tvar 1) tvoid.
+Proof. reflexivity. Qed.
+
+Example ex_twhile_nested:
+  let nested := \while tvar 2 \do tvoid \done in
+  \while tvar 1 \do \while tvar 2 \do tvoid \done \done = twhile (tvar 1) nested.
+Proof. simpl. reflexivity. Qed.
+
 End Examples.
 
 
