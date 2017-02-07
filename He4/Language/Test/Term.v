@@ -182,6 +182,15 @@ Example ex_tseq_multi:
   (tvar 1 ::= tnat 1; tvar 2 ::= tnat 2; tvar 3 ::= tnat 3) = (tvar 1 ::= tnat 1; result1).
 Proof. simpl. reflexivity. Qed.
 
+Example ex_tif_single:
+  \if tbool true \then tbool false \else tbool true \fi = tif (tbool true) (tbool false) (tbool true).
+Proof. reflexivity. Qed.
+
+Example ex_tif_nested:
+  let nested := \if tvar 1 \then tvoid \else tvoid \fi in
+  \if tbool true \then \if tvar 1 \then tvoid \else tvoid \fi \else tbool true \fi = \if tbool true \then nested \else tbool true \fi.
+Proof. simpl. reflexivity. Qed.
+
 End Examples.
 
 
