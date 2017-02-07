@@ -102,6 +102,60 @@ Example ex_trefpass_multi:
   \ref \ref (tvar 1) = \ref result1.
 Proof. simpl. reflexivity. Qed.
 
+Example ex_tmult_single:
+  tnat 1 \* tnat 2 = tmult (tnat 1) (tnat 2).
+Proof. reflexivity. Qed.
+
+Example ex_tmult_multi:
+  let result1 := tnat 1 \* tnat 2 in
+  tnat 1 \* tnat 2 \* tnat 3 = result1 \* tnat 3.
+Proof. simpl. reflexivity. Qed.
+
+Example ex_tplus_single:
+  tnat 1 \+ tnat 2 = tplus (tnat 1) (tnat 2).
+Proof. reflexivity. Qed.
+
+Example ex_tplus_multi:
+  let result1 := tnat 1 \+ tnat 2 in
+  tnat 1 \+ tnat 2 \+ tnat 3 = result1 \+ tnat 3.
+Proof. simpl. reflexivity. Qed.
+
+Example ex_tminus_single:
+  tnat 1 \- tnat 2 = tminus (tnat 1) (tnat 2).
+Proof. reflexivity. Qed.
+
+Example ex_tminus_multi:
+  let result1 := tnat 1 \- tnat 2 in
+  tnat 1 \- tnat 2 \- tnat 3 = result1 \- tnat 3.
+Proof. simpl. reflexivity. Qed.
+
+Example ex_teq_single:
+  tvar 1 == tvar 2 = teq (tvar 1) (tvar 2).
+Proof. reflexivity. Qed.
+
+Example ex_teq_multi:
+  let result1 := tvar 1 == tvar 2 in
+  tvar 1 == tvar 2 == tvar 3 = result1 == tvar 3.
+Proof. simpl. reflexivity. Qed.
+
+Example ex_tand_single:
+  tvar 1 \&& tvar 2 = tand (tvar 1) (tvar 2).
+Proof. reflexivity. Qed.
+
+Example ex_tand_multi:
+  let result1 := tvar 1 \&& tvar 2 in
+  tvar 1 \&& tvar 2 \&& tvar 3 = result1 \&& tvar 3.
+Proof. simpl. reflexivity. Qed.
+
+Example ex_tor_single:
+  tvar 1 \|| tvar 2 = tor (tvar 1) (tvar 2).
+Proof. reflexivity. Qed.
+
+Example ex_tor_multi:
+  let result1 := tvar 1 \|| tvar 2 in
+  tvar 1 \|| tvar 2 \|| tvar 3 = result1 \|| tvar 3.
+Proof. simpl. reflexivity. Qed.
+
 End Examples.
 
 
