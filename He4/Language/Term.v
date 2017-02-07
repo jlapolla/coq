@@ -54,10 +54,10 @@ Inductive tm : Type :=
 
 Module ObjectOrientedNotations.
 
-Notation "'<(' t ')>'" := (trc t tvoid) (at level 20, format "'<(' t ')>'") : oo_scope.
+Notation "'<(' t ')>'" := (trc t tvoid) (format "'<(' t ')>'") : oo_scope.
 
 Notation "'<(' t ',' .. ',' t0 ')>'" :=
-  (trc t .. (trc t0 tvoid) ..) (at level 20, format "'<(' t ','  .. ','  t0 ')>'") : oo_scope.
+  (trc t .. (trc t0 tvoid) ..) (format "'<(' t ','  .. ','  t0 ')>'") : oo_scope.
 
 Notation "t '@' n0" :=
   (tfield_r n0 t) (at level 26, left associativity, format "t  '@'  n0") : oo_scope.
