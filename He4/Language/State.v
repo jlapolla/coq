@@ -482,6 +482,64 @@ Proof with auto.
           simpl. assumption.
   Qed.
 
+Lemma push_call_length:
+  forall st args,
+  length (get_call_stack (push_call args st)) = S (length (get_call_stack st)) /\
+  length (get_stack (push_call args st)) = S (length (get_stack st)).
+Proof.
+  induction st. intros. simpl.
+  split; reflexivity.
+  Qed.
+
+(** Tail of [call_stack] is unchanged. *)
+
+Lemma push_call_correct_1:
+  forall st m args d1 d2,
+  lt m (length (get_call_stack st)) ->
+  nth (S m) (get_call_stack (push_call args st)) d1 = nth m (get_call_stack st) d2.
+Proof.
+  induction st. intros m tm d1 d2. simpl. intros.
+  apply nth_indep. assumption.
+  Qed.
+
+(** Tail of [stack] is unchanged. *)
+
+Lemma push_call_correct_2:
+  forall st m args d1 d2,
+  lt m (length (get_stack st)) ->
+  nth (S m) (get_stack (push_call args st)) d1 = nth m (get_stack st) d2.
+Proof.
+  induction st. intros m tm d1 d2. simpl. intros.
+  apply nth_indep. assumption.
+  Qed.
+
+(** Head of [call_stack] is changed. *)
+
+Lemma push_call_correct_3:
+  forall st args d,
+  hd d (get_call_stack (push_call args st)) = args_to_call_frame (rc_to_list args).
+Proof.
+  induction st. reflexivity.
+  Qed.
+
+(** Head of [stack] is changed. *)
+
+Lemma push_call_correct_4:
+  forall st args d,
+  hd d (get_stack (push_call args st)) = args_to_stack_frame (rc_to_list args) (hd nil (get_stack st)).
+Proof.
+  induction st. reflexivity.
+  Qed.
+
+(** [store] is unchanged. *)
+
+Lemma push_call_correct_5:
+  forall st args,
+  get_store (push_call args st) = get_store st.
+Proof.
+  induction st. intros. reflexivity.
+  Qed.
+
 End FunctionCalls.
 
 (** ** Stack functions *)
