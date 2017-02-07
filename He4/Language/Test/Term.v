@@ -93,6 +93,15 @@ Example ex_tnot_multi:
   !!tbool false = !result1.
 Proof. simpl. reflexivity. Qed.
 
+Example ex_trefpass_single:
+  \ref (tvar 1) = trefpass (tvar 1).
+Proof. reflexivity. Qed.
+
+Example ex_trefpass_multi:
+  let result1 := \ref (tvar 1) in
+  \ref \ref (tvar 1) = \ref result1.
+Proof. simpl. reflexivity. Qed.
+
 End Examples.
 
 
