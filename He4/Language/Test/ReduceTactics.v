@@ -1,10 +1,7 @@
-Require Import He4.Language.Record.
 Require Import He4.Language.State.
 Require Import He4.Language.Step.
 Require Import He4.Language.StepProp.
 Require Import He4.Language.Term.
-Require Import He4.Language.Value.
-Require Import He4.Strings.String.
 Require Import He4.Language.ReduceTactics.
 Import ObjectOrientedNotations.
 Import StateNotations.
@@ -172,10 +169,10 @@ Example ex_reduce_twhile:
 Proof.
   unfold ex_reduce_twhile_tm. repeat reduce. Qed.
 
-Definition ex_reduce_trc_tm := list_to_rc (cons (tnat 1 \+ tnat 2) (cons (tnat 3 \+ tnat 4) nil)).
+Definition ex_reduce_trc_tm := <(tnat 1 \+ tnat 2, tnat 3 \+ tnat 4)>.
 Example ex_reduce_trc:
   forall st,
-  ex_reduce_trc_tm / st ==>* list_to_rc (cons (tnat 3) (cons (tnat 7) nil)) / st.
+  ex_reduce_trc_tm / st ==>* <(tnat 3, tnat 7)> / st.
 Proof.
   unfold ex_reduce_trc_tm. intros. simpl. repeat reduce. Qed.
 
