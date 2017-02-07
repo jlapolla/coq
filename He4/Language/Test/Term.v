@@ -53,6 +53,20 @@ Example ex_tvfield_r_multi:
       )).
 Proof. reflexivity. Qed.
 
+Example ex_tcall_chain_no_arguments_single:
+  (tref 0) # "foo"|()| = tcall "foo" (trc (tref 0) tvoid).
+Proof. reflexivity. Qed.
+
+Example ex_tcall_chain_no_arguments_multi:
+  let foo_result := (tref 0) # "foo"|()| in
+  let bar_result := foo_result # "bar"|()| in
+  (tref 0) # "foo"|()| # "bar"|()| = bar_result.
+Proof. reflexivity. Qed.
+
+Example ex_tcall_chain_one_argument_single:
+  (tref 0) # "foo"|(tnat 1)| = tcall "foo" (trc (tref 0) (trc (tnat 1) tvoid)).
+Proof. reflexivity. Qed.
+
 End Examples.
 
 
