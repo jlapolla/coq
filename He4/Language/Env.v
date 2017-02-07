@@ -521,7 +521,7 @@ Let ex_reduce_tcall_tm := ((
   )%oo).
 Let ex_reduce_tcall:
   forall st,
-  ex_reduce_tcall_tm / st ==>* treturn (texec "foo") / push_sf (cons (tnat 2) nil) st.
+  ex_reduce_tcall_tm / st ==>* treturn (texec "foo") / push_call (trc (tnat 2) tvoid) st.
 Proof.
   unfold ex_reduce_tcall_tm. intros. simpl. repeat reduce. Qed.
 
@@ -530,7 +530,7 @@ Let ex_reduce_treturn_tm := ((
   )%oo).
 Let ex_reduce_treturn:
   forall st,
-  ex_reduce_treturn_tm / st ==>* tnat 2 / pop_sf st.
+  ex_reduce_treturn_tm / st ==>* tnat 2 / pop_call st.
 Proof.
   unfold ex_reduce_treturn_tm. intros. repeat reduce. Qed.
 
@@ -555,8 +555,8 @@ Let ex_reduce_tfield_r_tm := ((
     (treturn (tref 1))@2
   )%oo).
 Let ex_reduce_tfield_r:
-  let st := push_sf nil (alloc_sr (tcl "foo" (|(tvoid, tnat 1, tnat 2)|))%oo init_state) in
-  let st' := pop_sf st in
+  let st := push_call tvoid (alloc_sr (tcl "foo" (|(tvoid, tnat 1, tnat 2)|))%oo init_state) in
+  let st' := pop_call st in
   ex_reduce_tfield_r_tm / st ==>* tnat 2 / st'.
 Proof.
   unfold ex_reduce_tfield_r_tm. repeat reduce. Qed.
@@ -565,8 +565,8 @@ Let ex_reduce_tfield_w_tm := ((
     (treturn (tref 1)) <@ 1 <- (tnat 1 \+ tnat 1)
   )%oo).
 Let ex_reduce_tfield_w:
-  let st := push_sf nil (alloc_sr (tcl "foo" (|(tvoid, tvoid)|))%oo init_state) in
-  let st' := write_sr 1 (tcl "foo" (|(tvoid, tnat 2)|))%oo (pop_sf st) in
+  let st := push_call tvoid (alloc_sr (tcl "foo" (|(tvoid, tvoid)|))%oo init_state) in
+  let st' := write_sr 1 (tcl "foo" (|(tvoid, tnat 2)|))%oo (pop_call st) in
   ex_reduce_tfield_w_tm / st ==>* tvoid / st'.
 Proof.
   unfold ex_reduce_tfield_w_tm. repeat reduce. Qed.

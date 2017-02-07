@@ -169,7 +169,7 @@ Inductive step : step_relation :=
   | STcall :
     forall f v0 st,
     value v0 ->
-    tcall f v0 / st ==> treturn (texec f) / push_sf (rc_to_list v0) st
+    tcall f v0 / st ==> treturn (texec f) / push_call v0 st
 
   | STreturn_r :
     forall t t' st st',
@@ -178,7 +178,7 @@ Inductive step : step_relation :=
   | STreturn :
     forall v st,
     value v ->
-    treturn v / st ==> v / pop_sf st
+    treturn v / st ==> v / pop_call st
 
   | STcl_r :
     forall c t0 t0' st st',
