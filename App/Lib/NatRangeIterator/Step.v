@@ -17,11 +17,6 @@ Reserved Notation "t1 '/' st1 '==>' t2 '/' st2"
   (at level 40, st1 at level 39, t2 at level 39).
 
 Inductive step : (prod tm state) -> (prod tm state) -> Prop :=
-  | STbase :
-    forall x x',
-    Step.step x x' ->
-    step x x'
-
   | STexec_NatRangeIterator_make :
     forall st,
     texec "NatRangeIterator_make" / st ==> (
