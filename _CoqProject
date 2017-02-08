@@ -1,4 +1,5 @@
 -install none -R He4 He4 -R App App
+App/Lib/NatRangeIterator/ReduceTactics.v
 App/Lib/NatRangeIterator/Step.v
 He4/Discussion/Abstract.v
 He4/Discussion/Introduction.v
