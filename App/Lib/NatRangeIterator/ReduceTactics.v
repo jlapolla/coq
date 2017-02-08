@@ -15,3 +15,8 @@ Ltac reduce_get_at_start :=
     end
   end.
 
+Ltac reduce_step :=
+     reduce_NatRangeIterator_make
+  || reduce_get_at_start
+.
+
