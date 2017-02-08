@@ -3,7 +3,9 @@ App/Feasibility.v
 App/FeasibilityStep.v
 App/FeasibilityTactics.v
 App/Lib/NatRangeIterator/ReduceTactics.v
+App/Lib/NatRangeIterator/Spec.v
 App/Lib/NatRangeIterator/Step.v
+App/Lib/Iterator/Spec.v
 Dilemma/Dilemma.v
 He4/Discussion/Abstract.v
 He4/Discussion/Introduction.v
