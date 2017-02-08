@@ -6,6 +6,7 @@ Require Import He4.Language.State.
 Require Import He4.Language.Value.
 Require Import He4.Language.Record.
 Require Import He4.Language.Step.
+Require Import He4.Language.StepProp.
 Require Import He4.Language.DynamicBinding.
 
 Import ObjectOrientedNotations.
@@ -16,7 +17,7 @@ Open Scope oo_scope.
 Reserved Notation "t1 '/' st1 '==>' t2 '/' st2"
   (at level 40, st1 at level 39, t2 at level 39).
 
-Inductive step : (prod tm state) -> (prod tm state) -> Prop :=
+Inductive step : step_relation :=
   | STexec_NatRangeIterator_make :
     forall st,
     texec "NatRangeIterator_make" / st ==> (
