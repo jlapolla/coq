@@ -3,6 +3,8 @@ Require Import He4.Language.StepProp.
 Require Import He4.Language.Term.
 Require Import App.FeasibilityStep.
 Require Import App.FeasibilityTactics.
+Require Import App.Lib.Iterator.Spec.
+Require Import App.Lib.NatRangeIterator.Spec.
 Import ObjectOrientedNotations.
 Import StateNotations.
 
@@ -10,7 +12,7 @@ Notation "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2))
   (at level 40, st1 at level 39, t2 at level 39, format "'//' '[' t1 '//' / '//' st1 '//' '==>' '//' t2 '//' / '//' st2 ']'").
 
 Notation "t1 '/' st1 '==>*' t2 '/' st2" := (multi step (pair t1 st1) (pair t2 st2))
-  (at level 40, st1 at level 39, t2 at level 39, format "'//' '[' t1 '//' / '//' st1 '//' '==>*' '//' t2 '//' / '//' st2 ']'").
+  (at level 40, st1 at level 39, t2 at level 39, format "'['  t1  /  st1  '==>*'  t2  /  st2 ']'").
 
 Ltac reduce_step := Language.reduce_step || NatRangeIterator.reduce_step.
 
@@ -35,4 +37,12 @@ Proof.
   reduce. reduce. reduce. reduce. reduce. reduce. reduce. reduce. reduce.
   reduce. reduce. reduce. reduce. reduce. reduce. reduce.
   Qed.
+
+Close Scope state_scope.
+Open Scope string_scope.
+
+Theorem off__no_side_effects:
+  Iterator.Spec.off__no_side_effects step "NatRangeIterator" (NatRangeIterator.Spec.wf step).
+Proof.
+  Abort.
 
