@@ -16,7 +16,7 @@ Ltac reduce_step := Language.reduce_step || NatRangeIterator.reduce_step.
 
 Ltac reduce :=
   match goal with
-  | |- multi step ?t ?t => apply Relation_Operators.rt1n_refl
+  | |- multi step _ _ => solve [apply Relation_Operators.rt1n_refl]
   | |- multi step _ _ => 
     eapply Relation_Operators.rt1n_trans;
     [repeat reduce_step | instantiate; simpl; fold multi]
@@ -33,7 +33,6 @@ Proof.
   reduce. reduce. reduce. reduce. reduce. reduce. reduce. reduce. reduce.
   reduce. reduce. reduce. reduce. reduce. reduce. reduce. reduce. reduce.
   reduce. reduce. reduce. reduce. reduce. reduce. reduce. reduce. reduce.
-  reduce. reduce. reduce. reduce. reduce. reduce.
-  eapply Relation_Operators.rt1n_refl.
+  reduce. reduce. reduce. reduce. reduce. reduce. reduce.
   Qed.
 
