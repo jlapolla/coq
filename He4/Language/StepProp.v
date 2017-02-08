@@ -30,5 +30,11 @@ Definition deterministic : Prop :=
     step x z ->
     z = y.
 
+Definition states_eq_wrt (t : tm) (st1 st2 : state) : Prop :=
+  forall v st1' st2',
+  value v ->
+  multi step (pair t st1) (pair v st1') ->
+  multi step (pair t st2) (pair v st2').
+
 End StepProps.
 
