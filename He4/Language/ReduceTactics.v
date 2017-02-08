@@ -1,3 +1,4 @@
+Require Import He4.Language.DynamicBinding.
 Require Import He4.Language.State.
 Require Import He4.Language.Step.
 Require Import He4.Language.StepProp.
@@ -17,6 +18,14 @@ Ltac reduce_read_stack :=
 Ltac reduce_read_store :=
   match goal with
   | |- read_sr _ _ = _ => reflexivity
+  end.
+
+Ltac reduce_called_on_class :=
+  match goal with
+  | |- called_on_class _ _ => apply called_on_classb_true_iff
+  | |- called_on_classb _ _ = true => reflexivity
+  | |- called_on_vclass _ _ => apply called_on_vclassb_true_iff
+  | |- called_on_vclassb _ _ = true => reflexivity
   end.
 
 Ltac reduce_tnot :=
@@ -280,6 +289,7 @@ Ltac reduce_step :=
      reduce_value
   || reduce_read_stack
   || reduce_read_store
+  || reduce_called_on_class
   || reduce_tnot
   || reduce_tand
   || reduce_tor
