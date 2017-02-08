@@ -1,4 +1,11 @@
-Require Import He4.Language.Core.
+Require Import Coq.Strings.String.
+Require Import He4.Language.Term.
+Require Import Coq.Lists.List.
+Require Import He4.Lists.List.
+Require Import He4.Language.State.
+Require Import He4.Language.Value.
+Require Import He4.Language.Record.
+Require Import He4.Language.Step.
 Require Import He4.Language.DynamicBinding.
 
 Import ObjectOrientedNotations.
