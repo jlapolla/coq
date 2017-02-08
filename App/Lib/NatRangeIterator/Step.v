@@ -1,10 +1,8 @@
 Require Import He4.Language.Core.
+Require Import He4.Language.DynamicBinding.
 
 Import ObjectOrientedNotations.
 Delimit Scope oo_scope with oo.
-
-Definition called_on_class (c : string) (st : state) : Prop :=
-  exists n, read_sk_hd 0 st = tref n /\ (exists t, read_sr n st = tcl c t).
 
 Reserved Notation "t1 '/' st1 '==>' t2 '/' st2"
   (at level 40, st1 at level 39, t2 at level 39).
