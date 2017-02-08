@@ -1,4 +1,7 @@
 -install none -R He4 He4 -R App App -R Dilemma Dilemma
+App/Feasibility.v
+App/FeasibilityStep.v
+App/FeasibilityTactics.v
 App/Lib/NatRangeIterator/ReduceTactics.v
 App/Lib/NatRangeIterator/Step.v
 Dilemma/Dilemma.v
