@@ -16,6 +16,14 @@ Section Examples.
 Open Scope oo_scope.
 Open Scope state_scope.
 
+Ltac reduce :=
+  match goal with
+  | |- multi step ?t ?t => apply Relation_Operators.rt1n_refl
+  | |- multi step _ _ => 
+    eapply Relation_Operators.rt1n_trans;
+    [repeat reduce_step | instantiate; simpl; fold multi]
+  end.
+
 Example ex_tnot:
   forall st,
   (!!tbool true) / st ==>* (tbool true) / st.

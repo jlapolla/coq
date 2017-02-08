@@ -304,11 +304,3 @@ Ltac reduce_step :=
   || reduce_tvfield_w
 .
 
-Ltac reduce :=
-  match goal with
-  | |- multi step ?t ?t => apply Relation_Operators.rt1n_refl
-  | |- multi step _ _ => 
-    eapply Relation_Operators.rt1n_trans;
-    [repeat reduce_step | instantiate; simpl; fold multi]
-  end.
-
