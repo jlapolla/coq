@@ -41,8 +41,22 @@ Proof.
 Close Scope state_scope.
 Open Scope string_scope.
 
+Ltac expand_wf :=
+  match goal with
+  | H: wf _ _ |- _ => destruct H as [[ref [Hread_sk [rec Hread_sr]]] [[at_start Hat_start] [[count Hcount] [first Hfirst]]]]
+  | H: read_sk_hd 0 ?st = tref _ |- _ => destruct st as [[| sf sk] csk sr]
+  | H: read_sk_hd 0 (Cstate nil _ _) = tref _ |- _ => inversion H
+  | H: read_sk_hd 0 (Cstate (?sf :: _)%list _ _) = tref _ |- _ => destruct sf as [| t sf]
+  | H: read_sk_hd 0 (Cstate (nil :: _)%list _ _) = tref _ |- _ => inversion H
+  | H: read_sk_hd 0 (Cstate (_ :: _)%list _ _) = tref _ |- _ => simpl in H
+  | H: ?t = tref _ |- _ => subst t
+  end.
+
 Theorem off__no_side_effects:
-  Iterator.Spec.off__no_side_effects step "NatRangeIterator" (NatRangeIterator.Spec.wf step).
+  Iterator.Spec.off__no_side_effects step (NatRangeIterator.Spec.wf step).
 Proof.
+  unfold off__no_side_effects.
+  intros.
+  repeat expand_wf. 
   Abort.
 
