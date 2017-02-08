@@ -9,7 +9,9 @@ Require Import He4.Language.Step.
 Require Import He4.Language.DynamicBinding.
 
 Import ObjectOrientedNotations.
-Delimit Scope oo_scope with oo.
+
+Section Steps.
+Open Scope oo_scope.
 
 Reserved Notation "t1 '/' st1 '==>' t2 '/' st2"
   (at level 40, st1 at level 39, t2 at level 39).
@@ -32,7 +34,7 @@ Inductive step : (prod tm state) -> (prod tm state) -> Prop :=
       this#"set_first"|(first)|;
       this#"set_count"|(count)|;
       this
-    )%oo) / resize_sk_hd 3 st
+    )) / resize_sk_hd 3 st
   | STexec_get_at_start :
     forall st,
     called_on_class "NatRangeIterator" st ->
@@ -40,7 +42,7 @@ Inductive step : (prod tm state) -> (prod tm state) -> Prop :=
     let this := tvar 0 in
     (
       this@0
-    )%oo) / resize_sk_hd 1 st
+    )) / resize_sk_hd 1 st
   | STexec_get_count :
     forall st,
     called_on_class "NatRangeIterator" st ->
@@ -48,7 +50,7 @@ Inductive step : (prod tm state) -> (prod tm state) -> Prop :=
     let this := tvar 0 in
     (
       this@1
-    )%oo) / resize_sk_hd 1 st
+    )) / resize_sk_hd 1 st
   | STexec_get_first :
     forall st,
     called_on_class "NatRangeIterator" st ->
@@ -56,7 +58,7 @@ Inductive step : (prod tm state) -> (prod tm state) -> Prop :=
     let this := tvar 0 in
     (
       this@2
-    )%oo) / resize_sk_hd 1 st
+    )) / resize_sk_hd 1 st
   | STexec_set_at_start :
     forall st,
     called_on_class "NatRangeIterator" st ->
@@ -65,7 +67,7 @@ Inductive step : (prod tm state) -> (prod tm state) -> Prop :=
     let value := tvar 1 in
     (
       this<@0 <- value
-    )%oo) / resize_sk_hd 2 st
+    )) / resize_sk_hd 2 st
   | STexec_set_count :
     forall st,
     called_on_class "NatRangeIterator" st ->
@@ -74,7 +76,7 @@ Inductive step : (prod tm state) -> (prod tm state) -> Prop :=
     let value := tvar 1 in
     (
       this<@1 <- value
-    )%oo) / resize_sk_hd 2 st
+    )) / resize_sk_hd 2 st
   | STexec_set_first :
     forall st,
     called_on_class "NatRangeIterator" st ->
@@ -83,7 +85,7 @@ Inductive step : (prod tm state) -> (prod tm state) -> Prop :=
     let value := tvar 1 in
     (
       this<@2 <- value
-    )%oo) / resize_sk_hd 2 st
+    )) / resize_sk_hd 2 st
   | STexec_off :
     forall st,
     called_on_class "NatRangeIterator" st ->
@@ -91,7 +93,7 @@ Inductive step : (prod tm state) -> (prod tm state) -> Prop :=
     let this := tvar 0 in
     (
       this#"get_count"|()| \== (tnat 0) \|| this#"get_at_start"|()|
-    )%oo) / resize_sk_hd 1 st
+    )) / resize_sk_hd 1 st
   | STexec_after :
     forall st,
     called_on_class "NatRangeIterator" st ->
@@ -99,7 +101,7 @@ Inductive step : (prod tm state) -> (prod tm state) -> Prop :=
     let this := tvar 0 in
     (
       this#"get_count"|()| \== (tnat 0) \&& !this#"get_at_start"|()|
-    )%oo) / resize_sk_hd 1 st
+    )) / resize_sk_hd 1 st
   | STexec_forth :
     forall st,
     called_on_class "NatRangeIterator" st ->
@@ -113,7 +115,7 @@ Inductive step : (prod tm state) -> (prod tm state) -> Prop :=
         this#"set_first"|(this#"get_first"|()| \+ tnat 1)|;
         this#"set_count"|(this#"get_count"|()| \- tnat 1)|
       \fi
-    )%oo) / resize_sk_hd 1 st
+    )) / resize_sk_hd 1 st
   | STexec_item :
     forall st,
     called_on_class "NatRangeIterator" st ->
@@ -121,7 +123,9 @@ Inductive step : (prod tm state) -> (prod tm state) -> Prop :=
     let this := tvar 0 in
     (
       this#"get_first"|()|
-    )%oo) / resize_sk_hd 1 st
+    )) / resize_sk_hd 1 st
 
   where "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2)).
+
+End Steps.
 
