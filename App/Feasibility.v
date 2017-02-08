@@ -30,15 +30,10 @@ Example ex_NatRangeIterator_make:
   (tnat 1) # "NatRangeIterator_make"|(tnat 2)| / init_state ==>* tref 1 / st'.
 Proof.
   eapply ex_intro.
-  reduce. reduce. reduce. reduce. reduce. reduce. reduce. reduce.
-  apply DynamicBinding.called_on_classb_true_iff. reflexivity.
-  reduce. reduce. reduce. reduce. reduce. reduce. reduce. reduce.
-  reduce.
-  apply DynamicBinding.called_on_classb_true_iff. reflexivity.
-  reduce. reduce. reduce. reduce. reduce. reduce. reduce.
-  reduce. reduce.
-  apply DynamicBinding.called_on_classb_true_iff. reflexivity.
+  reduce. reduce. reduce. reduce. reduce. reduce. reduce. reduce. reduce.
+  reduce. reduce. reduce. reduce. reduce. reduce. reduce. reduce. reduce.
+  reduce. reduce. reduce. reduce. reduce. reduce. reduce. reduce. reduce.
   reduce. reduce. reduce. reduce. reduce. reduce.
-  reduce. eapply Relation_Operators.rt1n_refl.
+  eapply Relation_Operators.rt1n_refl.
   Qed.
 
