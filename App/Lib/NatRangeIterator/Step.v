@@ -116,5 +116,21 @@ Inductive step : step_relation :=
 
   where "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2)).
 
+Lemma value_irreducible__step:
+  value_irreducible step.
+Proof with auto.
+  intros t Hval.
+  induction Hval;
+  try solve [intros t' st st' Hcontra; inversion Hcontra].
+  Qed.
+
+Lemma deterministic__step:
+  deterministic step.
+Proof with auto.
+  intros x y Hxy.
+  induction Hxy; intros z Hxz; inversion Hxz; subst;
+  try solve [reflexivity].
+  Qed.
+
 End Steps.
 
