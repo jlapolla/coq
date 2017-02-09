@@ -69,8 +69,14 @@ Proof.
     reduce.
     reduce.
     reduce.
-    reduce. eapply STfield_r. simpl. simpl in Hsr. rewrite Hsr. reflexivity.
-    reduce. reduce. reduce. reduce. rewrite Hst. reduce.
+    reduce.
+    reduce.
+    reduce.
+    reduce.
+    reduce.
+    destruct sk. destruct n; inversion Hsk.
+    simpl. rewrite Hst.
+    reduce.
   Abort.
 
 
