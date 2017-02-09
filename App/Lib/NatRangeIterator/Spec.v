@@ -5,7 +5,6 @@ Require Import He4.Language.Term.
 Require Import He4.Language.Value.
 Import ObjectOrientedNotations.
 
-Section Specs.
 Open Scope oo_scope.
 
 Definition wf_ex (x : tm) (st : state) : Prop :=
@@ -19,6 +18,15 @@ Definition wf x var ref st at_start count first : Prop :=
   /\  read_sk_hd var st = tref ref
   /\  read_sr ref st = tcl "NatRangeIterator" <(tbool at_start, tnat count, tnat first)>.
 
+Lemma wf_implies_wf_ex:
+  forall x var ref st at_start count first,
+  wf x var ref st at_start count first ->
+  wf_ex x st.
+Proof.
+  Abort.
+
+Section Specs.
+
 Variable step : step_relation.
 
 Notation "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2))
@@ -26,6 +34,80 @@ Notation "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2))
 
 Notation "t1 '/' st1 '==>*' t2 '/' st2" := (multi step (pair t1 st1) (pair t2 st2))
   (at level 40, st1 at level 39, t2 at level 39, format "'[' t1 / st1 '==>*' t2 / st2 ']'").
+
+Definition get_at_start : Prop :=
+  forall x var ref st at_start count first,
+  wf x var ref st at_start count first ->
+  (x # "get_at_start"|()|) / st ==>* (tbool at_start) / st.
+
+Definition get_count : Prop :=
+  forall x var ref st at_start count first,
+  wf x var ref st at_start count first ->
+  (x # "get_count"|()|) / st ==>* (tnat count) / st.
+
+Definition get_first : Prop :=
+  forall x var ref st at_start count first,
+  wf x var ref st at_start count first ->
+  (x # "get_first"|()|) / st ==>* (tnat first) / st.
+
+Definition set_at_start : Prop :=
+  forall x var ref st at_start count first,
+  wf x var ref st at_start count first ->
+  forall val,
+  (x # "set_at_start"|(val)|) / st ==>* tvoid / write_sr ref (tcl "NatRangeIterator" <(val, tnat count, tnat first)>) st.
+
+Definition set_count : Prop :=
+  forall x var ref st at_start count first,
+  wf x var ref st at_start count first ->
+  forall val,
+  (x # "set_count"|(val)|) / st ==>* tvoid / write_sr ref (tcl "NatRangeIterator" <(tbool at_start, val, tnat first)>) st.
+
+Definition set_first : Prop :=
+  forall x var ref st at_start count first,
+  wf x var ref st at_start count first ->
+  forall val,
+  (x # "set_first"|(val)|) / st ==>* tvoid / write_sr ref (tcl "NatRangeIterator" <(tbool at_start, tnat count, val)>) st.
+
+Definition off_true : Prop :=
+  forall x var ref st at_start count first,
+  wf x var ref st at_start count first ->
+  count = 0 \/ at_start = true ->
+  (x # "off"|()|) / st ==>* (tbool true) / st.
+
+Definition off_false : Prop :=
+  forall x var ref st at_start count first,
+  wf x var ref st at_start count first ->
+  count <> 0 /\ at_start = false ->
+  (x # "off"|()|) / st ==>* (tbool false) / st.
+
+Definition after_true : Prop :=
+  forall x var ref st at_start count first,
+  wf x var ref st at_start count first ->
+  count = 0 /\ at_start = false ->
+  (x # "off"|()|) / st ==>* (tbool true) / st.
+
+Definition after_false : Prop :=
+  forall x var ref st at_start count first,
+  wf x var ref st at_start count first ->
+  count <> 0 \/ at_start = true ->
+  (x # "off"|()|) / st ==>* (tbool true) / st.
+
+Definition forth_at_start : Prop :=
+  forall x var ref st at_start count first,
+  wf x var ref st at_start count first ->
+  at_start = true ->
+  (x # "forth"|()|) / st ==>* tvoid / write_sr ref (tcl "NatRangeIterator" <(tbool false, tnat count, tnat first)>) st.
+
+Definition forth : Prop :=
+  forall x var ref st at_start count first,
+  wf x var ref st at_start count first ->
+  at_start = false ->
+  (x # "forth"|()|) / st ==>* tvoid / write_sr ref (tcl "NatRangeIterator" <(tbool at_start, tnat (count - 1), tnat (first + 1))>) st.
+
+Definition item : Prop :=
+  forall x var ref st at_start count first,
+  wf x var ref st at_start count first ->
+  (x # "item"|()|) / st ==>* (tnat first) / st.
 
 Definition get_at_start__behavior : Prop :=
   forall x var ref st at_start count first,
@@ -55,4 +137,6 @@ Definition get_at_start__preserves_state : Prop :=
   term_preserves_state step (x # "get_at_start"|()|) st.
 
 End Specs.
+
+Close Scope oo_scope.
 
