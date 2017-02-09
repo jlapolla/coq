@@ -36,6 +36,25 @@ Definition deterministic : Prop :=
     step x z ->
     z = y.
 
+Definition term_terminates (t : tm) (st : state) : Prop :=
+  exists v st',
+  value v ->
+  t / st ==>* v / st'.
+
+Definition term_deterministic (t : tm) (st : state) : Prop :=
+  forall v1 v2 st1 st2,
+  value v1 ->
+  t / st ==>* v1 / st1 ->
+  value v2 ->
+  t / st ==>* v2 / st2 ->
+  v2 = v1 /\ st2 = st1.
+
+Definition term_preserves_state (t : tm) (st : state) : Prop :=
+  forall v st',
+  value v ->
+  t / st ==>* v / st' ->
+  st' = st.
+
 Definition states_eq_wrt (t : tm) (st1 st2 : state) : Prop :=
   forall v st1',
   value v ->
