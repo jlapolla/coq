@@ -6,6 +6,9 @@ Require Import He4.Language.Value.
 Require Import App.Lib.NatRangeIterator.Spec.
 Import ObjectOrientedNotations.
 
+Ltac destruct_wf_ex H var ref at_start count Hvar Hsk Hsr :=
+  destruct H as [var [ref [at_start [count [first [Hvar [Hsk Hsr]]]]]]].
+
 Section Props.
 Open Scope oo_scope.
 
@@ -25,15 +28,14 @@ Definition get_at_start__terminates_proof:
   term_terminates step (x # "get_at_start"|()|) st.
 Proof.
   intros.
-  unfold wf_ex in H.
-  destruct H as [var [ref [at_start [count [first [Hvar [Hsk Hsr]]]]]]].
+  destruct_wf_ex H var ref at_start count Hvar Hsk Hsr.
   subst x.
-  assert (wf var ref st at_start count first).
-  { unfold wf. split; assumption. }
+  assert (wf (tvar var) var ref st at_start count first).
+  { unfold wf; auto. }
   unfold term_terminates.
   exists (tbool at_start). exists st.
   intros.
-  apply (get_at_start__behavior_proof var ref st at_start count first).
+  apply (get_at_start__behavior_proof (tvar var) var ref st at_start count first).
   assumption.
   Qed.
 

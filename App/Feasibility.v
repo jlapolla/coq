@@ -73,7 +73,8 @@ Proof.
   unfold get_at_start__behavior.
   unfold wf. intros.
   destruct st as [sk csk sr] eqn:Hst.
-  destruct H as [Hsk Hsr].
+  destruct H as [Hvar [Hsk Hsr]].
+  subst x.
   destruct sk; try solve [destruct var; inversion Hsk].
   simpl in Hsk, Hsr.
   repeat reduce.
