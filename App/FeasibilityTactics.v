@@ -29,6 +29,10 @@ Ltac reduce_called_on_class :=
     match eval cbv in (read_sk_hd 0 st) with
     | tref ?r =>
       match goal with
+      | H: List.nth r ?sr tvoid = tcl ?c ?t |- called_on_class ?c (Cstate _ _ ?sr) =>
+        exists r;
+        split;
+        [reflexivity | exists t; assumption]
       | H: read_sr r (Cstate _ _ ?sr) = tcl ?c ?t |- called_on_class ?c (Cstate _ _ ?sr) =>
         exists r;
         split;
@@ -344,6 +348,7 @@ Ltac reduce_function class fn rule :=
       match eval cbv in (read_sk_hd 0 st) with
       | tref ?r =>
         match goal with
+        | H: List.nth r ?sr tvoid = tcl class _ |- step (pair (texec fn) (Cstate _ _ ?sr)) _ => eapply rule
         | H: read_sr r (Cstate _ _ ?sr) = tcl class _ |- step (pair (texec fn) (Cstate _ _ ?sr)) _ => eapply rule
         end
       end
