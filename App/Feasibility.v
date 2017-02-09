@@ -16,7 +16,7 @@ Notation "t1 '/' st1 '==>*' t2 '/' st2" := (multi step (pair t1 st1) (pair t2 st
 
 Ltac reduce_step := Language.reduce_step || NatRangeIterator.reduce_step.
 
-Ltac rewrite_nth_sf :=
+Ltac rewrite_nth :=
   match goal with
   | H: List.nth ?n ?sf tvoid = _ |- context [List.nth ?n ?sf tvoid] => rewrite H
   end.
@@ -26,7 +26,7 @@ Ltac reduce :=
   | |- multi step _ _ => solve [apply Relation_Operators.rt1n_refl]
   | |- multi step _ _ => 
     eapply Relation_Operators.rt1n_trans;
-    [repeat reduce_step | instantiate; simpl; repeat rewrite_nth_sf; fold multi]
+    [repeat reduce_step | instantiate; simpl; repeat rewrite_nth; fold multi]
   end.
 
 Open Scope oo_scope.
@@ -57,26 +57,13 @@ Proof.
   unfold off__no_side_effects.
   intros. expand_wf. subst x.
   destruct st as [sk csk sr] eqn:Hst.
-  simpl in Hsr, Hsk.
+  destruct sk; try solve [destruct n; inversion Hsk].
+  simpl in Hsk, Hsr.
   destruct count.
   (* count = 0 *)
-    exists true. exists st.
+    exists true. exists st. subst st.
     repeat split.
-    reduce.
-    reduce.
-    reduce.
-    reduce.
-    reduce.
-    reduce.
-    reduce.
-    reduce.
-    reduce.
-    reduce.
-    reduce.
-    reduce.
-    destruct sk. destruct n; inversion Hsk.
-    simpl. rewrite Hst.
-    reduce.
+      repeat reduce.
   Abort.
 
 

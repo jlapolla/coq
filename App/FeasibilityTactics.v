@@ -24,9 +24,6 @@ Ltac reduce_read_store :=
     simpl;
     rewrite H;
     reflexivity
-  | H: read_sr ?r (Cstate _ _ ?sr) = _ |- read_sr ?r (Cstate _ _ ?sr) = _ =>
-    rewrite H;
-    reflexivity
   end.
 
 Ltac reduce_called_on_class :=
