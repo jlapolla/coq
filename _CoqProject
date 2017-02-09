@@ -2,6 +2,7 @@
 App/Feasibility.v
 App/FeasibilityStep.v
 App/FeasibilityTactics.v
+App/Lib/NatRangeIterator/Prop.v
 App/Lib/NatRangeIterator/ReduceTactics.v
 App/Lib/NatRangeIterator/Spec.v
 App/Lib/NatRangeIterator/Step.v

@@ -5,6 +5,7 @@ Require Import App.FeasibilityStep.
 Require Import App.FeasibilityTactics.
 Require Import App.Lib.Iterator.Spec.
 Require Import App.Lib.NatRangeIterator.Spec.
+Require Import App.Lib.NatRangeIterator.Prop.
 Import ObjectOrientedNotations.
 Import StateNotations.
 
@@ -78,19 +79,11 @@ Proof.
   repeat reduce.
   Qed.
 
-Theorem get_at_start__terminates_proof:
-  get_at_start__terminates step.
+Theorem get_at_start__terminates_proof :
+  forall x st,
+  wf_ex x st ->
+  term_terminates step (x # "get_at_start"|()|) st.
 Proof.
-  unfold get_at_start__terminates.
-  intros. expand_wf_ex. subst x.
-  assert (wf n ref st at_start count first).
-  {
-    unfold wf. split; assumption.
-  }
-  unfold term_terminates.
-  exists (tbool at_start). exists st.
-  intros.
-  apply (get_at_start__behavior_proof n ref st at_start count first).
-  assumption.
+  apply (get_at_start__terminates_proof step get_at_start__behavior_proof).
   Qed.
 
