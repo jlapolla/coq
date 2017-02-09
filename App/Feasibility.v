@@ -14,7 +14,32 @@ Notation "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2))
 Notation "t1 '/' st1 '==>*' t2 '/' st2" := (multi step (pair t1 st1) (pair t2 st2))
   (at level 40, st1 at level 39, t2 at level 39, format "'['  t1  /  st1  '==>*'  t2  /  st2 ']'").
 
-Ltac reduce_step := Language.reduce_step || NatRangeIterator.reduce_step.
+Ltac reduce_off :=
+  match goal with
+  | |- step (pair (texec "off") ?st) _ =>
+    match eval cbv in (read_sk_hd 0 st) with
+    | tref ?r =>
+      match goal with
+      | H: read_sr r (Cstate _ _ ?sr) = tcl "NatRangeIterator" _ |- step (pair (texec "off") (Cstate _ _ ?sr)) _ => eapply STexec_off
+      end
+    end
+  end.
+
+Ltac reduce_called_on_class :=
+  match goal with
+  | |- DynamicBinding.called_on_class ?c ?st =>
+    match eval cbv in (read_sk_hd 0 st) with
+    | tref ?r =>
+      match goal with
+      | H: read_sr r (Cstate _ _ ?sr) = tcl c ?t |- DynamicBinding.called_on_class c (Cstate _ _ ?sr) =>
+        exists r;
+        split;
+        [reflexivity | exists t; assumption]
+      end
+    end
+  end.
+
+Ltac reduce_step := reduce_off || reduce_called_on_class || Language.reduce_step || NatRangeIterator.reduce_step.
 
 Ltac rewrite_read_sk_hd :=
   match goal with
@@ -76,16 +101,12 @@ Proof.
     repeat split.
     reduce.
     reduce.
-    reduce. constructor. unfold DynamicBinding.called_on_class.
-      exists ref. split. reflexivity.
-      exists <(tbool at_start, tnat 0, tnat first)>. assumption.
-    reduce. simpl. repeat reduce_step.
     reduce.
-    reduce. constructor. unfold DynamicBinding.called_on_class.
-      exists ref. split. reflexivity.
-      exists <(tbool at_start, tnat 0, tnat first)>. assumption.
-    reduce. simpl. repeat reduce_step.
-    reduce. simpl. eapply STfield_r. simpl. simpl in Hsr. rewrite Hsr. reflexivity.
+    reduce.
+    reduce.
+    reduce. constructor. reduce_step. simpl.
+    reduce.
+    reduce. eapply STfield_r. simpl. simpl in Hsr. rewrite Hsr. reflexivity.
     reduce. reduce. reduce. reduce. rewrite Hst. reduce.
   Abort.
 
