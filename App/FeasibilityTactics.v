@@ -24,10 +24,25 @@ Ltac reduce_read_store :=
 
 Ltac reduce_called_on_class :=
   match goal with
-  | |- called_on_class _ _ => apply called_on_classb_true_iff
-  | |- called_on_classb _ _ = true => reflexivity
-  | |- called_on_vclass _ _ => apply called_on_vclassb_true_iff
-  | |- called_on_vclassb _ _ = true => reflexivity
+  (* Using hypothesis *)
+  | |- called_on_class _ ?st =>
+    match eval cbv in (read_sk_hd 0 st) with
+    | tref ?r =>
+      match goal with
+      | H: read_sr r (Cstate _ _ ?sr) = tcl ?c ?t |- called_on_class ?c (Cstate _ _ ?sr) =>
+        exists r;
+        split;
+        [reflexivity | exists t; assumption]
+      end
+    end
+  (* Direct computation *)
+  | |- called_on_vclass _ _ =>
+    apply called_on_vclassb_true_iff;
+    reflexivity
+  (* Direct computation *)
+  | |- called_on_class _ _ =>
+    apply called_on_classb_true_iff;
+    reflexivity
   end.
 
 Ltac reduce_tnot :=

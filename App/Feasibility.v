@@ -25,21 +25,7 @@ Ltac reduce_off :=
     end
   end.
 
-Ltac reduce_called_on_class :=
-  match goal with
-  | |- DynamicBinding.called_on_class ?c ?st =>
-    match eval cbv in (read_sk_hd 0 st) with
-    | tref ?r =>
-      match goal with
-      | H: read_sr r (Cstate _ _ ?sr) = tcl c ?t |- DynamicBinding.called_on_class c (Cstate _ _ ?sr) =>
-        exists r;
-        split;
-        [reflexivity | exists t; assumption]
-      end
-    end
-  end.
-
-Ltac reduce_step := reduce_off || reduce_called_on_class || Language.reduce_step || NatRangeIterator.reduce_step.
+Ltac reduce_step := reduce_off || Language.reduce_step || NatRangeIterator.reduce_step.
 
 Ltac rewrite_read_sk_hd :=
   match goal with
