@@ -46,18 +46,25 @@ Ltac expand_wf :=
   | H: wf _ _ |- _ => destruct H as [n [ref [at_start [count [first [Hvar [Hsk Hsr]]]]]]]
   end.
 
+Ltac elim_nil_stack :=
+  match goal with
+  | H: read_sk_hd (S ?n) (Cstate (nil :: _)%list _ _) = _ |- _ => inversion H
+  | H: read_sk_hd 0 (Cstate (nil :: _)%list _ _) = _ |- _ => inversion H
+  | H: read_sk_hd ?n (Cstate (nil :: _)%list _ _) = _ |- _ => destruct n
+  | H: read_sk_hd _ (Cstate (?sf :: _)%list _ _) = _ |- _ => destruct sf as [| v0 sf]
+  | H: read_sk_hd (S ?n) (Cstate nil _ _) = _ |- _ => inversion H
+  | H: read_sk_hd 0 (Cstate nil _ _) = _ |- _ => inversion H
+  | H: read_sk_hd ?n (Cstate nil _ _) = _ |- _ => destruct n
+  | H: read_sk_hd _ (Cstate ?sk _ _) = _ |- _ => destruct sk as [| sf sk]
+  | H: read_sk_hd _ ?st = _ |- _ => destruct st as [sk csk sr] eqn:Hst
+  end.
+
 Theorem off__no_side_effects:
   Iterator.Spec.off__no_side_effects step NatRangeIterator.Spec.wf.
 Proof.
   unfold off__no_side_effects.
   intros. expand_wf. subst x.
-  destruct st as [sk csk sr] eqn:Hst.
-  destruct sk as [| sf sk].
-    (* sk = nil *)
-    inversion Hsk. destruct n; inversion H0.
-  destruct sf as [| t sf].
-    (* sf = nil *)
-    inversion Hsk. destruct n; inversion H0.
+  repeat elim_nil_stack.
   destruct count.
   (* count = 0 *)
     exists true. exists st.
