@@ -16,12 +16,17 @@ Notation "t1 '/' st1 '==>*' t2 '/' st2" := (multi step (pair t1 st1) (pair t2 st
 
 Ltac reduce_step := Language.reduce_step || NatRangeIterator.reduce_step.
 
+Ltac rewrite_read_sk_hd :=
+  match goal with
+  | H: read_sk_hd ?n ?st = _ |- context [read_sk_hd ?n ?st] => rewrite H
+  end.
+
 Ltac reduce :=
   match goal with
   | |- multi step _ _ => solve [apply Relation_Operators.rt1n_refl]
   | |- multi step _ _ => 
     eapply Relation_Operators.rt1n_trans;
-    [repeat reduce_step | instantiate; simpl; fold multi]
+    [repeat reduce_step | instantiate; repeat rewrite_read_sk_hd; simpl; fold multi]
   end.
 
 Open Scope oo_scope.
@@ -69,7 +74,7 @@ Proof.
   (* count = 0 *)
     exists true. exists st.
     repeat split.
-    reduce. simpl in Hsk. rewrite Hsk.
+    reduce.
     reduce.
     reduce. constructor. unfold DynamicBinding.called_on_class.
       exists ref. split. reflexivity.
