@@ -31,6 +31,8 @@ Definition get_at_start__behavior : Prop :=
   wf var ref st at_start count first ->
   ((tvar var) # "get_at_start"|()|) / st ==>* (tbool at_start) / st.
 
+Variable get_at_start__behavior_proof : get_at_start__behavior.
+
 Definition get_at_start__returns_tbool : Prop :=
   forall v x st st',
   wf_ex x st ->
@@ -42,6 +44,24 @@ Definition get_at_start__terminates : Prop :=
   forall x st,
   wf_ex x st ->
   term_terminates step (x # "get_at_start"|()|) st.
+
+Definition get_at_start__terminates_proof:
+  forall x st,
+  wf_ex x st ->
+  term_terminates step (x # "get_at_start"|()|) st.
+Proof.
+  intros.
+  unfold wf_ex in H.
+  destruct H as [var [ref [at_start [count [first [Hvar [Hsk Hsr]]]]]]].
+  subst x.
+  assert (wf var ref st at_start count first).
+  { unfold wf. split; assumption. }
+  unfold term_terminates.
+  exists (tbool at_start). exists st.
+  intros.
+  apply (get_at_start__behavior_proof var ref st at_start count first).
+  assumption.
+  Qed.
 
 Definition get_at_start__deterministic : Prop :=
   forall x st,
