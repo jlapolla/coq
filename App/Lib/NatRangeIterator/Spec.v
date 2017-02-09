@@ -14,8 +14,7 @@ Definition wf_ex (var : tm) (st : state) : Prop :=
   /\  read_sk_hd n st = tref ref
   /\  read_sr ref st = tcl "NatRangeIterator" <(tbool at_start, tnat count, tnat first)>.
 
-Definition wf : Prop :=
-  forall var ref st at_start count first,
+Definition wf var ref st at_start count first : Prop :=
       read_sk_hd var st = tref ref
   /\  read_sr ref st = tcl "NatRangeIterator" <(tbool at_start, tnat count, tnat first)>.
 
@@ -26,6 +25,11 @@ Notation "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2))
 
 Notation "t1 '/' st1 '==>*' t2 '/' st2" := (multi step (pair t1 st1) (pair t2 st2))
   (at level 40, st1 at level 39, t2 at level 39, format "'[' t1 / st1 '==>*' t2 / st2 ']'").
+
+Definition get_at_start__behavior : Prop :=
+  forall var ref st at_start count first,
+  wf var ref st at_start count first ->
+  ((tvar var) # "get_at_start"|()|) / st ==>* (tbool at_start) / st.
 
 Definition get_at_start__returns_tbool : Prop :=
   forall v x st st',

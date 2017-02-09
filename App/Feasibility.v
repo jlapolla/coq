@@ -66,3 +66,31 @@ Proof.
       repeat reduce.
   Abort.
 
+Theorem get_at_start__behavior_proof:
+  get_at_start__behavior step.
+Proof.
+  unfold get_at_start__behavior.
+  unfold wf. intros.
+  destruct st as [sk csk sr] eqn:Hst.
+  destruct H as [Hsk Hsr].
+  destruct sk; try solve [destruct var; inversion Hsk].
+  simpl in Hsk, Hsr.
+  repeat reduce.
+  Qed.
+
+Theorem get_at_start__terminates_proof:
+  get_at_start__terminates step.
+Proof.
+  unfold get_at_start__terminates.
+  intros. expand_wf_ex. subst x.
+  assert (wf n ref st at_start count first).
+  {
+    unfold wf. split; assumption.
+  }
+  unfold term_terminates.
+  exists (tbool at_start). exists st.
+  intros.
+  apply (get_at_start__behavior_proof n ref st at_start count first).
+  assumption.
+  Qed.
+
