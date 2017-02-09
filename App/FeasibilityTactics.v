@@ -340,6 +340,13 @@ Ltac reduce_function class fn rule :=
   | |- step (pair (texec fn) ?st) _ =>
     match eval cbv in (called_on_classb class st) with
     | true => eapply rule
+    | _ =>
+      match eval cbv in (read_sk_hd 0 st) with
+      | tref ?r =>
+        match goal with
+        | H: read_sr r (Cstate _ _ ?sr) = tcl class _ |- step (pair (texec fn) (Cstate _ _ ?sr)) _ => eapply rule
+        end
+      end
     end
   end.
 
