@@ -50,6 +50,30 @@ Theorem off__no_side_effects:
   Iterator.Spec.off__no_side_effects step NatRangeIterator.Spec.wf.
 Proof.
   unfold off__no_side_effects.
-  intros. expand_wf. subst.
+  intros. expand_wf. subst x.
+  destruct st as [sk csk sr] eqn:Hst.
+  destruct sk as [| sf sk].
+    (* sk = nil *)
+    inversion Hsk. destruct n; inversion H0.
+  destruct sf as [| t sf].
+    (* sf = nil *)
+    inversion Hsk. destruct n; inversion H0.
+  destruct count.
+  (* count = 0 *)
+    exists true. exists st.
+    repeat split.
+    reduce. simpl in Hsk. rewrite Hsk.
+    reduce.
+    reduce. constructor. unfold DynamicBinding.called_on_class.
+      exists ref. split. reflexivity.
+      exists <(tbool at_start, tnat 0, tnat first)>. assumption.
+    reduce. simpl. repeat reduce_step.
+    reduce.
+    reduce. constructor. unfold DynamicBinding.called_on_class.
+      exists ref. split. reflexivity.
+      exists <(tbool at_start, tnat 0, tnat first)>. assumption.
+    reduce. simpl. repeat reduce_step.
+    reduce. simpl. eapply STfield_r. simpl. simpl in Hsr. rewrite Hsr. reflexivity.
+    reduce. reduce. reduce. reduce. rewrite Hst. reduce.
   Abort.
 
