@@ -6,6 +6,8 @@ App/Lib/NatRangeIterator/Props.v
 App/Lib/NatRangeIterator/ReduceTactics.v
 App/Lib/NatRangeIterator/Spec.v
 App/Lib/NatRangeIterator/Step.v
+App/Lib/NatRangeIterator/Verify/Sys1/ReduceTactics.v
+App/Lib/NatRangeIterator/Verify/Sys1/Step.v
 App/Lib/Iterator/Spec.v
 Dilemma/Dilemma.v
 He4/Discussion/Abstract.v
