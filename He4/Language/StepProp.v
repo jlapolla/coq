@@ -62,6 +62,14 @@ Definition term_preserves_state (t : tm) (st : state) : Prop :=
   st' = st.
 
 (** WARNING: Again, watch out for non-deterministic terms! *)
+Definition term_preserves_term (t : tm) (st : state) (preserved : tm) : Prop :=
+  forall v1 v2 st1 st2,
+  value v1 ->
+  t / st ==>* v1 / st1 ->
+  value v2 ->
+  preserved / st ==>* v2 / st2 ->
+  exists st3, preserved / st1 ==>* v2 / st3.
+
 Definition states_eq_wrt (t : tm) (st1 st2 : state) : Prop :=
   forall v st1',
   value v ->
