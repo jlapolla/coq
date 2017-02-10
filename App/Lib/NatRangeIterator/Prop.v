@@ -20,9 +20,9 @@ Notation "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2))
 Notation "t1 '/' st1 '==>*' t2 '/' st2" := (multi step (pair t1 st1) (pair t2 st2))
   (at level 40, st1 at level 39, t2 at level 39, format "'[' t1 / st1 '==>*' t2 / st2 ']'").
 
-Variable get_at_start__behavior_proof : get_at_start__behavior step.
+Variable proof_get_at_start : get_at_start step.
 
-Definition get_at_start__terminates_proof:
+Definition terminates_get_at_start:
   forall x st,
   wf_ex x st ->
   term_terminates step (x # "get_at_start"|()|) st.
@@ -35,7 +35,7 @@ Proof.
   unfold term_terminates.
   exists (tbool at_start). exists st.
   intros.
-  apply (get_at_start__behavior_proof (tvar var) var ref st at_start count first).
+  apply (proof_get_at_start (tvar var) var ref st at_start count first).
   assumption.
   Qed.
 

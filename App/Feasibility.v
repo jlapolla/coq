@@ -67,10 +67,10 @@ Proof.
       repeat reduce.
   Abort.
 
-Theorem get_at_start__behavior_proof:
-  get_at_start__behavior step.
+Theorem proof_get_at_start:
+  Spec.get_at_start step.
 Proof.
-  unfold get_at_start__behavior.
+  unfold get_at_start.
   unfold wf. intros.
   destruct st as [sk csk sr] eqn:Hst.
   destruct H as [Hvar [Hsk Hsr]].
@@ -80,11 +80,11 @@ Proof.
   repeat reduce.
   Qed.
 
-Theorem get_at_start__terminates_proof :
+Theorem terminates_get_at_start :
   forall x st,
   wf_ex x st ->
   term_terminates step (x # "get_at_start"|()|) st.
 Proof.
-  apply (get_at_start__terminates_proof step get_at_start__behavior_proof).
+  apply (terminates_get_at_start step proof_get_at_start).
   Qed.
 

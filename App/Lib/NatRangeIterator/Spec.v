@@ -77,20 +77,20 @@ Definition off_true : Prop :=
 Definition off_false : Prop :=
   forall x var ref st at_start count first,
   wf x var ref st at_start count first ->
-  count <> 0 /\ at_start = false ->
+  lt 0 count /\ at_start = false ->
   (x # "off"|()|) / st ==>* (tbool false) / st.
 
 Definition after_true : Prop :=
   forall x var ref st at_start count first,
   wf x var ref st at_start count first ->
   count = 0 /\ at_start = false ->
-  (x # "off"|()|) / st ==>* (tbool true) / st.
+  (x # "after"|()|) / st ==>* (tbool true) / st.
 
 Definition after_false : Prop :=
   forall x var ref st at_start count first,
   wf x var ref st at_start count first ->
-  count <> 0 \/ at_start = true ->
-  (x # "off"|()|) / st ==>* (tbool true) / st.
+  lt 0 count \/ at_start = true ->
+  (x # "after"|()|) / st ==>* (tbool true) / st.
 
 Definition forth_at_start : Prop :=
   forall x var ref st at_start count first,
@@ -108,33 +108,6 @@ Definition item : Prop :=
   forall x var ref st at_start count first,
   wf x var ref st at_start count first ->
   (x # "item"|()|) / st ==>* (tnat first) / st.
-
-Definition get_at_start__behavior : Prop :=
-  forall x var ref st at_start count first,
-  wf x var ref st at_start count first ->
-  (x # "get_at_start"|()|) / st ==>* (tbool at_start) / st.
-
-Definition get_at_start__returns_tbool : Prop :=
-  forall v x st st',
-  wf_ex x st ->
-  value v ->
-  (x # "get_at_start"|()|) / st ==>* v / st' ->
-  exists b, v = tbool b.
-
-Definition get_at_start__terminates : Prop :=
-  forall x st,
-  wf_ex x st ->
-  term_terminates step (x # "get_at_start"|()|) st.
-
-Definition get_at_start__deterministic : Prop :=
-  forall x st,
-  wf_ex x st ->
-  term_deterministic step (x # "get_at_start"|()|) st.
-
-Definition get_at_start__preserves_state : Prop :=
-  forall x st,
-  wf_ex x st ->
-  term_preserves_state step (x # "get_at_start"|()|) st.
 
 End Specs.
 
