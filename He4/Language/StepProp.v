@@ -36,6 +36,14 @@ Definition deterministic : Prop :=
     step x z ->
     z = y.
 
+Definition deterministic_multi : Prop :=
+  forall t v1 v2 st st1 st2,
+  value v1 ->
+  t / st ==>* v1 / st1 ->
+  value v2 ->
+  t / st ==>* v2 / st2 ->
+  v2 = v1 /\ st2 = st1.
+
 (** WARNING: For a non-deterministic term, [term_terminates] does not say the
     term _always_ terminates. It only says that it _can_ terminate.
 
