@@ -36,6 +36,12 @@ Definition deterministic : Prop :=
     step x z ->
     z = y.
 
+(** WARNING: For a non-deterministic term, [term_terminates] does not say the
+    term _always_ terminates. It only says that it _can_ terminate.
+
+    For a deterministic term, "can terminate" is equivalent to "always
+    terminates". *)
+
 Definition term_terminates (t : tm) (st : state) : Prop :=
   exists v st',
   value v ->
@@ -55,6 +61,7 @@ Definition term_preserves_state (t : tm) (st : state) : Prop :=
   t / st ==>* v / st' ->
   st' = st.
 
+(** WARNING: Again, watch out for non-deterministic terms! *)
 Definition states_eq_wrt (t : tm) (st1 st2 : state) : Prop :=
   forall v st1',
   value v ->
