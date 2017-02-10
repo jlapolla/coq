@@ -5,7 +5,7 @@ Require Import App.FeasibilityStep.
 Require Import App.FeasibilityTactics.
 Require Import App.Lib.Iterator.Spec.
 Require Import App.Lib.NatRangeIterator.Spec.
-Require Import App.Lib.NatRangeIterator.Prop.
+Require Import App.Lib.NatRangeIterator.Props.
 Import ObjectOrientedNotations.
 Import StateNotations.
 
