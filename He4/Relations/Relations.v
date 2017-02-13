@@ -1,6 +1,6 @@
 Require Import Coq.Relations.Relations.
 
-Section Relation.
+Section Definitions.
 
 Variable A : Type.
 Variable R : relation A.
@@ -17,11 +17,30 @@ Definition is_function : Prop :=
   R a b2 ->
   b2 = b1.
 
+End Definitions.
+
+Section Operators.
+
+Variable A : Type.
+Variable R : relation A.
+
+(** Terminating reflexive transitive closure. *)
+
+Inductive clos_refl_trans_term (x : A) : A -> Prop :=
+  | rtt_term (y : A) : (forall z, R y z -> False) -> clos_refl_trans A R x y -> clos_refl_trans_term x y.
+
+End Operators.
+
+Section Properties.
+
+Variable A : Type.
+Variable R : relation A.
+
 Lemma clos_refl_trans_termination_is_function:
   forall a b1 b2,
-  is_function ->
-  ~(in_domain b1) ->
-  ~(in_domain b2) ->
+  is_function A R ->
+  ~(in_domain A R b1) ->
+  ~(in_domain A R b2) ->
   clos_refl_trans A R a b1 ->
   clos_refl_trans A R a b2 ->
   b2 = b1.
@@ -42,5 +61,5 @@ Proof.
       apply IHclos_refl_trans_1n; try solve [assumption].
   Qed.
 
-End Relation.
+End Properties.
 
