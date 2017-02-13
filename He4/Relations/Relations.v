@@ -12,10 +12,10 @@ Definition in_range (a : A) : Prop :=
   exists a', R a' a.
 
 Definition is_function : Prop :=
-  forall a b1 b2,
-  R a b1 ->
-  R a b2 ->
-  b2 = b1.
+  forall x y1 y2,
+  R x y1 ->
+  R x y2 ->
+  y2 = y1.
 
 End Definitions.
 
@@ -35,6 +35,39 @@ Section Properties.
 
 Variable A : Type.
 Variable R : relation A.
+
+Lemma clos_refl_trans_term_is_function :
+  is_function A R ->
+  is_function A (clos_refl_trans_term A R).
+Proof.
+  intros. unfold is_function. intros.
+  induction H0. induction H1.
+  rename y0 into y1. rename y into y2.
+  apply clos_rt_rt1n in H2.
+  apply clos_rt_rt1n in H3.
+  generalize dependent H0.
+  generalize dependent H1.
+  generalize dependent H.
+  generalize dependent H2.
+  generalize dependent y2.
+  induction H3; subst.
+  (* y1 = x *)
+  - intros. inversion H2; subst.
+    (* y2 = x *)
+    + reflexivity.
+    (* R x y /\ clos_refl_trans_1n A R y y2 *)
+    + exfalso. apply (H1 y). assumption.
+  (* R x y /\ clos_refl_trans_1n A R y z *) 
+  - intros. inversion H2; subst.
+    (* y2 = x *)
+    + exfalso. apply (H4 y). assumption.
+    (* R x y /\ clos_refl_trans_1n A R y y2 *)
+    + apply IHclos_refl_trans_1n;
+      clear IHclos_refl_trans_1n;
+      try solve [assumption].
+      apply (H0 x y y0 H) in H5.
+      subst y0. assumption.
+  Qed.
 
 Lemma clos_refl_trans_termination_is_function:
   forall a b1 b2,
