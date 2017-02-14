@@ -1,8 +1,15 @@
 -install none -R He4 He4 -R App App -R Dilemma Dilemma
+App/Feasibility.v
+App/FeasibilityStep.v
+App/FeasibilityTactics.v
+App/Lib/NatRangeIterator/Props.v
 App/Lib/NatRangeIterator/ReduceTactics.v
+App/Lib/NatRangeIterator/Spec.v
 App/Lib/NatRangeIterator/Step.v
+App/Lib/Iterator/Spec.v
 Dilemma/Dilemma.v
 He4/Discussion/Abstract.v
+He4/Discussion/FeasibilityLimitations.v
 He4/Discussion/Introduction.v
 He4/Iterator.v
 He4/Language/CallStack.v
