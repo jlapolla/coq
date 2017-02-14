@@ -1,7 +1,7 @@
 Require Import He4.Language.State.
-Require Import He4.Language.StepProp.
+Require Import He4.Language.ExecutionProp.
 Require Import He4.Language.Syntax.
-Require Import App.FeasibilityStep.
+Require Import App.FeasibilityExecution.
 Require Import App.FeasibilityTactics.
 Require Import App.Lib.Iterator.Spec.
 Require Import App.Lib.NatRangeIterator.Spec.

@@ -3,7 +3,7 @@ Require Import He4.Language.Syntax.
 Require Import He4.Language.State.
 Require Import He4.Language.Value.
 Require Import He4.Language.Record.
-Require Import He4.Language.StepProp.
+Require Import He4.Language.ExecutionProp.
 
 Section Steps.
 

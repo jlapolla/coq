@@ -1,11 +1,11 @@
 -install none -R He4 He4 -R App App -R Dilemma Dilemma -R Software Software
 App/Feasibility.v
-App/FeasibilityStep.v
+App/FeasibilityExecution.v
 App/FeasibilityTactics.v
 App/Lib/NatRangeIterator/Props.v
 App/Lib/NatRangeIterator/ReduceTactics.v
 App/Lib/NatRangeIterator/Spec.v
-App/Lib/NatRangeIterator/Step.v
+App/Lib/NatRangeIterator/Execution.v
 App/Lib/Iterator/Spec.v
 Dilemma/Dilemma.v
 He4/Discussion/Abstract.v
@@ -16,10 +16,10 @@ He4/Language/DynamicBinding.v
 He4/Language/Record.v
 He4/Language/ReduceTactics.v
 He4/Language/RefPassStack.v
-He4/Language/Step.v
+He4/Language/Execution.v
 He4/Language/Stack.v
 He4/Language/State.v
-He4/Language/StepProp.v
+He4/Language/ExecutionProp.v
 He4/Language/Store.v
 He4/Language/Syntax.v
 He4/Language/Test/ReduceTactics.v

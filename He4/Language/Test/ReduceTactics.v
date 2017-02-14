@@ -1,6 +1,6 @@
 Require Import He4.Language.State.
-Require Import He4.Language.Step.
-Require Import He4.Language.StepProp.
+Require Import He4.Language.Execution.
+Require Import He4.Language.ExecutionProp.
 Require Import He4.Language.Syntax.
 Require Import He4.Language.ReduceTactics.
 Import ObjectOrientedNotations.
