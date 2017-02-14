@@ -1,4 +1,4 @@
-Require Import App.Lib.NatRangeIterator.ReduceTactics.
+Require Import Software.Doc.Example.Tactics.MyPackage.NatRangeIterator.
 Require Import App.Lib.NatRangeIterator.Execution.
 Require Import Software.Language.State.
 Require Import Software.Language.Execution.
@@ -37,7 +37,7 @@ Open Scope state_scope.
 Ltac reduce_exec_step :=
   unfold exec_step; unfold Relation_Operators.union;
      (left; progress repeat Language.ReduceTactics.reduce_exec_step)
-  || (right; progress repeat NatRangeIterator.ReduceTactics.reduce_exec_step).
+  || (right; progress repeat NatRangeIterator.reduce_exec_step).
 
 Ltac reduce :=
   match goal with
