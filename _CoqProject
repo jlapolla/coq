@@ -11,7 +11,6 @@ Dilemma/Dilemma.v
 He4/Discussion/Abstract.v
 He4/Discussion/FeasibilityLimitations.v
 He4/Discussion/Introduction.v
-He4/Iterator.v
 He4/Language/DynamicBinding.v
 He4/Language/Record.v
 He4/Language/ReduceTactics.v
