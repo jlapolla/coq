@@ -24,10 +24,10 @@ He4/Language/Syntax.v
 He4/Language/Test/ReduceTactics.v
 He4/Language/Test/Syntax.v
 He4/Language/Value.v
-He4/Lists/List.v
-He4/Relations/Relations.v
-He4/Strings/Ascii.v
-He4/Strings/String.v
+He4/Lib/Lists/List.v
+He4/Lib/Relations/Relations.v
+He4/Lib/Strings/Ascii.v
+He4/Lib/Strings/String.v
 Software/Doc/ClassicalLogic.v
 Software/Doc/ConceptualFoundations.v
 Software/Doc/LibraryOverview.v

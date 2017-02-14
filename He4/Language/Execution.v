@@ -1,4 +1,4 @@
-Require Import He4.Strings.String.
+Require Import He4.Lib.Strings.String.
 Require Import He4.Language.Syntax.
 Require Import He4.Language.State.
 Require Import He4.Language.Value.

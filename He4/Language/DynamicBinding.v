@@ -1,5 +1,5 @@
 Require Import Coq.Strings.String.
-Require He4.Strings.String.
+Require He4.Lib.Strings.String.
 Require Import He4.Language.State.
 Require Import He4.Language.Syntax.
 

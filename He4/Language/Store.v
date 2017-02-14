@@ -1,6 +1,6 @@
 Require Import He4.Language.Syntax.
 Require Import Coq.Lists.List.
-Require Import He4.Lists.List.
+Require Import He4.Lib.Lists.List.
 
 (** * Types *)
 
