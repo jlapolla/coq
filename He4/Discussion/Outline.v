@@ -39,41 +39,41 @@
 (**
 OUTLINE
 
-Abstract
-Introduction
-Conceptual Foundations
-Program State
-  Term
-  Stack
-  Store
-  Call Stack
-Language Syntax
-  Variables and References
-  Base Types
-  Records
-  Objects
-    Reference Types
-    Value Types
-  Operators
-  Control Flow
-  Function Call
-Language Semantics
-  Execution Steps
-  User Defined Functions and Classes
-    Dynamic Binding
-  Values
-Building Applications
-  File Hierarchy
-  Assembling a System
-  <ENVIRONMENT>
-  System Verification
-  <NON DETERMINISM>
-  Abstract Specifications
-    <CLASS INVARIANT>
-    Class Invariant
-  Application Verification
-Proof Automation
-Classical Logic
-<CLASSICAL LOGIC>
+Abstract TODO
+Introduction REWORK
+Conceptual Foundations DRAFT
+Program State TODO
+  Term TODO
+  Stack TODO
+  Store TODO
+  Call Stack TODO
+Language Syntax TODO
+  Variables and References TODO
+  Base Types TODO
+  Records TODO
+  Objects TODO
+    Reference Types TODO
+    Value Types TODO
+  Operators TODO
+  Control Flow TODO
+  Function Call TODO
+Language Semantics TODO
+  Execution Steps TODO
+  User Defined Functions and Classes TODO
+    Dynamic Binding TODO
+  Values TODO
+Building Applications TODO
+  File Hierarchy TODO
+  Assembling a System TODO
+  <ENVIRONMENT> TODO
+  System Verification TODO
+  <NON DETERMINISM> TODO
+  Abstract Specifications TODO
+    <CLASS INVARIANT> TODO
+    Class Invariant TODO
+  Application Verification TODO
+Proof Automation TODO
+Classical Logic TODO
+<CLASSICAL LOGIC> TODO
 
 *)
