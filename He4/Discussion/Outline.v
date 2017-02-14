@@ -33,6 +33,20 @@ Abstract TODO
 Introduction REWORK
 Conceptual Foundations DRAFT
 Library Overview DRAFT
+Example Application TODO
+  File Hierarchy TODO
+  Assembling a System TODO
+  <ENVIRONMENT> TODO
+  System Verification TODO
+  <NON DETERMINISM> TODO
+  Abstract Specifications TODO
+    <CLASS INVARIANT> TODO
+    Class Invariant TODO
+  Application Verification TODO
+Proof Automation TODO
+Classical Logic DRAFT
+
+INLINE COQDOC
 Execution State TODO
   Term TODO
   Stack TODO
@@ -56,17 +70,5 @@ Language Semantics TODO
   User Defined Functions and Classes TODO
     Dynamic Binding TODO
   Values TODO
-Building Applications TODO
-  File Hierarchy TODO
-  Assembling a System TODO
-  <ENVIRONMENT> TODO
-  System Verification TODO
-  <NON DETERMINISM> TODO
-  Abstract Specifications TODO
-    <CLASS INVARIANT> TODO
-    Class Invariant TODO
-  Application Verification TODO
-Proof Automation TODO
-Classical Logic DRAFT
 
 *)

@@ -1,7 +1,8 @@
 (** * Library Overview
 
     This chapter contains a brief description of each library in the
-    [Software] library collection.
+    [Software] library collection. For details on each library, refer to
+    the library's [coqdoc].
 
     ** [Software.Language] Libraries
 
