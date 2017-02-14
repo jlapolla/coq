@@ -1,4 +1,4 @@
-Require Import He4.Lib.Strings.String.
+Require Import Software.Lib.Strings.String.
 
 Inductive term : Type :=
 

@@ -1,6 +1,6 @@
-Require Import He4.Lib.Strings.String.
-Require Import He4.Language.State.
-Require Import He4.Language.Syntax.
+Require Import Software.Lib.Strings.String.
+Require Import Software.Language.State.
+Require Import Software.Language.Syntax.
 
 Definition called_on_class (c : string) (st : state) : Prop :=
   exists n, read_sk_hd 0 st = tref n /\ (exists t, read_sr n st = tcl c t).

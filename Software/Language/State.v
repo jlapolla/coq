@@ -1,9 +1,9 @@
-Require Import He4.Language.Record.
-Require Import He4.Lib.Lists.List.
-Require Import He4.Language.RefPassStack.
-Require Import He4.Language.Syntax.
-Require Import He4.Language.Stack.
-Require Import He4.Language.Store.
+Require Import Software.Language.Record.
+Require Import Software.Lib.Lists.List.
+Require Import Software.Language.RefPassStack.
+Require Import Software.Language.Syntax.
+Require Import Software.Language.Stack.
+Require Import Software.Language.Store.
 
 (** * Types *)
 

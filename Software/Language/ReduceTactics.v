@@ -1,9 +1,9 @@
-Require Import He4.Language.DynamicBinding.
-Require Import He4.Language.State.
-Require Import He4.Language.Execution.
-Require Import He4.Language.ExecutionProp.
-Require Import He4.Language.Syntax.
-Require Import He4.Language.Value.
+Require Import Software.Language.DynamicBinding.
+Require Import Software.Language.State.
+Require Import Software.Language.Execution.
+Require Import Software.Language.ExecutionProp.
+Require Import Software.Language.Syntax.
+Require Import Software.Language.Value.
 
 Ltac reduce_value :=
   match goal with

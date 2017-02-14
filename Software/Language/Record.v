@@ -1,5 +1,5 @@
-Require Import He4.Language.Syntax.
-Require Import He4.Lib.Lists.List.
+Require Import Software.Language.Syntax.
+Require Import Software.Lib.Lists.List.
 
 Section Records.
 

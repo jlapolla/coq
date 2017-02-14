@@ -1,17 +1,17 @@
 Require Import App.Lib.NatRangeIterator.ReduceTactics.
 Require Import App.Lib.NatRangeIterator.Execution.
-Require Import He4.Language.State.
-Require Import He4.Language.Execution.
-Require Import He4.Language.ExecutionProp.
-Require Import He4.Language.Syntax.
-Require Import He4.Language.ReduceTactics.
+Require Import Software.Language.State.
+Require Import Software.Language.Execution.
+Require Import Software.Language.ExecutionProp.
+Require Import Software.Language.Syntax.
+Require Import Software.Language.ReduceTactics.
 Import ObjectOrientedNotations.
 Import StateNotations.
 
 Section Steps.
 Import StepRelationNotations.
 
-(** I want to use stepping rules from the base [He4.Language.Execution], and extend
+(** I want to use stepping rules from the base [Software.Language.Execution], and extend
     them with the stepping rules from [App.Lib.NatRangeIterator.Execution]. We
     define a new [exec_step_relation] that is the union of the two
     [exec_step_relation]'s. *)
@@ -47,9 +47,9 @@ Ltac reduce :=
     [reduce_exec_step | instantiate; simpl; fold multi]
   end.
 
-(** This works for all of the examples from [He4.Language.Test.ReduceTactics].
+(** This works for all of the examples from [Software.Language.Test.ReduceTactics].
     For example, here we've copied [ex_tnot] from
-    [He4.Language.Test.ReduceTactics]. *)
+    [Software.Language.Test.ReduceTactics]. *)
 
 Example ex_tnot:
   forall st,
@@ -61,12 +61,12 @@ Proof.
     [App.Lib.NatRangeIterator.Execution]. The problem is that [STreturn_r] and
     [STreturn] say we can reduce a [treturn t] by first reducing [t] to a
     value. But notice this subtelty: [t] must be able to reduce by
-    [He4.Language.Execution]!
+    [Software.Language.Execution]!
       
     In the following example, we end up with a term [treturn (texec
     "NatRangeIterator_make")]. This is reducible in
     [App.Lib.NatRangeIterator.Execution], but it is not reducible in
-    [He4.Language.Execution]. Therefore, we cannot apply [STreturn_r]. *)
+    [Software.Language.Execution]. Therefore, we cannot apply [STreturn_r]. *)
 
 Example ex_NatRangeIterator_make:
   exists st',
@@ -76,7 +76,7 @@ Proof.
   Abort.
 
 (** At first glance, it appears we can solve this problem by moving the
-    [STreturn_r] rule from [He4.Language.Execution] to
+    [STreturn_r] rule from [Software.Language.Execution] to
     [App.Lib.NatRangeIterator.Execution]. While this will work for terms of the form
     [treturn t], it will not work for [treturn t] terms that are nested in
     another term. For example, [tseq (treturn t) tvoid] will not reduce unless we

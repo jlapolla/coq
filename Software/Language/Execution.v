@@ -1,9 +1,9 @@
-Require He4.Lib.Strings.String.
-Require Import He4.Language.Syntax.
-Require Import He4.Language.State.
-Require Import He4.Language.Value.
-Require Import He4.Language.Record.
-Require Import He4.Language.ExecutionProp.
+Require Software.Lib.Strings.String.
+Require Import Software.Language.Syntax.
+Require Import Software.Language.State.
+Require Import Software.Language.Value.
+Require Import Software.Language.Record.
+Require Import Software.Language.ExecutionProp.
 
 Section Steps.
 

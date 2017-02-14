@@ -1,7 +1,7 @@
-Require Import He4.Lib.Relations.Relations.
-Require Import He4.Language.Syntax.
-Require Import He4.Language.Value.
-Require Import He4.Language.State.
+Require Import Software.Lib.Relations.Relations.
+Require Import Software.Language.Syntax.
+Require Import Software.Language.Value.
+Require Import Software.Language.State.
 
 Definition exec_step_relation : Type := relation exec_state.
 Definition multi : exec_step_relation -> exec_step_relation := clos_refl_trans_1n exec_state.
