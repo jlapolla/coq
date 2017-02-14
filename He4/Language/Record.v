@@ -1,4 +1,4 @@
-Require Import He4.Language.Term.
+Require Import He4.Language.Syntax.
 Require Import Coq.Lists.List.
 
 Section Records.

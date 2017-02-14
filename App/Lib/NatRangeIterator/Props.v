@@ -1,7 +1,7 @@
 Require Import He4.Language.DynamicBinding.
 Require Import He4.Language.State.
 Require Import He4.Language.StepProp.
-Require Import He4.Language.Term.
+Require Import He4.Language.Syntax.
 Require Import He4.Language.Value.
 Require Import App.Lib.Iterator.Spec.
 Require Import App.Lib.NatRangeIterator.Spec.

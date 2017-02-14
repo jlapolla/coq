@@ -2,7 +2,7 @@ Require Import He4.Language.DynamicBinding.
 Require Import He4.Language.State.
 Require Import He4.Language.Step.
 Require Import He4.Language.StepProp.
-Require Import He4.Language.Term.
+Require Import He4.Language.Syntax.
 Require Import He4.Language.Value.
 
 Ltac reduce_value :=

@@ -1,4 +1,4 @@
-Require Import He4.Language.Term.
+Require Import He4.Language.Syntax.
 Import ObjectOrientedNotations.
 
 Section Examples.

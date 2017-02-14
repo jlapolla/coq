@@ -21,9 +21,9 @@ He4/Language/Stack.v
 He4/Language/State.v
 He4/Language/StepProp.v
 He4/Language/Store.v
-He4/Language/Term.v
+He4/Language/Syntax.v
 He4/Language/Test/ReduceTactics.v
-He4/Language/Test/Term.v
+He4/Language/Test/Syntax.v
 He4/Language/Value.v
 He4/Lists/List.v
 He4/Relations/Relations.v
