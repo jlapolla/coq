@@ -16,12 +16,17 @@ Section Examples.
 Open Scope oo_scope.
 Open Scope state_scope.
 
+Ltac rewrite_nth :=
+  match goal with
+  | H: List.nth ?n ?sf tvoid = _ |- context [List.nth ?n ?sf tvoid] => rewrite H
+  end.
+
 Ltac reduce :=
   match goal with
-  | |- multi exec_step ?t ?t => apply Relation_Operators.rt1n_refl
+  | |- multi exec_step _ _ => solve [apply Relation_Operators.rt1n_refl]
   | |- multi exec_step _ _ => 
     eapply Relation_Operators.rt1n_trans;
-    [repeat reduce_exec_step | instantiate; simpl; fold multi]
+    [repeat reduce_exec_step | instantiate; simpl; repeat rewrite_nth; fold multi]
   end.
 
 Example ex_tnot:
