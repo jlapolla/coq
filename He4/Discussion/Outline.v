@@ -32,11 +32,13 @@ OUTLINE
 Abstract TODO
 Introduction REWORK
 Conceptual Foundations DRAFT
-Program State TODO
+Library Catalog DRAFT
+Execution State TODO
   Term TODO
   Stack TODO
   Store TODO
-  Call Stack TODO
+  State TODO
+  Execution State TODO
 Language Syntax TODO
   Variables and References TODO
   Base Types TODO
@@ -48,6 +50,8 @@ Language Syntax TODO
   Control Flow TODO
   Function Call TODO
 Language Semantics TODO
+  Term Reduction
+    No Jumps
   Execution Steps TODO
   User Defined Functions and Classes TODO
     Dynamic Binding TODO
