@@ -24,17 +24,7 @@
 
     Unfortunately, we cannot extend the base language directly by
     defining a new [step] relation through
-    [Coq.Relations.Relation_Operators.Union].
-
-    CLASSICAL LOGIC
-
-    I'm hesitant to use classical logic until I am convinced that
-    classical logic is absolutely necessary. By waiting, I hope to
-    better understand exactly why classical logic is (or is not)
-    required.
-
-    I don't think classical logic would cause us any harm though, since
-    we are not trying to extract executable code from our proofs. *)
+    [Coq.Relations.Relation_Operators.Union]. *)
 
 (**
 OUTLINE
@@ -73,7 +63,6 @@ Building Applications TODO
     Class Invariant TODO
   Application Verification TODO
 Proof Automation TODO
-Classical Logic TODO
-<CLASSICAL LOGIC> TODO
+Classical Logic DRAFT
 
 *)
