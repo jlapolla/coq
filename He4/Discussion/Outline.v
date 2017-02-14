@@ -32,7 +32,7 @@ OUTLINE
 Abstract TODO
 Introduction REWORK
 Conceptual Foundations DRAFT
-Library Catalog DRAFT
+Library Overview DRAFT
 Execution State TODO
   Term TODO
   Stack TODO

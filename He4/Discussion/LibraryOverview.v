@@ -1,4 +1,4 @@
-(** * Library Catalog
+(** * Library Overview
 
     This chapter contains a brief description of each library in the
     [Software] library collection.
