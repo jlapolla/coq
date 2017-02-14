@@ -4,7 +4,6 @@ App/Lib/NatRangeIterator/Spec.v
 App/Lib/NatRangeIterator/Execution.v
 App/Lib/Iterator/Spec.v
 Dilemma/Dilemma.v
-He4/Doc/Abstract.v
 He4/Doc/FeasibilityLimitations.v
 He4/Doc/Introduction.v
 He4/Language/DynamicBinding.v
