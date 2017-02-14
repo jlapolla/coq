@@ -1,9 +1,12 @@
--install none -R He4 He4 -R App App -R Software Software
+-install none -R He4 He4 -R App App
 App/Lib/NatRangeIterator/ReduceTactics.v
 App/Lib/NatRangeIterator/Spec.v
 App/Lib/NatRangeIterator/Execution.v
 App/Lib/Iterator/Spec.v
+He4/Doc/ClassicalLogic.v
+He4/Doc/ConceptualFoundations.v
 He4/Doc/Introduction.v
+He4/Doc/LibraryOverview.v
 He4/Language/DynamicBinding.v
 He4/Language/Record.v
 He4/Language/ReduceTactics.v
@@ -23,6 +26,3 @@ He4/Lib/Strings/Ascii.v
 He4/Lib/Strings/String.v
 He4/Trash/Dilemma.v
 He4/Trash/FeasibilityLimitations.v
-Software/Doc/ClassicalLogic.v
-Software/Doc/ConceptualFoundations.v
-Software/Doc/LibraryOverview.v
