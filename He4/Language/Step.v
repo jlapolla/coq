@@ -14,7 +14,7 @@ Let beq_string : String.string -> String.string -> bool := String.eqb.
 Reserved Notation "t1 '/' st1 '==>' t2 '/' st2"
   (at level 40, st1 at level 39, t2 at level 39).
 
-Inductive step : step_relation :=
+Inductive exec_step : exec_step_relation :=
   | STnot_r :
     forall t t' st st',
     t / st ==> t' / st' ->
@@ -236,10 +236,10 @@ Inductive step : step_relation :=
     read_sk_hd n0 st = tcl c t0 ->
     tvfield_w n v0 (tvar n0) / st ==> tvoid / write_sk_hd n0 (tcl c (rc_write n v0 t0)) st
 
-  where "t1 '/' st1 '==>' t2 '/' st2" := (step (Cexec_state t1 st1) (Cexec_state t2 st2)).
+  where "t1 '/' st1 '==>' t2 '/' st2" := (exec_step (Cexec_state t1 st1) (Cexec_state t2 st2)).
 
-Lemma value_irreducible__step:
-  value_irreducible step.
+Lemma value_irreducible__exec_step:
+  value_irreducible exec_step.
 Proof with auto.
   intros t Hval.
   induction Hval;
@@ -253,21 +253,21 @@ Proof with auto.
   apply IHHval in H0. inversion H0.
   Qed.
 
-Ltac value_step_impossible :=
+Ltac value_exec_step_impossible :=
   match goal with
-  | H: value ?t, H0: step (Cexec_state ?t ?st) (Cexec_state ?t' ?st') |- _ =>
-    solve [destruct (value_irreducible__step t H t' st st'); assumption]
+  | H: value ?t, H0: exec_step (Cexec_state ?t ?st) (Cexec_state ?t' ?st') |- _ =>
+    solve [destruct (value_irreducible__exec_step t H t' st st'); assumption]
   end.
 
-Ltac step_impossible :=
+Ltac exec_step_impossible :=
   match goal with
-  | H: step _ _ |- _ =>
+  | H: exec_step _ _ |- _ =>
     solve [inversion H]
   end.
 
-Ltac step_inductive :=
+Ltac exec_step_inductive :=
   match goal with
-  | H: forall z, step ?x z -> z = ?y, H0: step ?x ?a |- _ = _ =>
+  | H: forall z, exec_step ?x z -> z = ?y, H0: exec_step ?x ?a |- _ = _ =>
     solve [apply H in H0; inversion H0; auto]
   end.
 
@@ -283,17 +283,17 @@ Ltac equality_contradiction :=
     solve [exfalso; apply H; reflexivity]
   end.
 
-Lemma deterministic__step:
-  deterministic step.
+Lemma deterministic__exec_step:
+  deterministic exec_step.
 Proof with auto.
   intros x y Hxy.
   induction Hxy; intros z Hxz; inversion Hxz; subst;
-  try solve [value_step_impossible];
+  try solve [value_exec_step_impossible];
   try solve [auto];
-  try solve [step_inductive];
+  try solve [exec_step_inductive];
   try solve [rewrite_invert];
   try solve [equality_contradiction];
-  try solve [step_impossible].
+  try solve [exec_step_impossible].
   Qed.
 
 End Steps.

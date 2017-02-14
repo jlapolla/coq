@@ -5,15 +5,15 @@ Require Import App.Lib.NatRangeIterator.Step.
 
 Ltac reduce_function class fn rule :=
   match goal with
-  | |- step (Cexec_state (texec fn) ?st) _ =>
+  | |- exec_step (Cexec_state (texec fn) ?st) _ =>
     match eval cbv in (called_on_classb class st) with
     | true => eapply rule
     | _ =>
       match eval cbv in (read_sk_hd 0 st) with
       | tref ?r =>
         match goal with
-        | H: List.nth r ?sr tvoid = tcl class _ |- step (Cexec_state (texec fn) (Cstate _ _ ?sr)) _ => eapply rule
-        | H: read_sr r (Cstate _ _ ?sr) = tcl class _ |- step (Cexec_state (texec fn) (Cstate _ _ ?sr)) _ => eapply rule
+        | H: List.nth r ?sr tvoid = tcl class _ |- exec_step (Cexec_state (texec fn) (Cstate _ _ ?sr)) _ => eapply rule
+        | H: read_sr r (Cstate _ _ ?sr) = tcl class _ |- exec_step (Cexec_state (texec fn) (Cstate _ _ ?sr)) _ => eapply rule
         end
       end
     end
@@ -21,12 +21,12 @@ Ltac reduce_function class fn rule :=
 
 Ltac reduce_static_function fn rule :=
   match goal with
-  | |- step (Cexec_state (texec fn) _) _ => eapply rule
+  | |- exec_step (Cexec_state (texec fn) _) _ => eapply rule
   end.
 
 Open Scope string_scope.
 
-Ltac reduce_step :=
+Ltac reduce_exec_step :=
      reduce_static_function "NatRangeIterator_make" STexec_NatRangeIterator_make
   || reduce_function "NatRangeIterator" "get_at_start" STexec_get_at_start
   || reduce_function "NatRangeIterator" "get_count" STexec_get_count

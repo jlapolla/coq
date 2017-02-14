@@ -8,24 +8,24 @@ Import ObjectOrientedNotations.
 Section Specs.
 Open Scope oo_scope.
 
-Variable step : step_relation.
+Variable exec_step : exec_step_relation.
 Variable wf : term -> state -> Prop.
 
-Notation "t1 '/' st1 '==>' t2 '/' st2" := (step (Cexec_state t1 st1) (Cexec_state t2 st2))
+Notation "t1 '/' st1 '==>' t2 '/' st2" := (exec_step (Cexec_state t1 st1) (Cexec_state t2 st2))
   (at level 40, st1 at level 39, t2 at level 39, format "'[' t1 / st1 '==>' t2 / st2 ']'").
 
-Notation "t1 '/' st1 '==>*' t2 '/' st2" := (multi step (Cexec_state t1 st1) (Cexec_state t2 st2))
+Notation "t1 '/' st1 '==>*' t2 '/' st2" := (multi exec_step (Cexec_state t1 st1) (Cexec_state t2 st2))
   (at level 40, st1 at level 39, t2 at level 39, format "'[' t1 / st1 '==>*' t2 / st2 ']'").
 
 Definition deterministic_off : Prop :=
   forall x st,
   wf x st ->
-  term_deterministic step (x # "off"|()|) st.
+  term_deterministic exec_step (x # "off"|()|) st.
 
 Definition terminates_off : Prop :=
   forall x st,
   wf x st ->
-  term_terminates step (x # "off"|()|) st.
+  term_terminates exec_step (x # "off"|()|) st.
 
 Definition preserves_wf_off : Prop :=
   forall x v st st',
@@ -44,26 +44,26 @@ Definition returns_tbool_off : Prop :=
 Definition perserves_off_off : Prop :=
   forall x st,
   wf x st ->
-  term_preserves_term step (x # "off"|()|) st (x # "off"|()|).
+  term_preserves_term exec_step (x # "off"|()|) st (x # "off"|()|).
 
 Definition perserves_off_after : Prop :=
   forall x st,
   wf x st ->
-  term_preserves_term step (x # "off"|()|) st (x # "after"|()|).
+  term_preserves_term exec_step (x # "off"|()|) st (x # "after"|()|).
 
 Definition perserves_off_item : Prop :=
   forall x st,
   wf x st ->
-  term_preserves_term step (x # "off"|()|) st (x # "item"|()|).
+  term_preserves_term exec_step (x # "off"|()|) st (x # "item"|()|).
 
 Definition off__no_side_effects : Prop :=
   forall x st,
   wf x st ->
     exists b st',
        (x # "off"|()|) / st ==>* tbool b / st'
-    /\ states_eq_wrt step (x # "off"|()|) st st'
-    /\ states_eq_wrt step (x # "after"|()|) st st'
-    /\ states_eq_wrt step (x # "item"|()|) st st'.
+    /\ states_eq_wrt exec_step (x # "off"|()|) st st'
+    /\ states_eq_wrt exec_step (x # "after"|()|) st st'
+    /\ states_eq_wrt exec_step (x # "item"|()|) st st'.
 
 End Specs.
 

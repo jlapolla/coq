@@ -13,38 +13,38 @@ Import StepRelationNotations.
 
 (** I want to use stepping rules from the base [He4.Language.Step], and extend
     them with the stepping rules from [App.Lib.NatRangeIterator.Step]. We
-    define a new [step_relation] that is the union of the two
-    [step_relation]'s. *)
+    define a new [exec_step_relation] that is the union of the two
+    [exec_step_relation]'s. *)
 
-Definition step : step_relation := Language.Step.step \U NatRangeIterator.Step.step.
+Definition exec_step : exec_step_relation := Language.Step.exec_step \U NatRangeIterator.Step.exec_step.
 
 End Steps.
 
-Notation "t1 '/' st1 '==>' t2 '/' st2" := (step (Cexec_state t1 st1) (Cexec_state t2 st2))
+Notation "t1 '/' st1 '==>' t2 '/' st2" := (exec_step (Cexec_state t1 st1) (Cexec_state t2 st2))
   (at level 40, st1 at level 39, t2 at level 39, format "'//' '[' t1 '//' / '//' st1 '//' '==>' '//' t2 '//' / '//' st2 ']'").
 
-Notation "t1 '/' st1 '==>*' t2 '/' st2" := (multi step (Cexec_state t1 st1) (Cexec_state t2 st2))
+Notation "t1 '/' st1 '==>*' t2 '/' st2" := (multi exec_step (Cexec_state t1 st1) (Cexec_state t2 st2))
   (at level 40, st1 at level 39, t2 at level 39, format "'//' '[' t1 '//' / '//' st1 '//' '==>*' '//' t2 '//' / '//' st2 ']'").
 
 Open Scope oo_scope.
 Open Scope state_scope.
 
 (** Unforutnately, our [reduce] tactics apply only to a specific
-    [step_relation], not to our new union of [step_relation]'s. To get around
-    this, we destruct the union into its component [step_relation]'s, then try
-    the corresponding step reduction tactic for each [step_relation] in turn. *)
+    [exec_step_relation], not to our new union of [exec_step_relation]'s. To get around
+    this, we destruct the union into its component [exec_step_relation]'s, then try
+    the corresponding step reduction tactic for each [exec_step_relation] in turn. *)
 
-Ltac reduce_step :=
-  unfold step; unfold Relation_Operators.union;
-     (left; progress repeat Language.ReduceTactics.reduce_step)
-  || (right; progress repeat NatRangeIterator.ReduceTactics.reduce_step).
+Ltac reduce_exec_step :=
+  unfold exec_step; unfold Relation_Operators.union;
+     (left; progress repeat Language.ReduceTactics.reduce_exec_step)
+  || (right; progress repeat NatRangeIterator.ReduceTactics.reduce_exec_step).
 
 Ltac reduce :=
   match goal with
-  | |- multi step ?t ?t => apply Relation_Operators.rt1n_refl
-  | |- multi step _ _ => 
+  | |- multi exec_step ?t ?t => apply Relation_Operators.rt1n_refl
+  | |- multi exec_step _ _ => 
     eapply Relation_Operators.rt1n_trans;
-    [reduce_step | instantiate; simpl; fold multi]
+    [reduce_exec_step | instantiate; simpl; fold multi]
   end.
 
 (** This works for all of the examples from [He4.Language.Test.ReduceTactics].
@@ -81,6 +81,6 @@ Proof.
     [treturn t], it will not work for [treturn t] terms that are nested in
     another term. For example, [tseq (treturn t) tvoid] will not reduce unless we
     also move the [tseq] reduction rules into [App.Lib.NatRangeIterator.Step]. In
-    effect, we end up moving all the reduction rules into a single [step_relation],
-    and we no longer have a union of individual [step_relation]'s. *)
+    effect, we end up moving all the reduction rules into a single [exec_step_relation],
+    and we no longer have a union of individual [exec_step_relation]'s. *)
 

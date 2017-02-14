@@ -6,10 +6,10 @@ Require Import He4.Language.ReduceTactics.
 Import ObjectOrientedNotations.
 Import StateNotations.
 
-Notation "t1 '/' st1 '==>' t2 '/' st2" := (step (Cexec_state t1 st1) (Cexec_state t2 st2))
+Notation "t1 '/' st1 '==>' t2 '/' st2" := (exec_step (Cexec_state t1 st1) (Cexec_state t2 st2))
   (at level 40, st1 at level 39, t2 at level 39, format "'//' '[' t1 '//' / '//' st1 '//' '==>' '//' t2 '//' / '//' st2 ']'").
 
-Notation "t1 '/' st1 '==>*' t2 '/' st2" := (multi step (Cexec_state t1 st1) (Cexec_state t2 st2))
+Notation "t1 '/' st1 '==>*' t2 '/' st2" := (multi exec_step (Cexec_state t1 st1) (Cexec_state t2 st2))
   (at level 40, st1 at level 39, t2 at level 39, format "'//' '[' t1 '//' / '//' st1 '//' '==>*' '//' t2 '//' / '//' st2 ']'").
 
 Section Examples.
@@ -18,10 +18,10 @@ Open Scope state_scope.
 
 Ltac reduce :=
   match goal with
-  | |- multi step ?t ?t => apply Relation_Operators.rt1n_refl
-  | |- multi step _ _ => 
+  | |- multi exec_step ?t ?t => apply Relation_Operators.rt1n_refl
+  | |- multi exec_step _ _ => 
     eapply Relation_Operators.rt1n_trans;
-    [repeat reduce_step | instantiate; simpl; fold multi]
+    [repeat reduce_exec_step | instantiate; simpl; fold multi]
   end.
 
 Example ex_tnot:

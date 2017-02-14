@@ -23,7 +23,7 @@
     new relation which is the union of the 
 
     Unfortunately, we cannot extend the base language directly by
-    defining a new [step] relation through
+    defining a new [exec_step] relation through
     [Coq.Relations.Relation_Operators.Union]. *)
 
 (**

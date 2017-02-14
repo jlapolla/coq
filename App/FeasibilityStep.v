@@ -17,7 +17,7 @@ Let beq_string : String.string -> String.string -> bool := String.eqb.
 Reserved Notation "t1 '/' st1 '==>' t2 '/' st2"
   (at level 40, st1 at level 39, t2 at level 39).
 
-Inductive step : step_relation :=
+Inductive exec_step : exec_step_relation :=
 
 (** Base language *)
 
@@ -347,7 +347,7 @@ Inductive step : step_relation :=
       this#"get_first"|()|
     )) / resize_sk_hd 1 st
 
-  where "t1 '/' st1 '==>' t2 '/' st2" := (step (Cexec_state t1 st1) (Cexec_state t2 st2)).
+  where "t1 '/' st1 '==>' t2 '/' st2" := (exec_step (Cexec_state t1 st1) (Cexec_state t2 st2)).
 
 End Steps.
 

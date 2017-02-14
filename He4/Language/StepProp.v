@@ -3,8 +3,8 @@ Require Import He4.Language.Syntax.
 Require Import He4.Language.Value.
 Require Import He4.Language.State.
 
-Definition step_relation : Type := relation exec_state.
-Definition multi : step_relation -> step_relation := clos_refl_trans_1n exec_state.
+Definition exec_step_relation : Type := relation exec_state.
+Definition multi : exec_step_relation -> exec_step_relation := clos_refl_trans_1n exec_state.
 
 Module StepRelationNotations.
 
@@ -14,12 +14,12 @@ End StepRelationNotations.
 
 Section StepProps.
 
-Variable step : step_relation.
+Variable exec_step : exec_step_relation.
 
-Notation "t1 '/' st1 '==>' t2 '/' st2" := (step (Cexec_state t1 st1) (Cexec_state t2 st2))
+Notation "t1 '/' st1 '==>' t2 '/' st2" := (exec_step (Cexec_state t1 st1) (Cexec_state t2 st2))
   (at level 40, st1 at level 39, t2 at level 39, format "'[' t1 / st1 '==>' t2 / st2 ']'").
 
-Notation "t1 '/' st1 '==>*' t2 '/' st2" := (multi step (Cexec_state t1 st1) (Cexec_state t2 st2))
+Notation "t1 '/' st1 '==>*' t2 '/' st2" := (multi exec_step (Cexec_state t1 st1) (Cexec_state t2 st2))
   (at level 40, st1 at level 39, t2 at level 39, format "'[' t1 / st1 '==>*' t2 / st2 ']'").
 
 Definition value_irreducible : Prop :=
@@ -31,9 +31,9 @@ Definition value_irreducible : Prop :=
 
 Definition deterministic : Prop :=
   forall x y,
-  step x y ->
+  exec_step x y ->
   forall z,
-    step x z ->
+    exec_step x z ->
     z = y.
 
 Definition deterministic_multi : Prop :=
