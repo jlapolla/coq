@@ -1,10 +1,10 @@
 -install none -R Software Software -R App App
 App/Lib/NatRangeIterator/ReduceTactics.v
-App/Lib/NatRangeIterator/Spec.v
 App/Lib/NatRangeIterator/Execution.v
-App/Lib/Iterator/Spec.v
 Software/Doc/ClassicalLogic.v
 Software/Doc/ConceptualFoundations.v
+Software/Doc/Example/Specification/MyPackage/Iterator.v
+Software/Doc/Example/Specification/MyPackage/NatRangeIterator.v
 Software/Doc/Introduction.v
 Software/Doc/LibraryOverview.v
 Software/Language/DynamicBinding.v
