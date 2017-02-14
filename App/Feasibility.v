@@ -57,7 +57,7 @@ Theorem off__no_side_effects:
 Proof.
   unfold off__no_side_effects.
   intros. expand_wf_ex. subst x.
-  destruct st as [sk csk sr] eqn:Hst.
+  destruct st as [sk rpsk sr] eqn:Hst.
   destruct sk; try solve [destruct n; inversion Hsk].
   simpl in Hsk, Hsr.
   destruct count.
@@ -72,7 +72,7 @@ Theorem proof_get_at_start:
 Proof.
   unfold get_at_start.
   unfold wf. intros.
-  destruct st as [sk csk sr] eqn:Hst.
+  destruct st as [sk rpsk sr] eqn:Hst.
   destruct H as [Hvar [Hsk Hsr]].
   subst x.
   destruct sk; try solve [destruct var; inversion Hsk].

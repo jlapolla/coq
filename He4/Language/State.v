@@ -9,7 +9,7 @@ Require Import He4.Language.Store.
 (** * Types *)
 
 Inductive state : Type :=
-  | Cstate: stack -> call_stack -> store -> state.
+  | Cstate: stack -> ref_pass_stack -> store -> state.
 
 (** * Functions *)
 (** ** State accessors *)
@@ -19,9 +19,9 @@ Definition get_stack (st : state) : stack :=
   | Cstate sk _ _ => sk
   end.
 
-Definition get_call_stack (st : state) : call_stack :=
+Definition get_ref_pass_stack (st : state) : ref_pass_stack :=
   match st with
-  | Cstate _ csk _ => csk
+  | Cstate _ rpsk _ => rpsk
   end.
 
 Definition get_store (st : state) : store :=
@@ -31,34 +31,34 @@ Definition get_store (st : state) : store :=
 
 Definition set_stack (sk : stack) (st : state) : state :=
   match st with
-  | Cstate _ csk sr => Cstate sk csk sr
+  | Cstate _ rpsk sr => Cstate sk rpsk sr
   end.
 
-Definition set_call_stack (csk : call_stack) (st : state) : state :=
+Definition set_ref_pass_stack (rpsk : ref_pass_stack) (st : state) : state :=
   match st with
-  | Cstate sk _ sr => Cstate sk csk sr
+  | Cstate sk _ sr => Cstate sk rpsk sr
   end.
 
 Definition set_store (sr : store) (st : state) : state :=
   match st with
-  | Cstate sk csk _ => Cstate sk csk sr
+  | Cstate sk rpsk _ => Cstate sk rpsk sr
   end.
 
 (** ** Function call *)
 
 Section FunctionCalls.
 
-Fixpoint args_to_call_frame (args : list tm) : call_frame :=
+Fixpoint args_to_ref_pass_stack_frame (args : list tm) : ref_pass_stack_frame :=
   match args with
   | nil => nil
   | cons t args' =>
     match t with
     | trefpass t' =>
       match t' with
-      | tvar n => cons (Some n) (args_to_call_frame args')
-      | _ => cons None (args_to_call_frame args')
+      | tvar n => cons (Some n) (args_to_ref_pass_stack_frame args')
+      | _ => cons None (args_to_ref_pass_stack_frame args')
       end
-    | _ => cons None (args_to_call_frame args')
+    | _ => cons None (args_to_ref_pass_stack_frame args')
     end
   end.
 
@@ -76,45 +76,45 @@ Fixpoint args_to_stack_frame (args : list tm) (context : stack_frame) : stack_fr
     end
   end.
 
-Fixpoint return_refpass_args (cf : call_frame) (source target : stack_frame) : stack_frame :=
-  match cf with
+Fixpoint return_refpass_args (rpsf : ref_pass_stack_frame) (source target : stack_frame) : stack_frame :=
+  match rpsf with
   | nil => target
-  | cons c cf' =>
+  | cons c rpsf' =>
     match c with
-    | None => return_refpass_args cf' (tl source) target
-    | Some n => return_refpass_args cf' (tl source) (replace n (hd tvoid source) target)
+    | None => return_refpass_args rpsf' (tl source) target
+    | Some n => return_refpass_args rpsf' (tl source) (replace n (hd tvoid source) target)
     end
   end.
 
 Definition push_call (args : tm) (st : state) : state :=
   let sk := get_stack st in
-  let csk := get_call_stack st in
+  let rpsk := get_ref_pass_stack st in
   let sk' := push (args_to_stack_frame (rc_to_list args) (hd nil sk)) sk in
-  let csk' := CallStack.push (args_to_call_frame (rc_to_list args)) csk in
-  set_call_stack csk' (set_stack sk' st).
+  let rpsk' := CallStack.push (args_to_ref_pass_stack_frame (rc_to_list args)) rpsk in
+  set_ref_pass_stack rpsk' (set_stack sk' st).
 
 Definition pop_call (st : state) : state :=
   let sk := get_stack st in
-  let csk := get_call_stack st in
-  let sk' := push (return_refpass_args (hd nil csk) (hd nil sk) (nth 1 sk nil)) (pop (pop sk)) in
-  set_call_stack (CallStack.pop csk) (set_stack sk' st).
+  let rpsk := get_ref_pass_stack st in
+  let sk' := push (return_refpass_args (hd nil rpsk) (hd nil sk) (nth 1 sk nil)) (pop (pop sk)) in
+  set_ref_pass_stack (CallStack.pop rpsk) (set_stack sk' st).
 
 Hint Resolve Lt.lt_S_n List.nth_indep.
 
-Lemma args_to_call_frame_length:
+Lemma args_to_ref_pass_stack_frame_length:
   forall args,
-  length (args_to_call_frame args) = length args.
+  length (args_to_ref_pass_stack_frame args) = length args.
 Proof with auto.
   induction args...
   destruct a; simpl...
   destruct a; simpl...
   Qed.
 
-Lemma args_to_call_frame_correct_1:
+Lemma args_to_ref_pass_stack_frame_correct_1:
   forall args m d1 d2,
   lt m (length args) ->
   (forall n, nth m args d1 <> trefpass (tvar n)) ->
-  nth m (args_to_call_frame args) d2 = None.
+  nth m (args_to_ref_pass_stack_frame args) d2 = None.
 Proof with auto.
   induction args; try solve [intros; inversion H].
   destruct m; simpl; intros d1 d2 Hlen Hstruct.
@@ -125,11 +125,11 @@ Proof with auto.
   destruct a; try solve [simpl; apply IHargs with d1; auto].
   Qed.
 
-Lemma args_to_call_frame_correct_2:
+Lemma args_to_ref_pass_stack_frame_correct_2:
   forall args m n d1 d2,
   lt m (length args) ->
   nth m args d1 = trefpass (tvar n) ->
-  nth m (args_to_call_frame args) d2 = Some n.
+  nth m (args_to_ref_pass_stack_frame args) d2 = Some n.
 Proof with auto.
   induction args; try solve [intros; inversion H].
   destruct m; simpl; intros n d1 d2 Hlen Hstruct.
@@ -180,28 +180,28 @@ Proof with auto.
   Qed.
 
 Lemma return_refpass_args_length:
-  forall cf target source,
-  length (return_refpass_args cf source target) = length target.
+  forall rpsf target source,
+  length (return_refpass_args rpsf source target) = length target.
 Proof with auto using replace_length.
-  induction cf...
+  induction rpsf...
   destruct target.
   destruct a; intros; simpl return_refpass_args...
-  destruct a; try solve [intros; simpl; rewrite IHcf; auto].
-  destruct n; intros; simpl; rewrite IHcf; simpl...
+  destruct a; try solve [intros; simpl; rewrite IHrpsf; auto].
+  destruct n; intros; simpl; rewrite IHrpsf; simpl...
   Qed.
 
 Lemma return_refpass_args_correct_1:
-  forall cf target n source d1 d2 d3,
-  (forall m, lt m (length cf) -> nth m cf d1 <> Some n) ->
+  forall rpsf target n source d1 d2 d3,
+  (forall m, lt m (length rpsf) -> nth m rpsf d1 <> Some n) ->
   lt n (length target) ->
-  nth n (return_refpass_args cf source target) d2 = nth n target d3.
+  nth n (return_refpass_args rpsf source target) d2 = nth n target d3.
 Proof with auto.
-  induction cf. simpl...
-  (* cf <> nil *)
+  induction rpsf. simpl...
+  (* rpsf <> nil *)
   destruct target. intros. inversion H0.
   (* target <> nil *)
   destruct a.
-  (* cf = Some n0 :: cf' *)
+  (* rpsf = Some n0 :: rpsf' *)
     intros n0. destruct (EqNat.beq_nat n0 n) eqn:Hnvals.
     (* n0 = n *)
       apply EqNat.beq_nat_true_iff in Hnvals. subst.
@@ -214,17 +214,17 @@ Proof with auto.
       (* n0 = 0 /\ n = 0 *)
         exfalso. apply Hnvals. reflexivity.
       (* n0 = S n0' /\ n = 0 *)
-        intros. simpl return_refpass_args. rewrite IHcf with (d1 := d1) (d3 := d3).
+        intros. simpl return_refpass_args. rewrite IHrpsf with (d1 := d1) (d3 := d3).
           reflexivity.
           intros. apply (H (S m)). simpl. apply Lt.lt_n_S. assumption.
           simpl. assumption.
       (* n0 = 0 /\ n = S n' *)
-        intros. simpl return_refpass_args. rewrite IHcf with (d1 := d1) (d3 := d3).
+        intros. simpl return_refpass_args. rewrite IHrpsf with (d1 := d1) (d3 := d3).
           reflexivity.
           intros. apply (H (S m)). simpl. apply Lt.lt_n_S. assumption.
           simpl. rewrite replace_length. assumption.
       (* n0 = S n0' /\ n = S n' *)
-        intros. simpl return_refpass_args. rewrite IHcf with (d1 := d1) (d3 := d3).
+        intros. simpl return_refpass_args. rewrite IHrpsf with (d1 := d1) (d3 := d3).
           simpl. rewrite replace_correct_1 with (d2 := d3).
             reflexivity.
             apply Lt.lt_S_n. assumption.
@@ -232,19 +232,19 @@ Proof with auto.
         intros. apply (H (S m)).
           simpl. apply Lt.lt_n_S. assumption.
         simpl. rewrite replace_length. assumption.
-  (* cf = None :: cf' *)
-    intros. simpl return_refpass_args. rewrite IHcf with (d1 := d1) (d3 := d3).
+  (* rpsf = None :: rpsf' *)
+    intros. simpl return_refpass_args. rewrite IHrpsf with (d1 := d1) (d3 := d3).
       reflexivity.
       intros. apply (H (S m)). simpl. apply Lt.lt_n_S. assumption.
       simpl. assumption.
   Qed.
 
-Definition refpass_unique (cf : call_frame) : Prop :=
+Definition refpass_unique (rpsf : ref_pass_stack_frame) : Prop :=
   forall m m' n d1 d2,
-  lt m (length cf) ->
-  nth m cf d1 = Some n ->
-  lt m' (length cf) ->
-  nth m' cf d2 = Some n ->
+  lt m (length rpsf) ->
+  nth m rpsf d1 = Some n ->
+  lt m' (length rpsf) ->
+  nth m' rpsf d2 = Some n ->
   m' = m.
 
 Lemma refpass_unique_nil:
@@ -255,11 +255,11 @@ Proof with auto.
   Qed.
 
 Lemma refpass_unique_cons:
-  forall cf a,
-  refpass_unique (cons a cf) ->
-  refpass_unique cf.
+  forall rpsf a,
+  refpass_unique (cons a rpsf) ->
+  refpass_unique rpsf.
 Proof with auto.
-  induction cf. intros. apply refpass_unique_nil.
+  induction rpsf. intros. apply refpass_unique_nil.
   unfold refpass_unique. intros.
   apply (H (S m) (S m') n d1 d2) in H3.
     inversion H3. reflexivity.
@@ -269,21 +269,21 @@ Proof with auto.
   Qed.
 
 Lemma return_refpass_args_correct_2:
-  forall source cf target n m d1 d2,
-  refpass_unique cf ->
-  lt m (length cf) ->
-  nth m cf d1 = Some n ->
+  forall source rpsf target n m d1 d2,
+  refpass_unique rpsf ->
+  lt m (length rpsf) ->
+  nth m rpsf d1 = Some n ->
   lt n (length target) ->
-  nth n (return_refpass_args cf source target) d2 = nth m source tvoid.
+  nth n (return_refpass_args rpsf source target) d2 = nth m source tvoid.
 Proof with auto.
   induction source.
   (* source = nil *)
-    induction cf. intros. inversion H0.
-    (* cf <> nil *)
+    induction rpsf. intros. inversion H0.
+    (* rpsf <> nil *)
     destruct target. intros. inversion H2.
     (* target <> nil *)
     destruct a.
-    (* cf = Some n0 :: cf' *)
+    (* rpsf = Some n0 :: rpsf' *)
       intros n0. destruct (EqNat.beq_nat n0 n) eqn:Hnvals.
       (* n0 = n *)
         apply EqNat.beq_nat_true_iff in Hnvals. subst.
@@ -332,7 +332,7 @@ Proof with auto.
             intros. inversion H1.
           (* m = S m' *)
             intros. simpl return_refpass_args.
-            rewrite IHcf with (m := m) (d1 := d1).
+            rewrite IHrpsf with (m := m) (d1 := d1).
               destruct m; reflexivity.
               apply refpass_unique_cons in H. assumption.
               simpl in H0. apply Lt.lt_S_n. assumption.
@@ -344,7 +344,7 @@ Proof with auto.
             intros. inversion H1.
           (* m = S m' *)
             intros. simpl return_refpass_args.
-            rewrite IHcf with (m := m) (d1 := d1).
+            rewrite IHrpsf with (m := m) (d1 := d1).
               destruct m; reflexivity.
               apply refpass_unique_cons in H. assumption.
               simpl in H0. apply Lt.lt_S_n. assumption.
@@ -356,31 +356,31 @@ Proof with auto.
             intros. inversion H1; subst. exfalso. apply Hnvals. reflexivity.
           (* m = S m' *)
             intros. simpl return_refpass_args.
-            rewrite IHcf with (m := m) (d1 := d1).
+            rewrite IHrpsf with (m := m) (d1 := d1).
               destruct m; reflexivity.
               apply refpass_unique_cons in H. assumption.
               simpl in H0. apply Lt.lt_S_n. assumption.
               assumption.
               simpl. rewrite replace_length. assumption.
-    (* cf = None :: cf' *)
+    (* rpsf = None :: rpsf' *)
       destruct m.
       (* m = 0 *)
         intros. inversion H1.
       (* m = S m' *)
         intros. simpl return_refpass_args.
-        rewrite IHcf with (m := m) (d1 := d1).
+        rewrite IHrpsf with (m := m) (d1 := d1).
           destruct m; reflexivity.
           apply refpass_unique_cons in H. assumption.
           simpl in H0. apply Lt.lt_S_n. assumption.
           assumption.
           simpl. assumption.
   (* source <> nil *)
-    destruct cf. intros. inversion H0.
-    (* cf <> nil *)
+    destruct rpsf. intros. inversion H0.
+    (* rpsf <> nil *)
     destruct target. intros. inversion H2.
     (* target <> nil *)
     destruct o.
-    (* cf = Some n0 :: cf' *)
+    (* rpsf = Some n0 :: rpsf' *)
       intros n0. destruct (EqNat.beq_nat n0 n) eqn:Hnvals.
       (* n0 = n *)
         apply EqNat.beq_nat_true_iff in Hnvals. subst.
@@ -459,7 +459,7 @@ Proof with auto.
               simpl in H0. apply Lt.lt_S_n. assumption.
               assumption.
               simpl. rewrite replace_length. assumption.
-    (* cf = None :: cf' *)
+    (* rpsf = None :: rpsf' *)
       destruct m.
       (* m = 0 *)
         intros. inversion H1.
@@ -475,19 +475,19 @@ Proof with auto.
 
 Lemma push_call_length:
   forall st args,
-  length (get_call_stack (push_call args st)) = S (length (get_call_stack st)) /\
+  length (get_ref_pass_stack (push_call args st)) = S (length (get_ref_pass_stack st)) /\
   length (get_stack (push_call args st)) = S (length (get_stack st)).
 Proof.
   induction st. intros. simpl.
   split; reflexivity.
   Qed.
 
-(** Tail of [call_stack] is unchanged. *)
+(** Tail of [ref_pass_stack] is unchanged. *)
 
 Lemma push_call_correct_1:
   forall st m args d1 d2,
-  lt m (length (get_call_stack st)) ->
-  nth (S m) (get_call_stack (push_call args st)) d1 = nth m (get_call_stack st) d2.
+  lt m (length (get_ref_pass_stack st)) ->
+  nth (S m) (get_ref_pass_stack (push_call args st)) d1 = nth m (get_ref_pass_stack st) d2.
 Proof.
   induction st. intros m tm d1 d2. simpl. intros.
   apply nth_indep. assumption.
@@ -504,11 +504,11 @@ Proof.
   apply nth_indep. assumption.
   Qed.
 
-(** Head of [call_stack] is changed. *)
+(** Head of [ref_pass_stack] is changed. *)
 
 Lemma push_call_correct_3:
   forall st args d,
-  hd d (get_call_stack (push_call args st)) = args_to_call_frame (rc_to_list args).
+  hd d (get_ref_pass_stack (push_call args st)) = args_to_ref_pass_stack_frame (rc_to_list args).
 Proof.
   induction st. reflexivity.
   Qed.
@@ -533,11 +533,11 @@ Proof.
 
 Lemma pop_call_length_1:
   forall st n,
-  length (get_call_stack st) = S n ->
-  length (get_call_stack (pop_call st)) = n.
+  length (get_ref_pass_stack st) = S n ->
+  length (get_ref_pass_stack (pop_call st)) = n.
 Proof.
   induction st. intros n. simpl.
-  destruct c. intros. inversion H.
+  destruct r. intros. inversion H.
   simpl. intros. injection H. intros. assumption.
   Qed.
 
@@ -552,15 +552,15 @@ Proof.
   simpl. intros. injection H. intros. rewrite H0. reflexivity.
   Qed.
 
-(** Tail of [call_stack] is unchanged. *)
+(** Tail of [ref_pass_stack] is unchanged. *)
 
 Lemma pop_call_correct_1:
   forall st m d1 d2,
-  lt (S m) (length (get_call_stack st)) ->
-  nth m (get_call_stack (pop_call st)) d1 = nth (S m) (get_call_stack st) d2.
+  lt (S m) (length (get_ref_pass_stack st)) ->
+  nth m (get_ref_pass_stack (pop_call st)) d1 = nth (S m) (get_ref_pass_stack st) d2.
 Proof.
   induction st. intros m d1 d2. simpl.
-  destruct c. intros. inversion H.
+  destruct r. intros. inversion H.
   simpl. intros. apply nth_indep. apply Lt.lt_S_n. assumption.
   Qed.
 
@@ -581,7 +581,7 @@ Proof.
 
 Lemma pop_call_correct_3:
   forall st d,
-  hd d (get_stack (pop_call st)) = return_refpass_args (hd nil (get_call_stack st)) (hd nil (get_stack st)) (nth 1 (get_stack st) nil).
+  hd d (get_stack (pop_call st)) = return_refpass_args (hd nil (get_ref_pass_stack st)) (hd nil (get_stack st)) (nth 1 (get_stack st) nil).
 Proof.
   induction st. reflexivity.
   Qed.
@@ -628,14 +628,14 @@ Definition read_sr (n : nat) (st : state) : tm :=
            https://coq.inria.fr/distrib/8.4pl4/refman/Reference-Manual010.html##sec395</a># *)
 
 Arguments get_stack st /.
-Arguments get_call_stack st /.
+Arguments get_ref_pass_stack st /.
 Arguments get_store st /.
 Arguments set_stack sk st /.
-Arguments set_call_stack csk st /.
+Arguments set_ref_pass_stack rpsk st /.
 Arguments set_store sr st /.
-Arguments args_to_call_frame args /.
+Arguments args_to_ref_pass_stack_frame args /.
 Arguments args_to_stack_frame args context /.
-Arguments return_refpass_args cf source target /.
+Arguments return_refpass_args rpsf source target /.
 Arguments push_call args st /.
 Arguments pop_call st /.
 Arguments write_sk_hd n a st /.
@@ -647,14 +647,14 @@ Arguments read_sr n st /.
 
 (** * Constants *)
 
-Definition init_state : state := Cstate init_stack init_call_stack init_store.
+Definition init_state : state := Cstate init_stack init_ref_pass_stack init_store.
 
 (** * Notations *)
 
 Module StateNotations.
 
-Notation "'\stack' sk '\call_stack' csk '\store' sr" :=
-  (Cstate sk csk sr) (at level 80, format "'[' '[v  ' \stack '/' '[' sk ']' ']' '//' '[v  ' \call_stack '/' '[' csk ']' ']' '//' '[v  ' \store '/' '[' sr ']' ']' ']'") : state_scope.
+Notation "'\stack' sk '\ref_pass_stack' rpsk '\store' sr" :=
+  (Cstate sk rpsk sr) (at level 80, format "'[' '[v  ' \stack '/' '[' sk ']' ']' '//' '[v  ' \ref_pass_stack '/' '[' rpsk ']' ']' '//' '[v  ' \store '/' '[' sr ']' ']' ']'") : state_scope.
 
 End StateNotations.
 

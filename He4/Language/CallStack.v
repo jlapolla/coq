@@ -2,21 +2,21 @@ Require Import Coq.Lists.List.
 
 (** * Types *)
 
-Definition call_frame : Type := list (option nat).
-Definition call_stack : Type := list call_frame.
+Definition ref_pass_stack_frame : Type := list (option nat).
+Definition ref_pass_stack : Type := list ref_pass_stack_frame.
 
 (** * Functions *)
 
-Definition push (cf : call_frame) (csk : call_stack) : call_stack := cons cf csk.
+Definition push (rpsf : ref_pass_stack_frame) (rpsk : ref_pass_stack) : ref_pass_stack := cons rpsf rpsk.
 
-Definition pop (csk : call_stack) : call_stack := tl csk.
+Definition pop (rpsk : ref_pass_stack) : ref_pass_stack := tl rpsk.
 
 (** Functions unfold with [simpl]. *)
 
-Arguments push cf csk /.
-Arguments pop csk /.
+Arguments push rpsf rpsk /.
+Arguments pop rpsk /.
 
 (** * Constants *)
 
-Definition init_call_stack : call_stack := push nil nil.
+Definition init_ref_pass_stack : ref_pass_stack := push nil nil.
 
