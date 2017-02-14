@@ -53,7 +53,7 @@ Ltac reduce_called_on_class :=
 
 Ltac reduce_tnot :=
   match goal with
-  | |- step (pair (tnot ?t) _) _ =>
+  | |- step (Cexec_state (tnot ?t) _) _ =>
     match eval cbv in (valueb t) with
     | false => eapply STnot_r
     | true =>
@@ -65,7 +65,7 @@ Ltac reduce_tnot :=
 
 Ltac reduce_tand :=
   match goal with
-  | |- step (pair (tand ?t ?t0) _) _ =>
+  | |- step (Cexec_state (tand ?t ?t0) _) _ =>
     match eval cbv in (valueb t) with
     | false => eapply STand_l
     | true =>
@@ -78,7 +78,7 @@ Ltac reduce_tand :=
 
 Ltac reduce_tor :=
   match goal with
-  | |- step (pair (tor ?t ?t0) _) _ =>
+  | |- step (Cexec_state (tor ?t ?t0) _) _ =>
     match eval cbv in (valueb t) with
     | false => eapply STor_l
     | true =>
@@ -91,7 +91,7 @@ Ltac reduce_tor :=
 
 Ltac reduce_tplus :=
   match goal with
-  | |- step (pair (tplus ?t ?t0) _) _ =>
+  | |- step (Cexec_state (tplus ?t ?t0) _) _ =>
     match eval cbv in (valueb t) with
     | false => eapply STplus_l
     | true =>
@@ -107,7 +107,7 @@ Ltac reduce_tplus :=
 
 Ltac reduce_tminus :=
   match goal with
-  | |- step (pair (tminus ?t ?t0) _) _ =>
+  | |- step (Cexec_state (tminus ?t ?t0) _) _ =>
     match eval cbv in (valueb t) with
     | false => eapply STminus_l
     | true =>
@@ -123,7 +123,7 @@ Ltac reduce_tminus :=
 
 Ltac reduce_tmult :=
   match goal with
-  | |- step (pair (tmult ?t ?t0) _) _ =>
+  | |- step (Cexec_state (tmult ?t ?t0) _) _ =>
     match eval cbv in (valueb t) with
     | false => eapply STmult_l
     | true =>
@@ -139,7 +139,7 @@ Ltac reduce_tmult :=
 
 Ltac reduce_teq :=
   match goal with
-  | |- step (pair (teq ?t ?t0) _) _ =>
+  | |- step (Cexec_state (teq ?t ?t0) _) _ =>
     match eval cbv in (valueb t) with
     | false => eapply STeq_l
     | true =>
@@ -160,12 +160,12 @@ Ltac reduce_teq :=
 
 Ltac reduce_tvar :=
   match goal with
-  | |- step (pair (tvar _) _) _ => eapply STvar
+  | |- step (Cexec_state (tvar _) _) _ => eapply STvar
   end.
 
 Ltac reduce_tassign :=
   match goal with
-  | |- step (pair (tassign (tvar _) ?t0) _) _ =>
+  | |- step (Cexec_state (tassign (tvar _) ?t0) _) _ =>
     match eval cbv in (valueb t0) with
     | false => eapply STassign_r
     | true => eapply STassign
@@ -174,7 +174,7 @@ Ltac reduce_tassign :=
 
 Ltac reduce_tseq :=
   match goal with
-  | |- step (pair (tseq ?t _) _) _ =>
+  | |- step (Cexec_state (tseq ?t _) _) _ =>
     match eval cbv in (valueb t) with
     | false => eapply STseq_l
     | true => eapply STseq
@@ -183,7 +183,7 @@ Ltac reduce_tseq :=
 
 Ltac reduce_tif :=
   match goal with
-  | |- step (pair (tif ?t _ _) _) _ =>
+  | |- step (Cexec_state (tif ?t _ _) _) _ =>
     match eval cbv in (valueb t) with
     | false => eapply STif_l
     | true =>
@@ -196,12 +196,12 @@ Ltac reduce_tif :=
 
 Ltac reduce_twhile :=
   match goal with
-  | |- step (pair (twhile _ _) _) _ => eapply STwhile
+  | |- step (Cexec_state (twhile _ _) _) _ => eapply STwhile
   end.
 
 Ltac reduce_trc :=
   match goal with
-  | |- step (pair (trc ?t ?t0) _) _ =>
+  | |- step (Cexec_state (trc ?t ?t0) _) _ =>
     match eval cbv in (valueb t) with
     | false => eapply STrc_l
     | true =>
@@ -213,7 +213,7 @@ Ltac reduce_trc :=
 
 Ltac reduce_tcall :=
   match goal with
-  | |- step (pair (tcall _ ?t0) _) _ =>
+  | |- step (Cexec_state (tcall _ ?t0) _) _ =>
     match eval cbv in (valueb t0) with
     | false => eapply STcall_r
     | true => eapply STcall
@@ -222,7 +222,7 @@ Ltac reduce_tcall :=
 
 Ltac reduce_treturn :=
   match goal with
-  | |- step (pair (treturn ?t) _) _ =>
+  | |- step (Cexec_state (treturn ?t) _) _ =>
     match eval cbv in (valueb t) with
     | false => eapply STreturn_r
     | true => eapply STreturn
@@ -231,7 +231,7 @@ Ltac reduce_treturn :=
 
 Ltac reduce_tcl :=
   match goal with
-  | |- step (pair (tcl _ ?t) _) _ =>
+  | |- step (Cexec_state (tcl _ ?t) _) _ =>
     match eval cbv in (valueb t) with
     | false => eapply STcl_r
     end
@@ -239,12 +239,12 @@ Ltac reduce_tcl :=
 
 Ltac reduce_tnew :=
   match goal with
-  | |- step (pair (tnew _ _) _) _ => eapply STnew
+  | |- step (Cexec_state (tnew _ _) _) _ => eapply STnew
   end.
 
 Ltac reduce_tfield_r :=
   match goal with
-  | |- step (pair (tfield_r _ ?t0) ?st) _ =>
+  | |- step (Cexec_state (tfield_r _ ?t0) ?st) _ =>
     match eval cbv in (valueb t0) with
     | false => eapply STfield_r_r
     | true =>
@@ -254,8 +254,8 @@ Ltac reduce_tfield_r :=
         | tcl _ _ => eapply STfield_r
         | _ =>
           match goal with
-          | H: List.nth n0 ?sr tvoid = tcl _ _ |- step (pair (tfield_r _ _) (Cstate _ _ ?sr)) _ => eapply STfield_r
-          | H: read_sr n0 (Cstate _ _ ?sr) = tcl _ _ |- step (pair (tfield_r _ _) (Cstate _ _ ?sr)) _ => eapply STfield_r
+          | H: List.nth n0 ?sr tvoid = tcl _ _ |- step (Cexec_state (tfield_r _ _) (Cstate _ _ ?sr)) _ => eapply STfield_r
+          | H: read_sr n0 (Cstate _ _ ?sr) = tcl _ _ |- step (Cexec_state (tfield_r _ _) (Cstate _ _ ?sr)) _ => eapply STfield_r
           end
         end
       end
@@ -264,7 +264,7 @@ Ltac reduce_tfield_r :=
 
 Ltac reduce_tfield_w :=
   match goal with
-  | |- step (pair (tfield_w _ ?t0 ?t1) ?st) _ =>
+  | |- step (Cexec_state (tfield_w _ ?t0 ?t1) ?st) _ =>
     match eval cbv in (valueb t1) with
     | false => eapply STfield_w_r
     | true =>
@@ -283,12 +283,12 @@ Ltac reduce_tfield_w :=
 
 Ltac reduce_tvnew :=
   match goal with
-  | |- step (pair (tvnew _ _) _) _ => eapply STvnew
+  | |- step (Cexec_state (tvnew _ _) _) _ => eapply STvnew
   end.
 
 Ltac reduce_tvfield_r :=
   match goal with
-  | |- step (pair (tvfield_r _ ?t0) ?st) _ =>
+  | |- step (Cexec_state (tvfield_r _ ?t0) ?st) _ =>
     match eval cbv in (valueb t0) with
     | false => eapply STvfield_r_r
     | true =>
@@ -300,7 +300,7 @@ Ltac reduce_tvfield_r :=
 
 Ltac reduce_tvfield_w :=
   match goal with
-  | |- step (pair (tvfield_w _ ?t0 ?t1) ?st) _ =>
+  | |- step (Cexec_state (tvfield_w _ ?t0 ?t1) ?st) _ =>
     match eval cbv in (valueb t0) with
     | false => eapply STvfield_w_l
     | true =>

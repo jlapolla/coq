@@ -236,7 +236,7 @@ Inductive step : step_relation :=
     read_sk_hd n0 st = tcl c t0 ->
     tvfield_w n v0 (tvar n0) / st ==> tvoid / write_sk_hd n0 (tcl c (rc_write n v0 t0)) st
 
-  where "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2)).
+  where "t1 '/' st1 '==>' t2 '/' st2" := (step (Cexec_state t1 st1) (Cexec_state t2 st2)).
 
 Lemma value_irreducible__step:
   value_irreducible step.
@@ -255,7 +255,7 @@ Proof with auto.
 
 Ltac value_step_impossible :=
   match goal with
-  | H: value ?t, H0: step (pair ?t ?st) (pair ?t' ?st') |- _ =>
+  | H: value ?t, H0: step (Cexec_state ?t ?st) (Cexec_state ?t' ?st') |- _ =>
     solve [destruct (value_irreducible__step t H t' st st'); assumption]
   end.
 

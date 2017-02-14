@@ -5,15 +5,15 @@ Require Import App.Lib.NatRangeIterator.Step.
 
 Ltac reduce_function class fn rule :=
   match goal with
-  | |- step (pair (texec fn) ?st) _ =>
+  | |- step (Cexec_state (texec fn) ?st) _ =>
     match eval cbv in (called_on_classb class st) with
     | true => eapply rule
     | _ =>
       match eval cbv in (read_sk_hd 0 st) with
       | tref ?r =>
         match goal with
-        | H: List.nth r ?sr tvoid = tcl class _ |- step (pair (texec fn) (Cstate _ _ ?sr)) _ => eapply rule
-        | H: read_sr r (Cstate _ _ ?sr) = tcl class _ |- step (pair (texec fn) (Cstate _ _ ?sr)) _ => eapply rule
+        | H: List.nth r ?sr tvoid = tcl class _ |- step (Cexec_state (texec fn) (Cstate _ _ ?sr)) _ => eapply rule
+        | H: read_sr r (Cstate _ _ ?sr) = tcl class _ |- step (Cexec_state (texec fn) (Cstate _ _ ?sr)) _ => eapply rule
         end
       end
     end
@@ -21,7 +21,7 @@ Ltac reduce_function class fn rule :=
 
 Ltac reduce_static_function fn rule :=
   match goal with
-  | |- step (pair (texec fn) _) _ => eapply rule
+  | |- step (Cexec_state (texec fn) _) _ => eapply rule
   end.
 
 Open Scope string_scope.

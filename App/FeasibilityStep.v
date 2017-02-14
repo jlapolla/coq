@@ -347,7 +347,7 @@ Inductive step : step_relation :=
       this#"get_first"|()|
     )) / resize_sk_hd 1 st
 
-  where "t1 '/' st1 '==>' t2 '/' st2" := (step (pair t1 st1) (pair t2 st2)).
+  where "t1 '/' st1 '==>' t2 '/' st2" := (step (Cexec_state t1 st1) (Cexec_state t2 st2)).
 
 End Steps.
 

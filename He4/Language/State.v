@@ -11,6 +11,9 @@ Require Import He4.Language.Store.
 Inductive state : Type :=
   | Cstate: stack -> ref_pass_stack -> store -> state.
 
+Inductive exec_state : Type :=
+  | Cexec_state : tm -> state -> exec_state.
+
 (** * Functions *)
 (** ** State accessors *)
 
