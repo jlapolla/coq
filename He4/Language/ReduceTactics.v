@@ -18,6 +18,10 @@ Ltac reduce_read_stack :=
 Ltac reduce_read_store :=
   match goal with
   | |- read_sr _ _ = _ => reflexivity
+  | H: List.nth ?r ?sr tvoid = _ |- read_sr ?r (Cstate _ _ ?sr) = _ =>
+    simpl;
+    rewrite H;
+    reflexivity
   end.
 
 Ltac reduce_called_on_class :=
@@ -27,6 +31,10 @@ Ltac reduce_called_on_class :=
     match eval cbv in (read_sk_hd 0 st) with
     | tref ?r =>
       match goal with
+      | H: List.nth r ?sr tvoid = tcl ?c ?t |- called_on_class ?c (Cstate _ _ ?sr) =>
+        exists r;
+        split;
+        [reflexivity | exists t; assumption]
       | H: read_sr r (Cstate _ _ ?sr) = tcl ?c ?t |- called_on_class ?c (Cstate _ _ ?sr) =>
         exists r;
         split;
@@ -244,6 +252,11 @@ Ltac reduce_tfield_r :=
       | tref ?n0 =>
         match eval cbv in (read_sr n0 st) with
         | tcl _ _ => eapply STfield_r
+        | _ =>
+          match goal with
+          | H: List.nth n0 ?sr tvoid = tcl _ _ |- step (pair (tfield_r _ _) (Cstate _ _ ?sr)) _ => eapply STfield_r
+          | H: read_sr n0 (Cstate _ _ ?sr) = tcl _ _ |- step (pair (tfield_r _ _) (Cstate _ _ ?sr)) _ => eapply STfield_r
+          end
         end
       end
     end
