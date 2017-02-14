@@ -1,4 +1,4 @@
-Require Import Coq.Lists.List.
+Require Export Coq.Lists.List.
 
 Set Implicit Arguments.
 

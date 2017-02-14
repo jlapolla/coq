@@ -1,4 +1,4 @@
-Require Import Coq.Relations.Relations.
+Require Import He4.Lib.Relations.Relations.
 Require Import He4.Language.Syntax.
 Require Import He4.Language.Value.
 Require Import He4.Language.State.

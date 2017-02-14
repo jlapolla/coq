@@ -1,4 +1,4 @@
-Require Import Coq.Relations.Relations.
+Require Export Coq.Relations.Relations.
 
 Section Definitions.
 

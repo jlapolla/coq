@@ -1,6 +1,5 @@
 Require Import He4.Language.Record.
 Require Import He4.Lib.Lists.List.
-Require Import Coq.Lists.List.
 Require Import He4.Language.RefPassStack.
 Require Import He4.Language.Syntax.
 Require Import He4.Language.Stack.

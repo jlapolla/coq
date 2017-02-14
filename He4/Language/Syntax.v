@@ -1,4 +1,4 @@
-Require Import Coq.Strings.String.
+Require Import He4.Lib.Strings.String.
 
 Inductive term : Type :=
 

@@ -1,5 +1,5 @@
 Require Import Coq.Bool.Bool.
-Require Import Coq.Strings.Ascii.
+Require Export Coq.Strings.Ascii.
 
 Definition eqb (a a0 : ascii) : bool :=
   match a, a0 with
