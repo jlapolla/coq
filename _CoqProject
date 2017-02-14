@@ -1,4 +1,4 @@
--install none -R He4 He4 -R App App -R Dilemma Dilemma
+-install none -R He4 He4 -R App App -R Dilemma Dilemma -R Software Software
 App/Feasibility.v
 App/FeasibilityStep.v
 App/FeasibilityTactics.v
@@ -9,11 +9,8 @@ App/Lib/NatRangeIterator/Step.v
 App/Lib/Iterator/Spec.v
 Dilemma/Dilemma.v
 He4/Discussion/Abstract.v
-He4/Discussion/ClassicalLogic.v
-He4/Discussion/ConceptualFoundations.v
 He4/Discussion/FeasibilityLimitations.v
 He4/Discussion/Introduction.v
-He4/Discussion/LibraryOverview.v
 He4/Iterator.v
 He4/Language/CallStack.v
 He4/Language/DynamicBinding.v
@@ -32,3 +29,6 @@ He4/Lists/List.v
 He4/Relations/Relations.v
 He4/Strings/Ascii.v
 He4/Strings/String.v
+Software/Doc/ClassicalLogic.v
+Software/Doc/ConceptualFoundations.v
+Software/Doc/LibraryOverview.v
