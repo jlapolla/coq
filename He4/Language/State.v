@@ -12,7 +12,7 @@ Inductive state : Type :=
   | Cstate: stack -> ref_pass_stack -> store -> state.
 
 Inductive exec_state : Type :=
-  | Cexec_state : tm -> state -> exec_state.
+  | Cexec_state : term -> state -> exec_state.
 
 (** * Functions *)
 (** ** State accessors *)
@@ -51,7 +51,7 @@ Definition set_store (sr : store) (st : state) : state :=
 
 Section FunctionCalls.
 
-Fixpoint args_to_ref_pass_stack_frame (args : list tm) : ref_pass_stack_frame :=
+Fixpoint args_to_ref_pass_stack_frame (args : list term) : ref_pass_stack_frame :=
   match args with
   | nil => nil
   | cons t args' =>
@@ -65,7 +65,7 @@ Fixpoint args_to_ref_pass_stack_frame (args : list tm) : ref_pass_stack_frame :=
     end
   end.
 
-Fixpoint args_to_stack_frame (args : list tm) (context : stack_frame) : stack_frame :=
+Fixpoint args_to_stack_frame (args : list term) (context : stack_frame) : stack_frame :=
   match args with
   | nil => nil
   | cons t args' =>
@@ -89,7 +89,7 @@ Fixpoint return_refpass_args (rpsf : ref_pass_stack_frame) (source target : stac
     end
   end.
 
-Definition push_call (args : tm) (st : state) : state :=
+Definition push_call (args : term) (st : state) : state :=
   let sk := get_stack st in
   let rpsk := get_ref_pass_stack st in
   let sk' := push (args_to_stack_frame (rc_to_list args) (hd nil sk)) sk in
@@ -492,7 +492,7 @@ Lemma push_call_correct_1:
   lt m (length (get_ref_pass_stack st)) ->
   nth (S m) (get_ref_pass_stack (push_call args st)) d1 = nth m (get_ref_pass_stack st) d2.
 Proof.
-  induction st. intros m tm d1 d2. simpl. intros.
+  induction st. intros m term d1 d2. simpl. intros.
   apply nth_indep. assumption.
   Qed.
 
@@ -503,7 +503,7 @@ Lemma push_call_correct_2:
   lt m (length (get_stack st)) ->
   nth (S m) (get_stack (push_call args st)) d1 = nth m (get_stack st) d2.
 Proof.
-  induction st. intros m tm d1 d2. simpl. intros.
+  induction st. intros m term d1 d2. simpl. intros.
   apply nth_indep. assumption.
   Qed.
 
@@ -602,10 +602,10 @@ End FunctionCalls.
 
 (** ** Stack functions *)
 
-Definition write_sk_hd (n : nat) (a : tm) (st : state) : state :=
+Definition write_sk_hd (n : nat) (a : term) (st : state) : state :=
   set_stack (write_hd n a (get_stack st)) st.
 
-Definition read_sk_hd (n : nat) (st : state) : tm :=
+Definition read_sk_hd (n : nat) (st : state) : term :=
   read_hd n (get_stack st).
 
 Definition resize_sk_hd (n : nat) (st : state) : state :=
@@ -613,13 +613,13 @@ Definition resize_sk_hd (n : nat) (st : state) : state :=
 
 (** ** Store functions *)
 
-Definition alloc_sr (a : tm) (st : state) : state :=
+Definition alloc_sr (a : term) (st : state) : state :=
   set_store (alloc a (get_store st)) st.
 
-Definition write_sr (n : nat) (t : tm) (st : state) : state :=
+Definition write_sr (n : nat) (t : term) (st : state) : state :=
   set_store (write n t (get_store st)) st.
 
-Definition read_sr (n : nat) (st : state) : tm :=
+Definition read_sr (n : nat) (st : state) : term :=
   read n (get_store st).
 
 (** ** Function unfolding

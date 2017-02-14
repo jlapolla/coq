@@ -2,7 +2,7 @@ Require Import He4.Language.Term.
 
 Section Values.
 
-Inductive value : tm -> Prop :=
+Inductive value : term -> Prop :=
 
   (* Base types *)
   | vvoid : value tvoid
@@ -15,7 +15,7 @@ Inductive value : tm -> Prop :=
   (* Classes *)
   | vcl : forall c t, value t -> value (tcl c t).
 
-Fixpoint valueb (x : tm) : bool :=
+Fixpoint valueb (x : term) : bool :=
   match x with
   | tvoid => true
   | tnat _ => true

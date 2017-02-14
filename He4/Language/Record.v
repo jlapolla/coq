@@ -5,19 +5,19 @@ Section Records.
 
 Hint Resolve Lt.lt_S_n.
 
-Fixpoint rc_create (n : nat) : tm :=
+Fixpoint rc_create (n : nat) : term :=
   match n with
   | O => tvoid
   | S n' => trc tvoid (rc_create n')
   end.
 
-Fixpoint rc_length (rc : tm) : nat :=
+Fixpoint rc_length (rc : term) : nat :=
   match rc with
   | trc _ rc' => S (rc_length rc')
   | _ => O
   end.
 
-Fixpoint rc_read (n : nat) (rc : tm) : tm :=
+Fixpoint rc_read (n : nat) (rc : term) : term :=
   match n with
   | O =>
     match rc with
@@ -31,7 +31,7 @@ Fixpoint rc_read (n : nat) (rc : tm) : tm :=
     end
   end.
 
-Fixpoint rc_write (n : nat) (t rc : tm) : tm :=
+Fixpoint rc_write (n : nat) (t rc : term) : term :=
   match n with
   | O =>
     match rc with
@@ -45,13 +45,13 @@ Fixpoint rc_write (n : nat) (t rc : tm) : tm :=
     end
   end.
 
-Fixpoint rc_to_list (rc : tm) : list tm :=
+Fixpoint rc_to_list (rc : term) : list term :=
   match rc with
   | trc t1 rc' => cons t1 (rc_to_list rc')
   | _ => nil
   end.
 
-Fixpoint list_to_rc (l : list tm) : tm :=
+Fixpoint list_to_rc (l : list term) : term :=
   match l with
   | nil => tvoid
   | cons t' l' => trc t' (list_to_rc l')

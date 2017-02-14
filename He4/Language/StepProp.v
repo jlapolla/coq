@@ -50,12 +50,12 @@ Definition deterministic_multi : Prop :=
     For a deterministic term, "can terminate" is equivalent to "always
     terminates". *)
 
-Definition term_terminates (t : tm) (st : state) : Prop :=
+Definition term_terminates (t : term) (st : state) : Prop :=
   exists v st',
   value v ->
   t / st ==>* v / st'.
 
-Definition term_deterministic (t : tm) (st : state) : Prop :=
+Definition term_deterministic (t : term) (st : state) : Prop :=
   forall v1 v2 st1 st2,
   value v1 ->
   t / st ==>* v1 / st1 ->
@@ -63,14 +63,14 @@ Definition term_deterministic (t : tm) (st : state) : Prop :=
   t / st ==>* v2 / st2 ->
   v2 = v1 /\ st2 = st1.
 
-Definition term_preserves_state (t : tm) (st : state) : Prop :=
+Definition term_preserves_state (t : term) (st : state) : Prop :=
   forall v st',
   value v ->
   t / st ==>* v / st' ->
   st' = st.
 
 (** WARNING: Again, watch out for non-deterministic terms! *)
-Definition term_preserves_term (t : tm) (st : state) (preserved : tm) : Prop :=
+Definition term_preserves_term (t : term) (st : state) (preserved : term) : Prop :=
   forall v1 v2 st1 st2,
   value v1 ->
   t / st ==>* v1 / st1 ->
@@ -78,7 +78,7 @@ Definition term_preserves_term (t : tm) (st : state) (preserved : tm) : Prop :=
   preserved / st ==>* v2 / st2 ->
   exists st3, preserved / st1 ==>* v2 / st3.
 
-Definition states_eq_wrt (t : tm) (st1 st2 : state) : Prop :=
+Definition states_eq_wrt (t : term) (st1 st2 : state) : Prop :=
   forall v st1',
   value v ->
   t / st1 ==>* v / st1' ->

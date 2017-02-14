@@ -6,7 +6,7 @@ Import ObjectOrientedNotations.
 
 Open Scope oo_scope.
 
-Definition wf_ex (x : tm) (st : state) : Prop :=
+Definition wf_ex (x : term) (st : state) : Prop :=
   exists var ref at_start count first,
       x = tvar var
   /\  read_sk_hd var st = tref ref

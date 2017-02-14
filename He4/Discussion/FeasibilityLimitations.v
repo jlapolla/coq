@@ -105,10 +105,10 @@ that a particular concrete configuration upholds a specification is
 worthwhile.
 
 Reading this all again, I see that it is possible to define functions of
-the form [step_relation -> tm -> state -> Prop], but we must provide a
-concrete [step_relation], [tm], and [state] to get a [Prop]. And when we
+the form [step_relation -> term -> state -> Prop], but we must provide a
+concrete [step_relation], [term], and [state] to get a [Prop]. And when we
 prove that [Prop], we prove it only for that particular combination of
-[step_relation], [tm], and [state].
+[step_relation], [term], and [state].
 
 The utility if this approach is in recycling the [Prop]'s. We write our
 specification once, then apply it to many steps, terms, and states.

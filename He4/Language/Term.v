@@ -1,56 +1,56 @@
 Require Import Coq.Strings.String.
 
-Inductive tm : Type :=
+Inductive term : Type :=
 
   (* Base types *)
-  | tvoid : tm
-  | tnat : nat -> tm
-  | tbool : bool -> tm
+  | tvoid : term
+  | tnat : nat -> term
+  | tbool : bool -> term
 
   (* Boolean operators *)
-  | tnot : tm -> tm
-  | tand : tm -> tm -> tm
-  | tor : tm -> tm -> tm
+  | tnot : term -> term
+  | tand : term -> term -> term
+  | tor : term -> term -> term
 
   (* Numeric operators *)
-  | tplus : tm -> tm -> tm
-  | tminus : tm -> tm -> tm
-  | tmult : tm -> tm -> tm
+  | tplus : term -> term -> term
+  | tminus : term -> term -> term
+  | tmult : term -> term -> term
 
   (* Equality operators *)
-  | teq : tm -> tm -> tm
+  | teq : term -> term -> term
 
   (* Variables and references *)
-  | tvar : nat -> tm
-  | tref : nat -> tm
-  | tassign : tm -> tm -> tm
+  | tvar : nat -> term
+  | tref : nat -> term
+  | tassign : term -> term -> term
 
   (* Control flow *)
-  | tseq : tm -> tm -> tm
-  | tif : tm -> tm -> tm -> tm
-  | twhile : tm -> tm -> tm
+  | tseq : term -> term -> term
+  | tif : term -> term -> term -> term
+  | twhile : term -> term -> term
 
   (* Records *)
-  | trc : tm -> tm -> tm
+  | trc : term -> term -> term
 
   (* Functions *)
-  | tcall : string -> tm -> tm
-  | texec : string -> tm
-  | treturn : tm -> tm
-  | trefpass : tm -> tm
+  | tcall : string -> term -> term
+  | texec : string -> term
+  | treturn : term -> term
+  | trefpass : term -> term
 
   (* Classes *)
-  | tcl : string -> tm -> tm
+  | tcl : string -> term -> term
 
   (* Reference types *)
-  | tnew : nat -> string -> tm
-  | tfield_r : nat -> tm -> tm
-  | tfield_w : nat -> tm -> tm -> tm
+  | tnew : nat -> string -> term
+  | tfield_r : nat -> term -> term
+  | tfield_w : nat -> term -> term -> term
 
   (* Value types *)
-  | tvnew : nat -> string -> tm
-  | tvfield_r : nat -> tm -> tm
-  | tvfield_w : nat -> tm -> tm -> tm.
+  | tvnew : nat -> string -> term
+  | tvfield_r : nat -> term -> term
+  | tvfield_w : nat -> term -> term -> term.
 
 Module ObjectOrientedNotations.
 
