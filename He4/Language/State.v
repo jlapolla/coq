@@ -1,7 +1,7 @@
 Require Import He4.Language.Record.
 Require Import He4.Lists.List.
 Require Import Coq.Lists.List.
-Require Import He4.Language.CallStack.
+Require Import He4.Language.RefPassStack.
 Require Import He4.Language.Term.
 Require Import He4.Language.Stack.
 Require Import He4.Language.Store.
@@ -90,14 +90,14 @@ Definition push_call (args : tm) (st : state) : state :=
   let sk := get_stack st in
   let rpsk := get_ref_pass_stack st in
   let sk' := push (args_to_stack_frame (rc_to_list args) (hd nil sk)) sk in
-  let rpsk' := CallStack.push (args_to_ref_pass_stack_frame (rc_to_list args)) rpsk in
+  let rpsk' := RefPassStack.push (args_to_ref_pass_stack_frame (rc_to_list args)) rpsk in
   set_ref_pass_stack rpsk' (set_stack sk' st).
 
 Definition pop_call (st : state) : state :=
   let sk := get_stack st in
   let rpsk := get_ref_pass_stack st in
   let sk' := push (return_refpass_args (hd nil rpsk) (hd nil sk) (nth 1 sk nil)) (pop (pop sk)) in
-  set_ref_pass_stack (CallStack.pop rpsk) (set_stack sk' st).
+  set_ref_pass_stack (RefPassStack.pop rpsk) (set_stack sk' st).
 
 Hint Resolve Lt.lt_S_n List.nth_indep.
 
