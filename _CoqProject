@@ -6,6 +6,7 @@ Software/Doc/Example/Specification/Package/Iterator.v
 Software/Doc/Example/Specification/Package/NatRangeIterator.v
 Software/Doc/Example/System/System1Execution.v
 Software/Doc/Example/System/System1Tactics.v
+Software/Doc/Example/System/System1Verification.v
 Software/Doc/Example/Tactics/Package/NatRangeIterator.v
 Software/Doc/Introduction.v
 Software/Doc/LibraryOverview.v
