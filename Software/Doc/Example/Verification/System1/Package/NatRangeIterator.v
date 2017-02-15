@@ -95,6 +95,42 @@ Proof.
   repeat reduce.
   Qed.
 
+Lemma proof_set_at_start :
+  set_at_start exec_step.
+Proof.
+  unfold set_at_start. intros.
+    unfold wf_fun in H.
+  destruct H. destruct H1. subst x.
+  destruct st as [sk rpsk sr].
+  simpl in H2.
+  (* Rule out empty stack *)
+  destruct sk as [| sf sk].
+  { exfalso. apply H2. reflexivity. }
+  reduce_clos_refl_trans_term.
+  eapply Relation_Operators.rt1n_trans.
+    eapply STcall.
+    repeat reduce_value.
+  simpl.
+  eapply Relation_Operators.rt1n_trans.
+    reduce_treturn.
+    reduce_exec_step.
+    reduce_called_on_class.
+  simpl.
+  eapply Relation_Operators.rt1n_trans.
+    reduce_treturn.
+    reduce_tfield_w.
+    reduce_tvar.
+  simpl.
+  eapply Relation_Operators.rt1n_trans.
+    reduce_treturn.
+    reduce_tfield_w.
+    reduce_value.
+    reduce_tvar.
+  simpl.
+  eapply Relation_Operators.rt1n_trans.
+    reduce_treturn.
+  Abort.
+
 Close Scope exec_scope.
 Close Scope oo_scope.
 

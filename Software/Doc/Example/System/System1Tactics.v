@@ -8,6 +8,7 @@ Require Import Software.Language.Value.
 Ltac reduce_value :=
   match goal with
   | |- value _ => constructor
+  | H: value ?t |- value ?t => apply H
   end.
 
 Ltac reduce_read_stack :=
@@ -280,6 +281,11 @@ Ltac reduce_tfield_w :=
         | tref ?n0 =>
           match eval cbv in (read_sr n0 st) with
           | tcl _ _ => eapply STfield_w
+          | _ =>
+            match goal with
+            | H: List.nth n0 ?sr tvoid = tcl _ _ |- exec_step (Cexec_state (tfield_r _ _) (Cstate _ _ ?sr)) _ => eapply STfield_w
+            | H: read_sr n0 (Cstate _ _ ?sr) = tcl _ _ |- exec_step (Cexec_state (tfield_r _ _) (Cstate _ _ ?sr)) _ => eapply STfield_w
+            end
           end
         end
       end
@@ -347,7 +353,7 @@ Ltac rewrite_nth :=
 Open Scope string_scope.
 
 Ltac reduce_exec_step :=
-     reduce_value
+     (repeat reduce_value)
   || reduce_read_stack
   || reduce_read_store
   || reduce_called_on_class

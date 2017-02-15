@@ -3,6 +3,7 @@ Require Import Software.Language.DynamicBinding.
 Require Import Software.Language.ExecutionProp.
 Require Import Software.Language.State.
 Require Import Software.Language.Syntax.
+Require Import Software.Language.Value.
 Import ObjectOrientedNotations.
 
 Section Specs.
@@ -47,18 +48,21 @@ Definition set_at_start : Prop :=
   forall x ref st at_start count first,
   wf_fun x ref st at_start count first ->
   forall val,
+  value val ->
   (x # "set_at_start"|(val)|) / st ==>* tvoid / write_sr ref (tcl "NatRangeIterator" <(val, tnat count, tnat first)>) st.
 
 Definition set_count : Prop :=
   forall x ref st at_start count first,
   wf_fun x ref st at_start count first ->
   forall val,
+  value val ->
   (x # "set_count"|(val)|) / st ==>* tvoid / write_sr ref (tcl "NatRangeIterator" <(tbool at_start, val, tnat first)>) st.
 
 Definition set_first : Prop :=
   forall x ref st at_start count first,
   wf_fun x ref st at_start count first ->
   forall val,
+  value val ->
   (x # "set_first"|(val)|) / st ==>* tvoid / write_sr ref (tcl "NatRangeIterator" <(tbool at_start, tnat count, val)>) st.
 
 Definition off_true : Prop :=
