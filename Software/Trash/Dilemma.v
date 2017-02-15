@@ -1,5 +1,5 @@
-Require Import Software.Doc.Example.Tactics.MyPackage.NatRangeIterator.
-Require Import Software.Doc.Example.Implementation.MyPackage.NatRangeIterator.
+Require Import Software.Doc.Example.Tactics.Package.NatRangeIterator.
+Require Import Software.Doc.Example.Implementation.Package.NatRangeIterator.
 Require Import Software.Language.State.
 Require Import Software.Language.Execution.
 Require Import Software.Language.ExecutionProp.
@@ -12,7 +12,7 @@ Section Steps.
 Import StepRelationNotations.
 
 (** I want to use stepping rules from the base [Software.Language.Execution], and extend
-    them with the stepping rules from [Software.Doc.Example.Implementation.MyPackage.NatRangeIterator]. We
+    them with the stepping rules from [Software.Doc.Example.Implementation.Package.NatRangeIterator]. We
     define a new [exec_step_relation] that is the union of the two
     [exec_step_relation]'s. *)
 
@@ -58,14 +58,14 @@ Proof.
   intros st. repeat reduce. Qed.
 
 (** However, we run into trouble when we try to reduce a function defined in
-    [Software.Doc.Example.Implementation.MyPackage.NatRangeIterator]. The problem is that [STreturn_r] and
+    [Software.Doc.Example.Implementation.Package.NatRangeIterator]. The problem is that [STreturn_r] and
     [STreturn] say we can reduce a [treturn t] by first reducing [t] to a
     value. But notice this subtelty: [t] must be able to reduce by
     [Software.Language.Execution]!
       
     In the following example, we end up with a term [treturn (texec
     "NatRangeIterator_make")]. This is reducible in
-    [Software.Doc.Example.Implementation.MyPackage.NatRangeIterator], but it is not reducible in
+    [Software.Doc.Example.Implementation.Package.NatRangeIterator], but it is not reducible in
     [Software.Language.Execution]. Therefore, we cannot apply [STreturn_r]. *)
 
 Example ex_NatRangeIterator_make:
@@ -77,10 +77,10 @@ Proof.
 
 (** At first glance, it appears we can solve this problem by moving the
     [STreturn_r] rule from [Software.Language.Execution] to
-    [Software.Doc.Example.Implementation.MyPackage.NatRangeIterator]. While this will work for terms of the form
+    [Software.Doc.Example.Implementation.Package.NatRangeIterator]. While this will work for terms of the form
     [treturn t], it will not work for [treturn t] terms that are nested in
     another term. For example, [tseq (treturn t) tvoid] will not reduce unless we
-    also move the [tseq] reduction rules into [Software.Doc.Example.Implementation.MyPackage.NatRangeIterator]. In
+    also move the [tseq] reduction rules into [Software.Doc.Example.Implementation.Package.NatRangeIterator]. In
     effect, we end up moving all the reduction rules into a single [exec_step_relation],
     and we no longer have a union of individual [exec_step_relation]'s. *)
 

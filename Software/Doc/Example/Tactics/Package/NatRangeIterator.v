@@ -1,7 +1,7 @@
 Require Import Software.Language.DynamicBinding.
 Require Import Software.Language.State.
 Require Import Software.Language.Syntax.
-Require Import Software.Doc.Example.Implementation.MyPackage.NatRangeIterator.
+Require Import Software.Doc.Example.Implementation.Package.NatRangeIterator.
 
 Ltac reduce_function class fn rule :=
   match goal with

@@ -1,10 +1,10 @@
 -install none -R Software Software
 Software/Doc/ClassicalLogic.v
 Software/Doc/ConceptualFoundations.v
-Software/Doc/Example/Implementation/MyPackage/NatRangeIterator.v
-Software/Doc/Example/Specification/MyPackage/Iterator.v
-Software/Doc/Example/Specification/MyPackage/NatRangeIterator.v
-Software/Doc/Example/Tactics/MyPackage/NatRangeIterator.v
+Software/Doc/Example/Implementation/Package/NatRangeIterator.v
+Software/Doc/Example/Specification/Package/Iterator.v
+Software/Doc/Example/Specification/Package/NatRangeIterator.v
+Software/Doc/Example/Tactics/Package/NatRangeIterator.v
 Software/Doc/Introduction.v
 Software/Doc/LibraryOverview.v
 Software/Language/DynamicBinding.v
