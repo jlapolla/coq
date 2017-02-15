@@ -1,9 +1,11 @@
+Require Import Software.Lib.Relations.Relations.
 Require Import Software.Language.DynamicBinding.
 Require Import Software.Language.ExecutionProp.
 Require Import Software.Language.State.
 Require Import Software.Language.Syntax.
 Import ObjectOrientedNotations.
 
+Section Specs.
 Open Scope oo_scope.
 
 Definition wf_fun x ref st at_start count first : Prop :=
@@ -14,15 +16,16 @@ Definition wf (x : term) (st : state) : Prop :=
   exists ref at_start count first,
   wf_fun x ref st at_start count first.
 
-Section Specs.
-
 Variable exec_step : exec_step_relation.
 
 Notation "t1 '/' st1 '==>' t2 '/' st2" := (exec_step (Cexec_state t1 st1) (Cexec_state t2 st2))
-  (at level 40, st1 at level 39, t2 at level 39, format "'[' t1 / st1 '==>' t2 / st2 ']'").
+  (at level 40, st1 at level 39, t2 at level 39, format "'[' t1  /  st1  '==>'  t2  /  st2 ']'").
 
-Notation "t1 '/' st1 '==>*' t2 '/' st2" := (multi exec_step (Cexec_state t1 st1) (Cexec_state t2 st2))
-  (at level 40, st1 at level 39, t2 at level 39, format "'[' t1 / st1 '==>*' t2 / st2 ']'").
+Notation "t1 '/' st1 '==>+' t2 '/' st2" := (clos_refl_trans exec_state exec_step (Cexec_state t1 st1) (Cexec_state t2 st2))
+  (at level 40, st1 at level 39, t2 at level 39, format "'[' t1  /  st1  '==>+'  t2  /  st2 ']'").
+
+Notation "t1 '/' st1 '==>*' t2 '/' st2" := (clos_refl_trans_term exec_state exec_step (Cexec_state t1 st1) (Cexec_state t2 st2))
+  (at level 40, st1 at level 39, t2 at level 39, format "'[' t1  /  st1  '==>*'  t2  /  st2 ']'").
 
 Definition get_at_start : Prop :=
   forall x ref st at_start count first,
@@ -99,6 +102,4 @@ Definition item : Prop :=
   (x # "item"|()|) / st ==>* (tnat first) / st.
 
 End Specs.
-
-Close Scope oo_scope.
 
