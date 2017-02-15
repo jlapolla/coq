@@ -10,7 +10,8 @@ Open Scope oo_scope.
 
 Definition wf_fun x ref st at_start count first : Prop :=
       x = tref ref
-  /\  read_sr ref st = tcl "NatRangeIterator" <(tbool at_start, tnat count, tnat first)>.
+  /\  read_sr ref st = tcl "NatRangeIterator" <(tbool at_start, tnat count, tnat first)>
+  /\  get_stack st <> nil.
 
 Definition wf (x : term) (st : state) : Prop :=
   exists ref at_start count first,

@@ -22,6 +22,11 @@ Ltac reduce_read_store :=
     simpl;
     rewrite H;
     reflexivity
+  | H: read_sr ?r (Cstate _ _ ?sr) = _ |- read_sr ?r (Cstate _ _ ?sr) = _ =>
+    simpl;
+    simpl in H;
+    rewrite H;
+    reflexivity
   end.
 
 Ltac reduce_called_on_class :=
@@ -385,23 +390,24 @@ Close Scope string_scope.
 
 Ltac reduce_clos_refl_trans_term :=
   match goal with
-  | |- clos_refl_trans_term exec_state exec_step _ _ =>
+  | |- clos_refl_trans_term _ ?R _ _ =>
     apply rtt_term;
     [
       unfold not_in_domain;
       intros;
       match goal with
-      | H: exec_step _ _ |- False =>
+      | H: ?R _ _ |- False =>
         inversion H
       end
-   |]
+    | apply clos_rt1n_rt
+    ]
   end.
 
 Ltac reduce :=
   match goal with
-  | |- clos_refl_trans_1n exec_step _ _ => solve [apply Relation_Operators.rt1n_refl]
-  | |- clos_refl_trans_1n exec_step _ _ => 
+  | |- clos_refl_trans_1n exec_state exec_step ?es ?es => solve [apply Relation_Operators.rt1n_refl]
+  | |- clos_refl_trans_1n exec_state exec_step _ _ => 
     eapply Relation_Operators.rt1n_trans;
-    [repeat reduce_exec_step | instantiate; simpl; repeat rewrite_nth; fold (clos_refl_trans_1n exec_step)]
+    [repeat reduce_exec_step | instantiate; simpl; repeat rewrite_nth]
   end.
 
