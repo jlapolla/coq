@@ -6,21 +6,13 @@ Import ObjectOrientedNotations.
 
 Open Scope oo_scope.
 
-Definition wf (x : term) (st : state) : Prop :=
-  exists ref at_start count first,
-      x = tref ref
-  /\  read_sr ref st = tcl "NatRangeIterator" <(tbool at_start, tnat count, tnat first)>.
-
 Definition wf_fun x ref st at_start count first : Prop :=
       x = tref ref
   /\  read_sr ref st = tcl "NatRangeIterator" <(tbool at_start, tnat count, tnat first)>.
 
-Lemma wf_fun_implies_wf:
-  forall x ref st at_start count first,
-  wf_fun x ref st at_start count first ->
-  wf x st.
-Proof.
-  Abort.
+Definition wf (x : term) (st : state) : Prop :=
+  exists ref at_start count first,
+  wf_fun x ref st at_start count first.
 
 Section Specs.
 
