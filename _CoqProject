@@ -1,7 +1,7 @@
--install none -R Software Software -R App App
-App/Lib/NatRangeIterator/Execution.v
+-install none -R Software Software
 Software/Doc/ClassicalLogic.v
 Software/Doc/ConceptualFoundations.v
+Software/Doc/Example/Implementation/MyPackage/NatRangeIterator.v
 Software/Doc/Example/Specification/MyPackage/Iterator.v
 Software/Doc/Example/Specification/MyPackage/NatRangeIterator.v
 Software/Doc/Example/Tactics/MyPackage/NatRangeIterator.v
