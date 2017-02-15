@@ -4,7 +4,7 @@ Require Import Software.Language.ExecutionProp.
 Require Import Software.Language.Syntax.
 Import ObjectOrientedNotations.
 
-Section Steps.
+Section ExecStep.
 Open Scope oo_scope.
 
 Reserved Notation "t1 '/' st1 '==>' t2 '/' st2"
@@ -116,21 +116,5 @@ Inductive exec_step : exec_step_relation :=
 
   where "t1 '/' st1 '==>' t2 '/' st2" := (exec_step (Cexec_state t1 st1) (Cexec_state t2 st2)).
 
-Lemma value_irreducible__exec_step:
-  value_irreducible exec_step.
-Proof with auto.
-  intros t Hval.
-  induction Hval;
-  try solve [intros t' st st' Hcontra; inversion Hcontra].
-  Qed.
-
-Lemma deterministic__exec_step:
-  deterministic exec_step.
-Proof with auto.
-  intros x y Hxy.
-  induction Hxy; intros z Hxz; inversion Hxz; subst;
-  try solve [reflexivity].
-  Qed.
-
-End Steps.
+End ExecStep.
 
