@@ -2,7 +2,7 @@ Require Import Software.Language.State.
 Require Import Software.Language.Execution.
 Require Import Software.Language.ExecutionProp.
 Require Import Software.Language.Syntax.
-Require Import Software.Language.ReduceTactics.
+Require Import Software.Language.Tactics.
 Import ObjectOrientedNotations.
 Import StateNotations.
 

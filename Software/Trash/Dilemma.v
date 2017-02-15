@@ -4,7 +4,7 @@ Require Import Software.Language.State.
 Require Import Software.Language.Execution.
 Require Import Software.Language.ExecutionProp.
 Require Import Software.Language.Syntax.
-Require Import Software.Language.ReduceTactics.
+Require Import Software.Language.Tactics.
 Import ObjectOrientedNotations.
 Import StateNotations.
 
@@ -36,7 +36,7 @@ Open Scope state_scope.
 
 Ltac reduce_exec_step :=
   unfold exec_step; unfold Relation_Operators.union;
-     (left; progress repeat Language.ReduceTactics.reduce_exec_step)
+     (left; progress repeat Language.Tactics.reduce_exec_step)
   || (right; progress repeat NatRangeIterator.reduce_exec_step).
 
 Ltac reduce :=
@@ -47,9 +47,9 @@ Ltac reduce :=
     [reduce_exec_step | instantiate; simpl; fold multi]
   end.
 
-(** This works for all of the examples from [Software.Language.Test.ReduceTactics].
+(** This works for all of the examples from [Software.Language.Test.Tactics].
     For example, here we've copied [ex_tnot] from
-    [Software.Language.Test.ReduceTactics]. *)
+    [Software.Language.Test.Tactics]. *)
 
 Example ex_tnot:
   forall st,
