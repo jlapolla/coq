@@ -53,7 +53,37 @@ Proof.
 Lemma proof_get_at_start' :
   get_at_start exec_step.
 Proof.
-  unfold NatRangeIterator.get_at_start. intros.
+  unfold get_at_start. intros.
+    unfold wf_fun in H.
+  destruct H. destruct H0. subst x.
+  destruct st as [sk rpsk sr].
+  simpl in H1.
+  (* Rule out empty stack *)
+  destruct sk as [| sf sk].
+  { exfalso. apply H1. reflexivity. }
+  reduce_clos_refl_trans_term.
+  repeat reduce.
+  Qed.
+
+Lemma proof_get_count :
+  get_count exec_step.
+Proof.
+  unfold get_count. intros.
+    unfold wf_fun in H.
+  destruct H. destruct H0. subst x.
+  destruct st as [sk rpsk sr].
+  simpl in H1.
+  (* Rule out empty stack *)
+  destruct sk as [| sf sk].
+  { exfalso. apply H1. reflexivity. }
+  reduce_clos_refl_trans_term.
+  repeat reduce.
+  Qed.
+
+Lemma proof_get_first :
+  get_first exec_step.
+Proof.
+  unfold get_first. intros.
     unfold wf_fun in H.
   destruct H. destruct H0. subst x.
   destruct st as [sk rpsk sr].
