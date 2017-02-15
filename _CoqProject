@@ -17,6 +17,7 @@ Software/Language/State.v
 Software/Language/ExecutionProp.v
 Software/Language/Store.v
 Software/Language/Syntax.v
+Software/Language/Test/Execution.v
 Software/Language/Test/ReduceTactics.v
 Software/Language/Test/Syntax.v
 Software/Language/Value.v
