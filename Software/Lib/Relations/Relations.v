@@ -8,8 +8,14 @@ Variable R : relation A.
 Definition in_domain (x : A) : Prop :=
   exists y, R x y.
 
+Definition not_in_domain (x : A) : Prop :=
+  forall y, R x y -> False.
+
 Definition in_range (y : A) : Prop :=
   exists x, R x y.
+
+Definition not_in_range (y : A) : Prop :=
+  forall x, R x y -> False.
 
 Definition is_function : Prop :=
   forall x y1 y2,
@@ -27,7 +33,7 @@ Variable R : relation A.
 (** Terminating reflexive transitive closure. *)
 
 Inductive clos_refl_trans_term (x : A) : A -> Prop :=
-  | rtt_term (y : A) : (forall z, R y z -> False) -> clos_refl_trans A R x y -> clos_refl_trans_term x y.
+  | rtt_term (y : A) : not_in_domain A R y -> clos_refl_trans A R x y -> clos_refl_trans_term x y.
 
 End Operators.
 
