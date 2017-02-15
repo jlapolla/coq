@@ -28,16 +28,16 @@ Open Scope string_scope.
 
 Ltac reduce_exec_step :=
      reduce_static_function "NatRangeIterator_make" STexec_NatRangeIterator_make
-  || reduce_function "NatRangeIterator" "get_at_start" STexec_get_at_start
-  || reduce_function "NatRangeIterator" "get_count" STexec_get_count
-  || reduce_function "NatRangeIterator" "get_first" STexec_get_first
-  || reduce_function "NatRangeIterator" "set_at_start" STexec_set_at_start
-  || reduce_function "NatRangeIterator" "set_count" STexec_set_count
-  || reduce_function "NatRangeIterator" "set_first" STexec_set_first
-  || reduce_function "NatRangeIterator" "off" STexec_off
-  || reduce_function "NatRangeIterator" "after" STexec_after
-  || reduce_function "NatRangeIterator" "forth" STexec_forth
-  || reduce_function "NatRangeIterator" "item" STexec_item
+  || reduce_function "NatRangeIterator" "get_at_start" STexec_NatRangeIterator_get_at_start
+  || reduce_function "NatRangeIterator" "get_count" STexec_NatRangeIterator_get_count
+  || reduce_function "NatRangeIterator" "get_first" STexec_NatRangeIterator_get_first
+  || reduce_function "NatRangeIterator" "set_at_start" STexec_NatRangeIterator_set_at_start
+  || reduce_function "NatRangeIterator" "set_count" STexec_NatRangeIterator_set_count
+  || reduce_function "NatRangeIterator" "set_first" STexec_NatRangeIterator_set_first
+  || reduce_function "NatRangeIterator" "off" STexec_NatRangeIterator_off
+  || reduce_function "NatRangeIterator" "after" STexec_NatRangeIterator_after
+  || reduce_function "NatRangeIterator" "forth" STexec_NatRangeIterator_forth
+  || reduce_function "NatRangeIterator" "item" STexec_NatRangeIterator_item
 .
 
 Close Scope string_scope.

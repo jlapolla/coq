@@ -24,7 +24,7 @@ Inductive exec_step : exec_step_relation :=
       this#"set_count"|(count)|;
       this
     )) / resize_sk_hd 3 st
-  | STexec_get_at_start :
+  | STexec_NatRangeIterator_get_at_start :
     forall st,
     called_on_class "NatRangeIterator" st ->
     texec "get_at_start" / st ==> (
@@ -32,7 +32,7 @@ Inductive exec_step : exec_step_relation :=
     (
       this@0
     )) / resize_sk_hd 1 st
-  | STexec_get_count :
+  | STexec_NatRangeIterator_get_count :
     forall st,
     called_on_class "NatRangeIterator" st ->
     texec "get_count" / st ==> (
@@ -40,7 +40,7 @@ Inductive exec_step : exec_step_relation :=
     (
       this@1
     )) / resize_sk_hd 1 st
-  | STexec_get_first :
+  | STexec_NatRangeIterator_get_first :
     forall st,
     called_on_class "NatRangeIterator" st ->
     texec "get_first" / st ==> (
@@ -48,7 +48,7 @@ Inductive exec_step : exec_step_relation :=
     (
       this@2
     )) / resize_sk_hd 1 st
-  | STexec_set_at_start :
+  | STexec_NatRangeIterator_set_at_start :
     forall st,
     called_on_class "NatRangeIterator" st ->
     texec "set_at_start" / st ==> (
@@ -57,7 +57,7 @@ Inductive exec_step : exec_step_relation :=
     (
       this<@0 <- value
     )) / resize_sk_hd 2 st
-  | STexec_set_count :
+  | STexec_NatRangeIterator_set_count :
     forall st,
     called_on_class "NatRangeIterator" st ->
     texec "set_count" / st ==> (
@@ -66,7 +66,7 @@ Inductive exec_step : exec_step_relation :=
     (
       this<@1 <- value
     )) / resize_sk_hd 2 st
-  | STexec_set_first :
+  | STexec_NatRangeIterator_set_first :
     forall st,
     called_on_class "NatRangeIterator" st ->
     texec "set_first" / st ==> (
@@ -75,7 +75,7 @@ Inductive exec_step : exec_step_relation :=
     (
       this<@2 <- value
     )) / resize_sk_hd 2 st
-  | STexec_off :
+  | STexec_NatRangeIterator_off :
     forall st,
     called_on_class "NatRangeIterator" st ->
     texec "off" / st ==> (
@@ -83,7 +83,7 @@ Inductive exec_step : exec_step_relation :=
     (
       this#"get_count"|()| \== (tnat 0) \|| this#"get_at_start"|()|
     )) / resize_sk_hd 1 st
-  | STexec_after :
+  | STexec_NatRangeIterator_after :
     forall st,
     called_on_class "NatRangeIterator" st ->
     texec "after" / st ==> (
@@ -91,7 +91,7 @@ Inductive exec_step : exec_step_relation :=
     (
       this#"get_count"|()| \== (tnat 0) \&& !this#"get_at_start"|()|
     )) / resize_sk_hd 1 st
-  | STexec_forth :
+  | STexec_NatRangeIterator_forth :
     forall st,
     called_on_class "NatRangeIterator" st ->
     texec "forth" / st ==> (
@@ -105,7 +105,7 @@ Inductive exec_step : exec_step_relation :=
         this#"set_count"|(this#"get_count"|()| \- tnat 1)|
       \fi
     )) / resize_sk_hd 1 st
-  | STexec_item :
+  | STexec_NatRangeIterator_item :
     forall st,
     called_on_class "NatRangeIterator" st ->
     texec "item" / st ==> (
