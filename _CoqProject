@@ -8,6 +8,7 @@ Software/Doc/Example/System/System1Execution.v
 Software/Doc/Example/System/System1Tactics.v
 Software/Doc/Example/System/System1Verification.v
 Software/Doc/Example/Tactics/Package/NatRangeIterator.v
+Software/Doc/Example/Verification/System1/Package/NatRangeIterator.v
 Software/Doc/Introduction.v
 Software/Doc/LibraryOverview.v
 Software/Language/DynamicBinding.v
