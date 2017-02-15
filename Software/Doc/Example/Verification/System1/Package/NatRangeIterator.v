@@ -3,6 +3,7 @@ Require Import Software.Doc.Example.Specification.Package.NatRangeIterator.
 Require Import Software.Doc.Example.System.System1Execution.
 Require Import Software.Doc.Example.System.System1Tactics.
 Require Import Software.Doc.Example.System.System1Verification.
+Require Import Software.Language.State.
 Require Import Software.Language.Syntax.
 Import ObjectOrientedNotations.
 
@@ -14,6 +15,7 @@ Lemma get_at_start :
 Proof.
   unfold get_at_start. intros.
   unfold wf_fun in H. destruct H. subst x.
+  Time reduce_clos_refl_trans_term.
   Abort.
 
 Close Scope exec_scope.

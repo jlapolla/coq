@@ -354,7 +354,7 @@ End ExecStep.
 Notation "t1 '/' st1 '==>' t2 '/' st2" := (exec_step (Cexec_state t1 st1) (Cexec_state t2 st2))
   (at level 40, st1 at level 39, t2 at level 39, format "'[' t1  /  st1  '==>'  t2  /  st2 ']'") : exec_scope.
 
-Notation "t1 '/' st1 '==>+' t2 '/' st2" := (clos_refl_trans exec_state exec_step (Cexec_state t1 st1) (Cexec_state t2 st2))
+Notation "t1 '/' st1 '==>+' t2 '/' st2" := (clos_refl_trans_1n exec_state exec_step (Cexec_state t1 st1) (Cexec_state t2 st2))
   (at level 40, st1 at level 39, t2 at level 39, format "'[' t1  /  st1  '==>+'  t2  /  st2 ']'") : exec_scope.
 
 Notation "t1 '/' st1 '==>*' t2 '/' st2" := (clos_refl_trans_term exec_state exec_step (Cexec_state t1 st1) (Cexec_state t2 st2))

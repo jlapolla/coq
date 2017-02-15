@@ -383,11 +383,25 @@ Ltac reduce_exec_step :=
 
 Close Scope string_scope.
 
+Ltac reduce_clos_refl_trans_term :=
+  match goal with
+  | |- clos_refl_trans_term exec_state exec_step _ _ =>
+    apply rtt_term;
+    [
+      unfold not_in_domain;
+      intros;
+      match goal with
+      | H: exec_step _ _ |- False =>
+        inversion H
+      end
+   |]
+  end.
+
 Ltac reduce :=
   match goal with
-  | |- clos_refl_trans exec_step _ _ => solve [apply Relation_Operators.rt1n_refl]
-  | |- clos_refl_trans exec_step _ _ => 
+  | |- clos_refl_trans_1n exec_step _ _ => solve [apply Relation_Operators.rt1n_refl]
+  | |- clos_refl_trans_1n exec_step _ _ => 
     eapply Relation_Operators.rt1n_trans;
-    [repeat reduce_exec_step | instantiate; simpl; repeat rewrite_nth; fold (clos_refl_trans exec_step)]
+    [repeat reduce_exec_step | instantiate; simpl; repeat rewrite_nth; fold (clos_refl_trans_1n exec_step)]
   end.
 
