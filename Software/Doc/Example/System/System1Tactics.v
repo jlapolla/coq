@@ -1,3 +1,4 @@
+Require Import Software.Lib.Relations.Relations.
 Require Import Software.Doc.Example.System.System1Execution.
 Require Import Software.Language.DynamicBinding.
 Require Import Software.Language.State.
@@ -333,6 +334,11 @@ Ltac reduce_static_function fn rule :=
   | |- exec_step (Cexec_state (texec fn) _) _ => eapply rule
   end.
 
+Ltac rewrite_nth :=
+  match goal with
+  | H: List.nth ?n ?sf tvoid = _ |- context [List.nth ?n ?sf tvoid] => rewrite H
+  end.
+
 Open Scope string_scope.
 
 Ltac reduce_exec_step :=
@@ -376,4 +382,12 @@ Ltac reduce_exec_step :=
 .
 
 Close Scope string_scope.
+
+Ltac reduce :=
+  match goal with
+  | |- clos_refl_trans exec_step _ _ => solve [apply Relation_Operators.rt1n_refl]
+  | |- clos_refl_trans exec_step _ _ => 
+    eapply Relation_Operators.rt1n_trans;
+    [repeat reduce_exec_step | instantiate; simpl; repeat rewrite_nth; fold (clos_refl_trans exec_step)]
+  end.
 
