@@ -418,5 +418,16 @@ Ltac reduce :=
       eapply Relation_Operators.rt1n_trans;
       [repeat reduce_exec_step | instantiate; simpl]
     end
+  | |- clos_refl_trans_term _ ?R _ _ =>
+    apply rtt_term;
+    [
+      unfold not_in_domain;
+      intros;
+      match goal with
+      | H: ?R _ _ |- False =>
+        inversion H
+      end
+    | apply clos_rt1n_rt
+    ]
   end.
 
