@@ -1,6 +1,5 @@
 Require Import Software.Lib.Relations.Relations.
 Require Import Software.Doc.Example.System.System1Execution.
-Require Import Software.Language.ExecutionProp.
 Require Import Software.Language.Syntax.
 Require Import Software.Language.State.
 Require Import Software.Language.Value.
@@ -22,15 +21,6 @@ Proof.
   - inversion H0; subst.
     unfold not_in_domain in IHvalue.
     apply (IHvalue st (Cexec_state t0' st')). assumption.
-  Qed.
-
-Lemma value_irreducible__exec_step :
-  value_irreducible exec_step.
-Proof.
-  unfold value_irreducible. intros.
-  apply (value_not_in_domain t st) in H.
-  unfold not_in_domain in H. apply (H (Cexec_state t' st')).
-  assumption.
   Qed.
 
 Ltac apply_value_not_in_domain :=
@@ -74,14 +64,6 @@ Proof.
   try solve [exec_step_inductive];
   try solve [exec_step_impossible];
   try solve [rewrite_invert].
-  Qed.
-
-Lemma deterministic__exec_step:
-  deterministic exec_step.
-Proof.
-  unfold deterministic.
-  intros.
-  apply (is_function_exec_step x y z H H0).
   Qed.
 
 End Verification.
