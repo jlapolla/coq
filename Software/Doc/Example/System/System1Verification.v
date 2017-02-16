@@ -1,3 +1,4 @@
+Require Import Software.Lib.Relations.Relations.
 Require Import Software.Doc.Example.System.System1Execution.
 Require Import Software.Language.ExecutionProp.
 Require Import Software.Language.Syntax.
@@ -6,25 +7,46 @@ Require Import Software.Language.Value.
 
 Section Verification.
 
-Lemma value_irreducible__exec_step:
-  value_irreducible exec_step.
-Proof with auto.
-  intros t Hval.
-  induction Hval;
-  try solve [intros t' st st' Hcontra; inversion Hcontra].
-  intros t' st st' Hcontra.
-  inversion Hcontra; subst.
-  apply IHHval1 in H0. inversion H0.
-  apply IHHval2 in H5. inversion H5.
-  intros t' st st' Hcontra.
-  inversion Hcontra; subst.
-  apply IHHval in H0. inversion H0.
+Lemma value_not_in_domain :
+  forall v st,
+  value v ->
+  not_in_domain exec_state exec_step (Cexec_state v st).
+Proof.
+  intros. generalize dependent st.
+  induction H; unfold not_in_domain; intros; try solve [inversion H].
+  - inversion H1; subst.
+    + unfold not_in_domain in IHvalue1.
+      apply (IHvalue1 st (Cexec_state t' st')). assumption.
+    + unfold not_in_domain in IHvalue2.
+      apply (IHvalue2 st (Cexec_state t0' st')). assumption.
+  - inversion H0; subst.
+    unfold not_in_domain in IHvalue.
+    apply (IHvalue st (Cexec_state t0' st')). assumption.
   Qed.
 
-Ltac value_exec_step_impossible :=
+Lemma value_irreducible__exec_step :
+  value_irreducible exec_step.
+Proof.
+  unfold value_irreducible. intros.
+  apply (value_not_in_domain t st) in H.
+  unfold not_in_domain in H. apply (H (Cexec_state t' st')).
+  assumption.
+  Qed.
+
+Ltac apply_value_not_in_domain :=
   match goal with
-  | H: value ?t, H0: exec_step (Cexec_state ?t ?st) (Cexec_state ?t' ?st') |- _ =>
-    solve [destruct (value_irreducible__exec_step t H t' st st'); assumption]
+  | H : value ?t, H0 : exec_step (Cexec_state ?t ?st) _ |- _ =>
+    apply (value_not_in_domain t st) in H;
+    apply H in H0;
+    inversion H0
+  end.
+
+Ltac exec_step_inductive :=
+  match goal with
+  | H: forall z, exec_step ?x z -> z = ?y, H0: exec_step ?x ?a |- _ = _ =>
+    apply H in H0;
+    inversion H0;
+    auto
   end.
 
 Ltac exec_step_impossible :=
@@ -33,35 +55,33 @@ Ltac exec_step_impossible :=
     solve [inversion H]
   end.
 
-Ltac exec_step_inductive :=
-  match goal with
-  | H: forall z, exec_step ?x z -> z = ?y, H0: exec_step ?x ?a |- _ = _ =>
-    solve [apply H in H0; inversion H0; auto]
-  end.
-
 Ltac rewrite_invert :=
   match goal with
   | H: ?x = ?y, H0: ?x = ?z |- _ = _ =>
-    solve [rewrite H in H0; inversion H0; reflexivity]
+    rewrite H in H0;
+    inversion H0;
+    reflexivity
   end.
 
-Ltac equality_contradiction :=
-  match goal with
-  | H: ?x = ?x -> False |- _ =>
-    solve [exfalso; apply H; reflexivity]
-  end.
+Lemma is_function_exec_step :
+  is_function exec_state exec_step.
+Proof.
+  unfold is_function. intros x y1 y2 Hxy1.
+  generalize dependent y2.
+  induction Hxy1; intros y2 Hxy2; inversion Hxy2; subst;
+  try solve [auto];
+  try solve [apply_value_not_in_domain];
+  try solve [exec_step_inductive];
+  try solve [exec_step_impossible];
+  try solve [rewrite_invert].
+  Qed.
 
 Lemma deterministic__exec_step:
   deterministic exec_step.
-Proof with auto.
-  intros x y Hxy.
-  induction Hxy; intros z Hxz; inversion Hxz; subst;
-  try solve [value_exec_step_impossible];
-  try solve [auto];
-  try solve [exec_step_inductive];
-  try solve [rewrite_invert];
-  try solve [equality_contradiction];
-  try solve [exec_step_impossible].
+Proof.
+  unfold deterministic.
+  intros.
+  apply (is_function_exec_step x y z H H0).
   Qed.
 
 End Verification.
