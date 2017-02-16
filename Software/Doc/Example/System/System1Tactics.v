@@ -358,16 +358,16 @@ Ltac reduce_exec_step :=
   || reduce_read_store
   || reduce_called_on_class
 (*  || reduce_tnot*)
-(*  || reduce_tand*)
-(*  || reduce_tor*)
+  || reduce_tand
+  || reduce_tor
 (*  || reduce_tplus*)
 (*  || reduce_tminus*)
 (*  || reduce_tmult*)
-(*  || reduce_teq*)
+  || reduce_teq
   || reduce_tvar
   || reduce_tassign
   || reduce_tseq
-(*  || reduce_tif*)
+  || reduce_tif
 (*  || reduce_twhile*)
   || reduce_trc
   || reduce_tcall

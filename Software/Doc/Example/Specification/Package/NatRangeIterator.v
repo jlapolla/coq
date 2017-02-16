@@ -29,6 +29,36 @@ Notation "t1 '/' st1 '==>+' t2 '/' st2" := (clos_refl_trans_1n exec_state exec_s
 Notation "t1 '/' st1 '==>*' t2 '/' st2" := (clos_refl_trans_term exec_state exec_step (Cexec_state t1 st1) (Cexec_state t2 st2))
   (at level 40, st1 at level 39, t2 at level 39, format "'[' t1  /  st1  '==>*'  t2  /  st2 ']'").
 
+Inductive transition (ref : term) (st1 st2 : state) : Prop :=
+  | tr_off : forall result,
+      (ref # "off"|()|) / st1 ==>* result / st2 ->
+      transition ref st1 st2
+  | tr_after : forall result,
+      (ref # "after"|()|) / st1 ==>* result / st2 ->
+      transition ref st1 st2
+  | tr_forth : forall st1a result,
+      (ref # "after"|()|) / st1 ==>* (tbool false) / st1a ->
+      (ref # "forth"|()|) / st1 ==>* result / st2 ->
+      transition ref st1 st2
+  | tr_item : forall st1a result,
+      (ref # "off"|()|) / st1 ==>* (tbool false) / st1a ->
+      (ref # "item"|()|) / st1 ==>* result / st2 ->
+      transition ref st1 st2.
+
+Notation "ref '::' st1 '-->' st2" := (transition ref st1 st2)
+  (at level 40, st1 at level 39, format "'[' ref  '::'  st1  '-->'  st2 ']'").
+
+Notation "ref '::' st1 '-->+' st2" := (clos_refl_trans_1n state (transition ref) st1 st2)
+  (at level 40, st1 at level 39, format "'[' ref  '::'  st1  '-->+'  st2 ']'").
+
+Notation "ref '::' st1 '-->*' st2" := (clos_refl_trans_term state (transition ref) st1 st2)
+  (at level 40, st1 at level 39, format "'[' ref  '::'  st1  '-->*'  st2 ']'").
+
+Definition all_states_wf x st1 : Prop :=
+  forall st2,
+  x :: st1 -->+ st2 ->
+  wf x st2.
+
 Definition get_at_start : Prop :=
   forall x ref st at_start count first,
   wf_fun x ref st at_start count first ->
