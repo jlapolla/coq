@@ -63,6 +63,7 @@ Proof.
   { exfalso. apply H1. reflexivity. }
   reduce_clos_refl_trans_term.
   repeat reduce.
+  apply Relation_Operators.rt1n_refl.
   Qed.
 
 Lemma proof_get_count :
@@ -78,6 +79,7 @@ Proof.
   { exfalso. apply H1. reflexivity. }
   reduce_clos_refl_trans_term.
   repeat reduce.
+  apply Relation_Operators.rt1n_refl.
   Qed.
 
 Lemma proof_get_first :
@@ -93,6 +95,7 @@ Proof.
   { exfalso. apply H1. reflexivity. }
   reduce_clos_refl_trans_term.
   repeat reduce.
+  apply Relation_Operators.rt1n_refl.
   Qed.
 
 Lemma proof_set_at_start :

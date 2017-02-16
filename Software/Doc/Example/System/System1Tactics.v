@@ -411,9 +411,12 @@ Ltac reduce_clos_refl_trans_term :=
 
 Ltac reduce :=
   match goal with
-  | |- clos_refl_trans_1n exec_state exec_step ?es ?es => solve [apply Relation_Operators.rt1n_refl]
-  | |- clos_refl_trans_1n exec_state exec_step _ _ => 
-    eapply Relation_Operators.rt1n_trans;
-    [repeat reduce_exec_step | instantiate; simpl]
+  | |- clos_refl_trans_1n exec_state exec_step (Cexec_state ?t1 _) (Cexec_state ?t2 _) => 
+    match t1 with
+    | t2 => idtac
+    | _ =>
+      eapply Relation_Operators.rt1n_trans;
+      [repeat reduce_exec_step | instantiate; simpl]
+    end
   end.
 
