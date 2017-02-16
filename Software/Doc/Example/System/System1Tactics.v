@@ -354,31 +354,31 @@ Open Scope string_scope.
 
 Ltac reduce_exec_step :=
      (repeat reduce_value)
-  || reduce_read_stack
+(*  || reduce_read_stack*)
   || reduce_read_store
   || reduce_called_on_class
-  || reduce_tnot
-  || reduce_tand
-  || reduce_tor
-  || reduce_tplus
-  || reduce_tminus
-  || reduce_tmult
-  || reduce_teq
+(*  || reduce_tnot*)
+(*  || reduce_tand*)
+(*  || reduce_tor*)
+(*  || reduce_tplus*)
+(*  || reduce_tminus*)
+(*  || reduce_tmult*)
+(*  || reduce_teq*)
   || reduce_tvar
   || reduce_tassign
   || reduce_tseq
-  || reduce_tif
-  || reduce_twhile
+(*  || reduce_tif*)
+(*  || reduce_twhile*)
   || reduce_trc
   || reduce_tcall
   || reduce_treturn
-  || reduce_tcl
+(*  || reduce_tcl*)
   || reduce_tnew
   || reduce_tfield_r
   || reduce_tfield_w
-  || reduce_tvnew
-  || reduce_tvfield_r
-  || reduce_tvfield_w
+(*  || reduce_tvnew*)
+(*  || reduce_tvfield_r*)
+(*  || reduce_tvfield_w*)
   || reduce_static_function "NatRangeIterator_make" STexec_NatRangeIterator_make
   || reduce_function "NatRangeIterator" "get_at_start" STexec_NatRangeIterator_get_at_start
   || reduce_function "NatRangeIterator" "get_count" STexec_NatRangeIterator_get_count
@@ -414,6 +414,6 @@ Ltac reduce :=
   | |- clos_refl_trans_1n exec_state exec_step ?es ?es => solve [apply Relation_Operators.rt1n_refl]
   | |- clos_refl_trans_1n exec_state exec_step _ _ => 
     eapply Relation_Operators.rt1n_trans;
-    [repeat reduce_exec_step | instantiate; simpl; repeat rewrite_nth]
+    [repeat reduce_exec_step | instantiate; simpl]
   end.
 
